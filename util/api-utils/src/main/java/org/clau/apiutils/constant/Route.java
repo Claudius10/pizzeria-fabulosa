@@ -1,0 +1,73 @@
+package org.clau.apiutils.constant;
+
+public final class Route {
+
+	private Route() {
+		// no init
+	}
+
+	// BASE
+
+	public static final String BASE = "/api";
+
+	public static final String V1 = "/v1";
+
+	public static final String ALL = "/**";
+
+	// DOCS
+
+	public static final String DOCS = "/docs";
+
+	// AUTH
+
+	public static final String AUTH_BASE = "/auth";
+
+	public static final String AUTH_LOGIN = "/login";
+
+	public static final String AUTH_LOGOUT = "/logout";
+
+	// ANON
+
+	public static final String ANON_BASE = "/anon";
+
+	public static final String ANON_REGISTER = "/register";
+
+	public static final String ANON_ORDER = "/order";
+
+	// RESOURCE
+
+	public static final String PRODUCT_BASE = "/product";
+
+	public static final String RESOURCE_PRODUCT_PARAM = "type";
+
+	public static final String STORE_BASE = "/store";
+
+	public static final String OFFER_BASE = "/offer";
+
+	public static final String UTIL_BASE = "/util";
+
+	public static final String LOCAL_DATE_TIME_NOW = "/now";
+
+	// USER
+
+	public static final String USER_BASE = "/user";
+
+	public static final String USER_ID = "/{userId}";
+	public static final String USER_ORDER = "/order";
+	public static final String USER_ADDRESS_ID = "/{addressId}";
+
+	public static final String USER_ADDRESS = "/address";
+
+	// ORDER
+
+	public static final String ORDER_BASE = "/order";
+
+	public static final String ORDER_ID = "/{orderId}";
+
+	public static final String ORDER_SUMMARY = "/summary";
+
+	// MISC
+
+	public static final String PAGE_NUMBER = "pageNumber";
+	public static final String PAGE_SIZE = "pageSize";
+}
