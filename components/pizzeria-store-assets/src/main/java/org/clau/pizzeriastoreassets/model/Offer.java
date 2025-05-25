@@ -3,10 +3,7 @@ package org.clau.pizzeriastoreassets.model;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 
 import java.util.Map;
@@ -15,6 +12,7 @@ import java.util.Map;
 @Table(name = "offer")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(setterPrefix = "with")
 @Setter
 @Getter
 public class Offer {

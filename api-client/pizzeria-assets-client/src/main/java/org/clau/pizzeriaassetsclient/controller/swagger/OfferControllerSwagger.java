@@ -9,6 +9,7 @@ import org.clau.apiutils.constant.Response;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.pizzeriaassetsclient.dto.OfferListDTO;
 import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Mono;
 
 @Tag(name = "Offer API")
 public interface OfferControllerSwagger {
@@ -24,5 +25,5 @@ public interface OfferControllerSwagger {
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
-	ResponseEntity<OfferListDTO> findAll();
+	Mono<ResponseEntity<Object>> findAll();
 }
