@@ -8,7 +8,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
-import org.clau.pizzeriaassetsclient.dto.OfferListDTO;
+import org.clau.pizzeriastoreassets.dto.OfferListDTO;
 import org.clau.pizzeriastoreassets.model.Offer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,11 +37,13 @@ import static org.mockito.Mockito.mock;
 
 public class OfferServiceTests {
 
+	private final String path = Route.BASE + Route.V1 + Route.OFFER_BASE;
+
+	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
 	static Stream<Arguments> arguments() {
 		return Stream.of(argumentSet("Reactor Netty", new ReactorClientHttpConnector()));
 	}
-
-	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	private MockWebServer server;
 
@@ -60,9 +62,9 @@ public class OfferServiceTests {
 
 		// Arrange
 
-		startServer(connector);
+		OfferService service = mock(OfferService.class);
 
-		OfferService offerService = mock(OfferService.class);
+		startServer(connector);
 
 		List<Offer> expected = List.of(
 				Offer.builder()
@@ -81,26 +83,26 @@ public class OfferServiceTests {
 						.build()
 		);
 
-		String offersJson = objectMapper.writeValueAsString(expected);
+		String json = objectMapper.writeValueAsString(expected);
 
 		prepareResponse(response -> response
 				.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-				.setBody(offersJson)
+				.setBody(json)
 		);
 
 		Mono<OfferListDTO> webRequestResult = this.webClient.get()
-				.uri(Route.BASE + Route.OFFER_BASE + Route.V1)
+				.uri(path)
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
 				.bodyToFlux(Offer.class)
 				.collectList()
 				.map(OfferListDTO::new);
 
-		doReturn(webRequestResult).when(offerService).findAll();
+		doReturn(webRequestResult).when(service).findAll();
 
 		// Act
 
-		Mono<Object> result = offerService.findAll();
+		Mono<Object> result = service.findAll();
 
 		// Assert
 
@@ -112,9 +114,15 @@ public class OfferServiceTests {
 
 					assertThat(actual.offers().get(0).getId()).isEqualTo(expected.get(0).getId());
 					assertThat(actual.offers().get(0).getName()).isEqualTo(expected.get(0).getName());
+					assertThat(actual.offers().get(0).getImage()).isEqualTo(expected.get(0).getImage());
+					assertThat(actual.offers().get(0).getDescription()).isEqualTo(expected.get(0).getDescription());
+					assertThat(actual.offers().get(0).getCaveat()).isEqualTo(expected.get(0).getCaveat());
 
 					assertThat(actual.offers().get(1).getId()).isEqualTo(expected.get(1).getId());
 					assertThat(actual.offers().get(1).getName()).isEqualTo(expected.get(1).getName());
+					assertThat(actual.offers().get(1).getImage()).isEqualTo(expected.get(1).getImage());
+					assertThat(actual.offers().get(1).getDescription()).isEqualTo(expected.get(1).getDescription());
+					assertThat(actual.offers().get(1).getCaveat()).isEqualTo(expected.get(1).getCaveat());
 
 				})
 				.expectComplete()
@@ -123,7 +131,7 @@ public class OfferServiceTests {
 
 		expectRequestCount(1);
 		expectRequest(request -> {
-			assertThat(request.getPath()).isEqualTo(Route.BASE + Route.OFFER_BASE + Route.V1);
+			assertThat(request.getPath()).isEqualTo(path);
 			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON.toString());
 		});
 	}
@@ -134,9 +142,9 @@ public class OfferServiceTests {
 
 		// Arrange
 
-		startServer(connector);
+		OfferService service = mock(OfferService.class);
 
-		OfferService offerService = mock(OfferService.class);
+		startServer(connector);
 
 		ResponseDTO responseDTOStub = ResponseDTO.builder()
 				.apiError(APIError.
@@ -145,31 +153,31 @@ public class OfferServiceTests {
 						.withCreatedOn(LocalDateTime.now())
 						.withCause("TestException")
 						.withMessage("TestMessage")
-						.withOrigin("OfferServiceTests")
-						.withPath(Route.BASE + Route.OFFER_BASE + Route.V1)
+						.withOrigin("Tests")
+						.withPath(path)
 						.withFatal(false)
 						.withLogged(false)
 						.build())
 				.build();
 
-		String responseDTOJson = objectMapper.writeValueAsString(responseDTOStub);
+		String json = objectMapper.writeValueAsString(responseDTOStub);
 
 		prepareResponse(response -> response
 				.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-				.setBody(responseDTOJson)
+				.setBody(json)
 		);
 
 		Mono<ResponseDTO> webRequestResult = this.webClient.get()
-				.uri(Route.BASE + Route.OFFER_BASE + Route.V1)
+				.uri(path)
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(ResponseDTO.class);
 
-		doReturn(webRequestResult).when(offerService).findAll();
+		doReturn(webRequestResult).when(service).findAll();
 
 		// Act
 
-		Mono<Object> result = offerService.findAll();
+		Mono<Object> result = service.findAll();
 
 		// Assert
 
@@ -192,7 +200,7 @@ public class OfferServiceTests {
 
 		expectRequestCount(1);
 		expectRequest(request -> {
-			assertThat(request.getPath()).isEqualTo(Route.BASE + Route.OFFER_BASE + Route.V1);
+			assertThat(request.getPath()).isEqualTo(path);
 			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON.toString());
 		});
 	}

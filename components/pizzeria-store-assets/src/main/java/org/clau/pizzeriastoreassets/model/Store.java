@@ -14,6 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder(setterPrefix = "with")
 @EqualsAndHashCode
 public class Store {
 

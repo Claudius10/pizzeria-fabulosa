@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.OFFER_BASE + Route.V1)
+@RequestMapping(Route.BASE + Route.V1 + Route.OFFER_BASE)
 public class OfferController implements OfferControllerSwagger {
 
 	private final OfferService offerService;

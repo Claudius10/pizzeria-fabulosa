@@ -7,8 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.clau.apiutils.constant.Response;
 import org.clau.apiutils.dto.ResponseDTO;
-import org.clau.pizzeriaassetsclient.dto.StoreListDTO;
+import org.clau.pizzeriastoreassets.dto.StoreListDTO;
 import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Mono;
 
 @Tag(name = "Store API")
 public interface StoreControllerSwagger {
@@ -24,5 +25,5 @@ public interface StoreControllerSwagger {
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
-	ResponseEntity<StoreListDTO> findAll();
+	Mono<ResponseEntity<Object>> findAll();
 }

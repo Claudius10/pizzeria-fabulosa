@@ -38,7 +38,7 @@ public final class Route {
 
 	public static final String PRODUCT_BASE = "/product";
 
-	public static final String RESOURCE_PRODUCT_PARAM = "type";
+	public static final String PRODUCT_TYPE = "type";
 
 	public static final String STORE_BASE = "/store";
 
@@ -70,4 +70,5 @@ public final class Route {
 
 	public static final String PAGE_NUMBER = "pageNumber";
 	public static final String PAGE_SIZE = "pageSize";
+	public static final String USER_ID_PARAM = "userId";
 }

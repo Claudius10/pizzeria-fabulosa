@@ -9,9 +9,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.clau.apiutils.constant.Response;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
-import org.clau.pizzeriaassetsclient.dto.ProductListDTO;
+import org.clau.pizzeriastoreassets.dto.ProductListDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
+import reactor.core.publisher.Mono;
 
 @Tag(name = "Product API")
 public interface ProductControllerSwagger {
@@ -27,7 +28,7 @@ public interface ProductControllerSwagger {
 			description = "Unexpected exception occurred",
 			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
 	)
-	ResponseEntity<ProductListDTO> findAllByType(
+	Mono<ResponseEntity<Object>> findAllByType(
 			@Parameter(required = true, description = "Type of the product") @RequestParam String type,
 			@Parameter(required = true, description = "Page number starting at 0") @RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
 			@Parameter(required = true, description = "Page size") @RequestParam(name = Route.PAGE_SIZE) Integer pageSize);

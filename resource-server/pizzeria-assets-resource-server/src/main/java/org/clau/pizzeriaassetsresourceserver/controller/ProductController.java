@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.PRODUCT_BASE + Route.V1)
+@RequestMapping(Route.BASE + Route.V1 + Route.PRODUCT_BASE)
 public class ProductController {
 
 	private final ProductService productService;
@@ -23,6 +23,6 @@ public class ProductController {
 			@RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
 			@RequestParam(name = Route.PAGE_SIZE) Integer pageSize) {
 
-		return productService.findAllByType(type, pageNumber, pageSize);
+		return productService.findAllByType(type, pageSize, pageNumber);
 	}
 }

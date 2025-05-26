@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.UTIL_BASE + Route.V1)
+@RequestMapping(Route.BASE + Route.V1 + Route.UTIL_BASE)
 public class UtilController implements UtilControllerSwagger {
 
 	@GetMapping(Route.LOCAL_DATE_TIME_NOW)

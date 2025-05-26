@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.STORE_BASE + Route.V1)
+@RequestMapping(Route.BASE + Route.V1 + Route.STORE_BASE)
 public class StoreController {
 
 	private final StoreService storeService;

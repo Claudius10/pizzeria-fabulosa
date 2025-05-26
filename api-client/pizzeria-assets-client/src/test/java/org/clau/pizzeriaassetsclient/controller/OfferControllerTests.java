@@ -36,6 +36,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import({OfferControllerTests.MockOfferService.class})
 public class OfferControllerTests {
 
+	private final String path = Route.BASE + Route.V1 + Route.OFFER_BASE;
+
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -70,7 +72,7 @@ public class OfferControllerTests {
 
 		// Act
 
-		MvcResult result = mockMvc.perform(get(Route.BASE + Route.OFFER_BASE + Route.V1)).andReturn();
+		MvcResult result = mockMvc.perform(get(path)).andReturn();
 
 		// Assert
 
@@ -83,12 +85,16 @@ public class OfferControllerTests {
 		assertThat(actual.size()).isEqualTo(2);
 
 		assertThat(actual.get(0).getId()).isEqualTo(expected.get(0).getId());
+		assertThat(actual.get(0).getName()).isEqualTo(expected.get(0).getName());
 		assertThat(actual.get(0).getImage()).isEqualTo(expected.get(0).getImage());
-		assertThat(actual.get(0).getName().get("en")).isEqualTo(expected.get(0).getName().get("en"));
+		assertThat(actual.get(0).getDescription()).isEqualTo(expected.get(0).getDescription());
+		assertThat(actual.get(0).getCaveat()).isEqualTo(expected.get(0).getCaveat());
 
 		assertThat(actual.get(1).getId()).isEqualTo(expected.get(1).getId());
+		assertThat(actual.get(1).getName()).isEqualTo(expected.get(1).getName());
 		assertThat(actual.get(1).getImage()).isEqualTo(expected.get(1).getImage());
-		assertThat(actual.get(1).getName().get("en")).isEqualTo(expected.get(1).getName().get("en"));
+		assertThat(actual.get(1).getDescription()).isEqualTo(expected.get(1).getDescription());
+		assertThat(actual.get(1).getCaveat()).isEqualTo(expected.get(1).getCaveat());
 	}
 
 	@Test
@@ -103,8 +109,8 @@ public class OfferControllerTests {
 						.withCreatedOn(LocalDateTime.now())
 						.withCause("TestException")
 						.withMessage("TestMessage")
-						.withOrigin("OfferServiceTests")
-						.withPath(Route.BASE + Route.OFFER_BASE + Route.V1)
+						.withOrigin("Tests")
+						.withPath(path)
 						.withFatal(false)
 						.withLogged(false)
 						.build())
@@ -116,7 +122,7 @@ public class OfferControllerTests {
 
 		// Act
 
-		MvcResult result = mockMvc.perform(get(Route.BASE + Route.OFFER_BASE + Route.V1)).andReturn();
+		MvcResult result = mockMvc.perform(get(path)).andReturn();
 
 		// Assert
 

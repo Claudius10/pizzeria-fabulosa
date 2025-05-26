@@ -8,6 +8,7 @@ import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.service.ErrorService;
 import org.clau.apiutils.util.ExceptionLogger;
 import org.clau.apiutils.util.ServerUtils;
+import org.clau.pizzeriaassetsresourceserver.util.Constant;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -24,8 +25,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
-	private static final String ORIGIN = "Pizzeria-Assets-Resource-Server";
-
 	private final ErrorService errorService;
 
 	@Override
@@ -37,7 +36,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		String message = "See cause";
 		boolean fatal = false;
 
-		APIError error = errorService.create(cause, message, ORIGIN, path, fatal);
+		APIError error = errorService.create(cause, message, Constant.APP_NAME, path, fatal);
 
 		ResponseDTO response = ResponseDTO.builder().apiError(error).build();
 		return new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -52,7 +51,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		String message = ex.getMessage();
 		boolean fatal = true;
 
-		APIError error = errorService.create(cause, message, ORIGIN, path, fatal);
+		APIError error = errorService.create(cause, message, Constant.APP_NAME, path, fatal);
 		ResponseDTO response = ResponseDTO.builder().apiError(error).build();
 
 		ExceptionLogger.log(ex, log, response);

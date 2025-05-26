@@ -1,0 +1,33 @@
+package org.clau.pizzeriabusinessresourceserver.service.impl;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.clau.apiutils.model.APIError;
+import org.clau.apiutils.service.ErrorService;
+import org.clau.apiutils.util.TimeUtils;
+import org.clau.pizzeriabusinessresourceserver.dao.ErrorRepository;
+import org.springframework.stereotype.Service;
+
+@RequiredArgsConstructor
+@Service
+@Transactional
+public class ErrorServiceImpl implements ErrorService {
+
+	private final ErrorRepository errorRepository;
+
+	@Override
+	public APIError create(String cause, String message, String origin, String uriPath, boolean fatal) {
+
+		APIError error = APIError.builder()
+				.withCreatedOn(TimeUtils.getNowAccountingDST())
+				.withCause(cause)
+				.withMessage(message)
+				.withOrigin(origin)
+				.withPath(uriPath)
+				.withLogged(true)
+				.withFatal(fatal)
+				.build();
+
+		return errorRepository.save(error);
+	}
+}
