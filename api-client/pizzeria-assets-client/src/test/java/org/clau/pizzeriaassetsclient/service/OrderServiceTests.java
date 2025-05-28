@@ -8,6 +8,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
+import org.clau.pizzeriaassetsclient.service.impl.OrderServiceImpl;
 import org.clau.pizzeriabusinessassets.dto.CreatedOrderDTO;
 import org.clau.pizzeriabusinessassets.dto.NewAnonOrderDTO;
 import org.clau.pizzeriabusinessassets.model.Cart;
@@ -38,9 +39,6 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.clau.pizzeriabusinessassets.util.TestUtils.anonOrderStub;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 public class OrderServiceTests {
 
@@ -69,9 +67,9 @@ public class OrderServiceTests {
 
 		// Arrange
 
-		OrderService service = mock(OrderService.class);
-
 		startServer(connector);
+
+		OrderService service = new OrderServiceImpl(webClient);
 
 		// body of POST
 		NewAnonOrderDTO body = anonOrderStub(
@@ -130,18 +128,9 @@ public class OrderServiceTests {
 		// return expected in response
 		prepareResponse(response -> response
 				.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.setResponseCode(HttpStatus.CREATED.value())
 				.setBody(json)
 		);
-
-		Mono<CreatedOrderDTO> webRequestResult = this.webClient.post()
-				.uri(path)
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(body)
-				.retrieve()
-				.bodyToMono(CreatedOrderDTO.class);
-
-		doReturn(webRequestResult).when(service).createAnonOrder(body);
 
 		// Act
 
@@ -203,9 +192,9 @@ public class OrderServiceTests {
 
 		// Arrange
 
-		OrderService service = mock(OrderService.class);
-
 		startServer(connector);
+
+		OrderService service = new OrderServiceImpl(webClient);
 
 		ResponseDTO responseDTOStub = ResponseDTO.builder()
 				.apiError(APIError.
@@ -226,20 +215,25 @@ public class OrderServiceTests {
 
 		prepareResponse(response -> response
 				.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.setBody(json)
 		);
 
-		Mono<ResponseDTO> webRequestResult = this.webClient.get()
-				.uri(path)
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.bodyToMono(ResponseDTO.class);
-
-		doReturn(webRequestResult).when(service).createAnonOrder(any());
-
 		// Act
 
-		Mono<Object> result = service.createAnonOrder(any());
+		Mono<Object> result = service.createAnonOrder(anonOrderStub(
+				"customerName",
+				111222333,
+				"customerEmail@gmail.com",
+				"Street",
+				5,
+				"15",
+				"E",
+				null,
+				"ASAP",
+				"Cash",
+				null,
+				false));
 
 		// Assert
 

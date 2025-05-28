@@ -8,6 +8,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
+import org.clau.pizzeriaassetsclient.service.impl.OfferServiceImpl;
 import org.clau.pizzeriastoreassets.dto.OfferListDTO;
 import org.clau.pizzeriastoreassets.model.Offer;
 import org.junit.jupiter.api.AfterEach;
@@ -33,8 +34,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 public class OfferServiceTests {
 
@@ -63,9 +62,9 @@ public class OfferServiceTests {
 
 		// Arrange
 
-		OfferService service = mock(OfferService.class);
-
 		startServer(connector);
+
+		OfferService service = new OfferServiceImpl(webClient);
 
 		List<Offer> expected = List.of(
 				Offer.builder()
@@ -88,18 +87,9 @@ public class OfferServiceTests {
 
 		prepareResponse(response -> response
 				.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.setResponseCode(HttpStatus.OK.value())
 				.setBody(json)
 		);
-
-		Mono<OfferListDTO> webRequestResult = this.webClient.get()
-				.uri(path)
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.bodyToFlux(Offer.class)
-				.collectList()
-				.map(OfferListDTO::new);
-
-		doReturn(webRequestResult).when(service).findAll();
 
 		// Act
 
@@ -143,9 +133,9 @@ public class OfferServiceTests {
 
 		// Arrange
 
-		OfferService service = mock(OfferService.class);
-
 		startServer(connector);
+
+		OfferService service = new OfferServiceImpl(webClient);
 
 		ResponseDTO responseDTOStub = ResponseDTO.builder()
 				.apiError(APIError.
@@ -166,16 +156,9 @@ public class OfferServiceTests {
 
 		prepareResponse(response -> response
 				.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.setBody(json)
 		);
-
-		Mono<ResponseDTO> webRequestResult = this.webClient.get()
-				.uri(path)
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.bodyToMono(ResponseDTO.class);
-
-		doReturn(webRequestResult).when(service).findAll();
 
 		// Act
 

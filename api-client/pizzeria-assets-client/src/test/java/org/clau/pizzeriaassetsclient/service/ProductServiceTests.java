@@ -8,6 +8,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
+import org.clau.pizzeriaassetsclient.service.impl.ProductServiceImpl;
 import org.clau.pizzeriastoreassets.dto.ProductListDTO;
 import org.clau.pizzeriastoreassets.model.Product;
 import org.junit.jupiter.api.AfterEach;
@@ -37,8 +38,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 public class ProductServiceTests {
 
@@ -67,9 +66,9 @@ public class ProductServiceTests {
 
 		// Arrange
 
-		ProductService service = mock(ProductService.class);
-
 		startServer(connector);
+
+		ProductService service = new ProductServiceImpl(webClient);
 
 		List<Product> expected = List.of(
 				Product.builder()
@@ -103,23 +102,9 @@ public class ProductServiceTests {
 
 		prepareResponse(response -> response
 				.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.setResponseCode(HttpStatus.OK.value())
 				.setBody(json)
 		);
-
-		Mono<ProductListDTO> webRequestResult = this.webClient.get()
-				.uri(uriBuilder -> uriBuilder
-						.path(path)
-						.queryParam(Route.PRODUCT_TYPE, "pizza")
-						.queryParam(Route.PAGE_SIZE, pageSize)
-						.queryParam(Route.PAGE_NUMBER, pageNumber)
-						.build()
-				)
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.bodyToMono(ProductListDTO.class);
-
-
-		doReturn(webRequestResult).when(service).findAllByType("pizza", pageSize, pageNumber);
 
 		// Act
 
@@ -159,9 +144,9 @@ public class ProductServiceTests {
 
 		// Arrange
 
-		ProductService service = mock(ProductService.class);
-
 		startServer(connector);
+
+		ProductService service = new ProductServiceImpl(webClient);
 
 		ResponseDTO responseDTOStub = ResponseDTO.builder()
 				.apiError(APIError.
@@ -182,22 +167,9 @@ public class ProductServiceTests {
 
 		prepareResponse(response -> response
 				.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.setBody(json)
 		);
-
-		Mono<ResponseDTO> webRequestResult = this.webClient.get()
-				.uri(uriBuilder -> uriBuilder
-						.path(path)
-						.queryParam(Route.PRODUCT_TYPE, "pizza")
-						.queryParam(Route.PAGE_SIZE, 5)
-						.queryParam(Route.PAGE_NUMBER, 0)
-						.build()
-				)
-				.accept(MediaType.APPLICATION_JSON)
-				.retrieve()
-				.bodyToMono(ResponseDTO.class);
-
-		doReturn(webRequestResult).when(service).findAllByType("pizza", 5, 0);
 
 		// Act
 
