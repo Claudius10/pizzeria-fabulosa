@@ -80,12 +80,12 @@ public final class TestUtils {
 		} else {
 			cart = new CartDTO(
 					1,
-					18.30D,
+					14.75D,
 					0D,
 					List.of(new CartItemDTO(
 							null,
 							"pizza",
-							13.30D,
+							14.75D,
 							1,
 							Map.of("es", "Cuatro Quesos", "en", "Cuatro Quesos"),
 							Map.of(
@@ -100,7 +100,7 @@ public final class TestUtils {
 		OrderDetailsDTO orderDetails = new OrderDetailsDTO(
 				"ASAP",
 				"Card",
-				null,
+				20D,
 				null,
 				false,
 				null
