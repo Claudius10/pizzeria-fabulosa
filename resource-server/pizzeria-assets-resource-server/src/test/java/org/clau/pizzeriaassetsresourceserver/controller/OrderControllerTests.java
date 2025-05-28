@@ -61,7 +61,7 @@ public class OrderControllerTests {
 				5,
 				"15",
 				"E",
-				null,
+				20D,
 				"ASAP",
 				"Cash",
 				null,
@@ -89,8 +89,8 @@ public class OrderControllerTests {
 		assertThat(actual.getOrderDetails().getPaymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
 		assertThat(actual.getOrderDetails().getDeliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
 		assertThat(actual.getOrderDetails().getStorePickUp()).isFalse();
-		assertThat(actual.getOrderDetails().getBillToChange()).isNull();
-		assertThat(actual.getOrderDetails().getChangeToGive()).isNull();
+		assertThat(actual.getOrderDetails().getBillToChange()).isEqualTo(expected.orderDetails().billToChange());
+		assertThat(actual.getOrderDetails().getChangeToGive()).isEqualTo(expected.orderDetails().billToChange() - expected.cart().totalCost());
 		assertThat(actual.getOrderDetails().getComment()).isNull();
 
 		assertThat(actual.getCart().getTotalQuantity()).isEqualTo(expected.cart().totalQuantity());
