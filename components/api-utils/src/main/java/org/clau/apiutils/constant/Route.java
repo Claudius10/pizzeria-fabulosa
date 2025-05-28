@@ -6,9 +6,9 @@ public final class Route {
 		// no init
 	}
 
-	// BASE
+	// API
 
-	public static final String BASE = "/api";
+	public static final String API = "/api";
 
 	public static final String V1 = "/v1";
 
@@ -28,11 +28,7 @@ public final class Route {
 
 	// ANON
 
-	public static final String ANON_BASE = "/anon";
-
 	public static final String ANON_REGISTER = "/register";
-
-	public static final String ANON_ORDER = "/order";
 
 	// RESOURCE
 

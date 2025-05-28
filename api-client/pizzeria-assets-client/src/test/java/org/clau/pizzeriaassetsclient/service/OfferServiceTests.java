@@ -15,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.mock;
 
 public class OfferServiceTests {
 
-	private final String path = Route.BASE + Route.V1 + Route.OFFER_BASE;
+	private final String path = Route.API + Route.V1 + Route.OFFER_BASE;
 
 	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -158,6 +159,7 @@ public class OfferServiceTests {
 						.withFatal(false)
 						.withLogged(false)
 						.build())
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.build();
 
 		String json = objectMapper.writeValueAsString(responseDTOStub);
@@ -185,6 +187,8 @@ public class OfferServiceTests {
 				.consumeNextWith(response -> {
 
 					ResponseDTO responseDTO = (ResponseDTO) response;
+					assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+
 					APIError actual = responseDTO.getApiError();
 					APIError expected = responseDTO.getApiError();
 

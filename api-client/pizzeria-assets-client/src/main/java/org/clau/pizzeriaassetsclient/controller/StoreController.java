@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.V1 + Route.STORE_BASE)
+@RequestMapping(Route.API + Route.V1 + Route.STORE_BASE)
 public class StoreController implements StoreControllerSwagger {
 
 	private final StoreService storeService;
@@ -21,13 +21,12 @@ public class StoreController implements StoreControllerSwagger {
 	@GetMapping
 	public Mono<ResponseEntity<Object>> findAll() {
 		Mono<ResponseEntity<Object>> result = storeService.findAll().map(response -> {
-			if (response instanceof ResponseDTO) {
-				return ResponseEntity.internalServerError().body(response);
+			if (response instanceof ResponseDTO responseDTO) {
+				return ResponseEntity.status(responseDTO.getStatus()).body(response);
 			} else {
 				return ResponseEntity.ok(response);
 			}
 		});
-
 
 		return result;
 	}

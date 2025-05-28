@@ -3,7 +3,6 @@ package org.clau.pizzeriabusinessresourceserver.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.clau.apiutils.util.TimeUtils;
-import org.clau.pizzeriabusinessassets.dto.NewAnonOrderDTO;
 import org.clau.pizzeriabusinessassets.dto.NewUserOrderDTO;
 import org.clau.pizzeriabusinessassets.model.Cart;
 import org.clau.pizzeriabusinessassets.model.CartItem;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -37,63 +35,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Order createAnonOrder(NewAnonOrderDTO newAnonOrder) {
-
-		Cart cart = Cart.builder()
-				.withTotalQuantity(newAnonOrder.cart().totalQuantity())
-				.withTotalCost(newAnonOrder.cart().totalCost())
-				.withTotalCostOffers(newAnonOrder.cart().totalCostOffers())
-				.build();
-
-		List<CartItem> items = newAnonOrder
-				.cart()
-				.cartItemsDTO()
-				.stream()
-				.map(cartItemDTO -> CartItem.builder()
-						.withType(cartItemDTO.type())
-						.withName(cartItemDTO.name())
-						.withQuantity(cartItemDTO.quantity())
-						.withDescription(cartItemDTO.description())
-						.withPrice(cartItemDTO.price())
-						.withFormats(cartItemDTO.formats())
-						.build())
-				.toList();
-
-		for (CartItem cartItem : items) {
-			cart.addItem(cartItem);
-		}
-
-		Order anonOrder = Order.builder()
-				.withCreatedOn(LocalDateTime.now())
-				.withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
-				.withAnonCustomerName(newAnonOrder.customer().name())
-				.withAnonCustomerContactNumber(newAnonOrder.customer().contactNumber())
-				.withAnonCustomerEmail(newAnonOrder.customer().email())
-				.withAddress(newAnonOrder.address())
-				.build();
-
-		anonOrder.setOrderDetails(OrderDetails.builder()
-				.withDeliveryTime(newAnonOrder.orderDetails().deliveryTime())
-				.withPaymentMethod(newAnonOrder.orderDetails().paymentMethod())
-				.withBillToChange(newAnonOrder.orderDetails().billToChange())
-				.withStorePickUp(newAnonOrder.orderDetails().storePickUp())
-				.withComment(newAnonOrder.orderDetails().comment())
-				.build());
-
-		anonOrder.setCart(cart);
-
-		if (null != newAnonOrder.orderDetails().billToChange()) {
-			anonOrder.getOrderDetails().setChangeToGive(OrderUtils.calculatePaymentChange(
-					newAnonOrder.orderDetails().billToChange(),
-					newAnonOrder.cart().totalCost(),
-					newAnonOrder.cart().totalCostOffers())
-			);
-		}
-
-		return orderRepository.save(anonOrder);
-	}
-
-	@Override
 	public Order createUserOrder(Long userId, NewUserOrderDTO newUserOrder) {
 
 		Cart cart = Cart.builder()
@@ -102,10 +43,7 @@ public class OrderServiceImpl implements OrderService {
 				.withTotalCostOffers(newUserOrder.cart().totalCostOffers())
 				.build();
 
-		newUserOrder
-				.cart()
-				.cartItemsDTO()
-				.stream()
+		newUserOrder.cart().cartItemsDTO().stream()
 				.map(cartItemDTO -> CartItem.builder()
 						.withType(cartItemDTO.type())
 						.withName(cartItemDTO.name())

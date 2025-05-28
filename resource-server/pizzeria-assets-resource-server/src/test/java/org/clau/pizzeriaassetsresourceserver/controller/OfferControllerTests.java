@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class OfferControllerTests {
 
-	private final String path = Route.BASE + Route.V1 + Route.OFFER_BASE;
+	private final String path = Route.API + Route.V1 + Route.OFFER_BASE;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -60,7 +60,7 @@ public class OfferControllerTests {
 
 		// Act
 
-		// get api call to find offer list
+		// get api call to find offer actual
 		MockHttpServletResponse response = mockMvc.perform(get(path)).andReturn().getResponse();
 
 		// Assert
@@ -70,13 +70,13 @@ public class OfferControllerTests {
 		TypeReference<List<Offer>> typeReference = new TypeReference<>() {
 		};
 
-		List<Offer> list = objectMapper.readValue(response.getContentAsString(), typeReference);
+		List<Offer> actual = objectMapper.readValue(response.getContentAsString(), typeReference);
 
-		assertThat(list).hasSize(1);
-		assertThat(list.getFirst().getId()).isEqualTo(1);
-		assertThat(list.getFirst().getImage()).isEqualTo("image1");
-		assertThat(list.getFirst().getName().get("en")).isEqualTo("test1");
-		assertThat(list.getFirst().getDescription().get("en")).isEqualTo("test1");
-		assertThat(list.getFirst().getCaveat().get("en")).isEqualTo("test1");
+		assertThat(actual).hasSize(1);
+		assertThat(actual.getFirst().getId()).isEqualTo(1);
+		assertThat(actual.getFirst().getImage()).isEqualTo("image1");
+		assertThat(actual.getFirst().getName().get("en")).isEqualTo("test1");
+		assertThat(actual.getFirst().getDescription().get("en")).isEqualTo("test1");
+		assertThat(actual.getFirst().getCaveat().get("en")).isEqualTo("test1");
 	}
 }

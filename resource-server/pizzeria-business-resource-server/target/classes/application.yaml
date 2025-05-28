@@ -36,3 +36,11 @@ logging:
     org.springframework.security: info
     org.springframework.web: info
     root: info
+
+ssl:
+  keyStoreType: PKCS12
+  keyStorePath: /test
+  keyStorePassword: test
+  keyAlias: test
+
+domain: 192.168.1.128

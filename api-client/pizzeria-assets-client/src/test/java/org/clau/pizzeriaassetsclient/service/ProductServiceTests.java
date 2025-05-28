@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -41,7 +42,7 @@ import static org.mockito.Mockito.mock;
 
 public class ProductServiceTests {
 
-	private final String path = Route.BASE + Route.V1 + Route.PRODUCT_BASE;
+	private final String path = Route.API + Route.V1 + Route.PRODUCT_BASE;
 
 	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -83,13 +84,13 @@ public class ProductServiceTests {
 						.build(),
 				Product.builder()
 						.withId(2L)
-						.withType("beverage")
+						.withType("pizza")
 						.withImage("image2")
-						.withName(Map.of("en", "Beer"))
-						.withDescription(Map.of("en", List.of("Alcohol")))
-						.withFormats(Map.of("m", Map.of("en", "330ML", "es", "330ML")))
-						.withPrices(Map.of("m", 2D))
-						.withAllergens(Map.of("en", List.of("Alcohol")))
+						.withName(Map.of("en", "Gluten Free2"))
+						.withDescription(Map.of("en", List.of("Bacon", "Cheese")))
+						.withFormats(Map.of("m", Map.of("en", "Medium", "es", "Mediana")))
+						.withPrices(Map.of("m", 13.30))
+						.withAllergens(Map.of("en", List.of("Lactose2")))
 						.build()
 		);
 
@@ -174,6 +175,7 @@ public class ProductServiceTests {
 						.withFatal(false)
 						.withLogged(false)
 						.build())
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.build();
 
 		String json = objectMapper.writeValueAsString(responseDTOStub);
@@ -207,6 +209,8 @@ public class ProductServiceTests {
 				.consumeNextWith(response -> {
 
 					ResponseDTO responseDTO = (ResponseDTO) response;
+					assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+
 					APIError actual = responseDTO.getApiError();
 					APIError expected = responseDTO.getApiError();
 

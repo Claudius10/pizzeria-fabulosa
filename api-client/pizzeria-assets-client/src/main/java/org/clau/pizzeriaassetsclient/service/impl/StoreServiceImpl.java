@@ -6,7 +6,6 @@ import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.pizzeriaassetsclient.service.StoreService;
 import org.clau.pizzeriastoreassets.dto.StoreListDTO;
 import org.clau.pizzeriastoreassets.model.Store;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,7 +15,7 @@ import reactor.core.publisher.Mono;
 @Service
 public class StoreServiceImpl implements StoreService {
 
-	private final String path = Route.BASE + Route.V1 + Route.STORE_BASE;
+	private final String path = Route.API + Route.V1 + Route.STORE_BASE;
 
 	private final WebClient webClient;
 
@@ -26,7 +25,7 @@ public class StoreServiceImpl implements StoreService {
 				.uri(path)
 				.accept(MediaType.APPLICATION_JSON)
 				.exchangeToMono(response -> {
-					if (response.statusCode() == HttpStatus.OK) {
+					if (response.statusCode().is2xxSuccessful()) {
 						return response.bodyToFlux(Store.class).collectList().map(StoreListDTO::new);
 					} else {
 						return response.bodyToMono(ResponseDTO.class);

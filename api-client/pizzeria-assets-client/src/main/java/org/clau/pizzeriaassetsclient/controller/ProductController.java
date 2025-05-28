@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.V1 + Route.PRODUCT_BASE)
+@RequestMapping(Route.API + Route.V1 + Route.PRODUCT_BASE)
 public class ProductController implements ProductControllerSwagger {
 
 	private final ProductService productService;
@@ -26,8 +26,8 @@ public class ProductController implements ProductControllerSwagger {
 			@RequestParam(name = Route.PAGE_SIZE) Integer pageSize) {
 
 		Mono<ResponseEntity<Object>> result = productService.findAllByType(type, pageSize, pageNumber).map(response -> {
-			if (response instanceof ResponseDTO) {
-				return ResponseEntity.internalServerError().body(response);
+			if (response instanceof ResponseDTO responseDTO) {
+				return ResponseEntity.status(responseDTO.getStatus()).body(response);
 			} else {
 				return ResponseEntity.ok(response);
 			}

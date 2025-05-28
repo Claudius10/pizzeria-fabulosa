@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.apiutils.constant.Route;
 import org.clau.pizzeriaassetsresourceserver.MyTestcontainersConfiguration;
 import org.clau.pizzeriaassetsresourceserver.dao.ProductRepository;
+import org.clau.pizzeriastoreassets.dto.ProductListDTO;
 import org.clau.pizzeriastoreassets.model.Product;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class ProductControllerTests {
 
-	private final String path = Route.BASE + Route.V1 + Route.PRODUCT_BASE;
+	private final String path = Route.API + Route.V1 + Route.PRODUCT_BASE;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -70,7 +71,8 @@ public class ProductControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-		ProductsDTO actual = objectMapper.readValue(response.getContentAsString(), ProductsDTO.class);
+		// can't directly deserialize the Page/PageImpl or Slice/SliceImpl, so got to use the DTO
+		ProductListDTO actual = objectMapper.readValue(response.getContentAsString(), ProductListDTO.class);
 
 		assertThat(actual.size()).isEqualTo(5);
 		assertThat(actual.number()).isEqualTo(0);
@@ -82,14 +84,5 @@ public class ProductControllerTests {
 		assertThat(actual.content().getFirst().getName().get("en")).isEqualTo("Gluten Free");
 		assertThat(actual.content().getFirst().getDescription().get("en")).isEqualTo(List.of("Bacon", "Cheese"));
 		assertThat(actual.content().getFirst().getPrices().get("m")).isEqualTo(13.30);
-	}
-
-	public record ProductsDTO(
-			List<Product> content,
-			int number,
-			int size,
-			long totalElements,
-			boolean last
-	) {
 	}
 }

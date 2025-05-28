@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class StoreControllerTests {
 
-	private final String path = Route.BASE + Route.V1 + Route.STORE_BASE;
+	private final String path = Route.API + Route.V1 + Route.STORE_BASE;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -61,7 +61,7 @@ public class StoreControllerTests {
 
 		// Act
 
-		// get api call to find store list
+		// get api call to find store actual
 		MockHttpServletResponse response = mockMvc.perform(get(path)).andReturn().getResponse();
 
 		// Assert
@@ -71,13 +71,13 @@ public class StoreControllerTests {
 		TypeReference<List<Store>> typeReference = new TypeReference<>() {
 		};
 
-		List<Store> list = objectMapper.readValue(response.getContentAsString(), typeReference);
+		List<Store> actual = objectMapper.readValue(response.getContentAsString(), typeReference);
 
-		assertThat(list).hasSize(1);
-		assertThat(list.getFirst().getId()).isEqualTo(1);
-		assertThat(list.getFirst().getImage()).isEqualTo("test1");
-		assertThat(list.getFirst().getName()).isEqualTo("test1");
-		assertThat(list.getFirst().getAddress()).isEqualTo("test1");
-		assertThat(list.getFirst().getPhoneNumber()).isEqualTo(1);
+		assertThat(actual).hasSize(1);
+		assertThat(actual.getFirst().getId()).isEqualTo(1);
+		assertThat(actual.getFirst().getImage()).isEqualTo("test1");
+		assertThat(actual.getFirst().getName()).isEqualTo("test1");
+		assertThat(actual.getFirst().getAddress()).isEqualTo("test1");
+		assertThat(actual.getFirst().getPhoneNumber()).isEqualTo(1);
 	}
 }

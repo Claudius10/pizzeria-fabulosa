@@ -1,6 +1,5 @@
 package org.clau.pizzeriabusinessresourceserver.service;
 
-import org.clau.pizzeriabusinessassets.dto.NewAnonOrderDTO;
 import org.clau.pizzeriabusinessassets.dto.NewUserOrderDTO;
 import org.clau.pizzeriabusinessassets.model.Order;
 import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
@@ -13,8 +12,6 @@ import java.util.Optional;
 public interface OrderService {
 
 	Optional<OrderProjection> findOrderDTOById(Long orderId);
-
-	Order createAnonOrder(NewAnonOrderDTO newAnonOrder);
 
 	Order createUserOrder(Long userId, NewUserOrderDTO newUserOrder);
 

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.V1 + Route.PRODUCT_BASE)
+@RequestMapping(Route.API + Route.V1 + Route.PRODUCT_BASE)
 public class ProductController {
 
 	private final ProductService productService;

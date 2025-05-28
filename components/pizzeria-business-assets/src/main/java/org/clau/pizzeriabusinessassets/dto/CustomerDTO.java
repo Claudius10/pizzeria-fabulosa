@@ -11,14 +11,14 @@ public record CustomerDTO(
 
 		@NotNull
 		@Pattern(regexp = ValidationRules.SIMPLE_LETTERS_ONLY_MAX_50_INSENSITIVE_REQUIERED, message = ValidationResponses.NAME_INVALID)
-		String name,
+		String anonCustomerName,
 
 		@NotNull
 		@IntegerLength(min = 9, max = 9, message = ValidationResponses.NUMBER_INVALID)
-		Integer contactNumber,
+		Integer anonCustomerContactNumber,
 
 		@NotNull
 		@Email(message = ValidationResponses.EMAIL_INVALID)
-		String email
+		String anonCustomerEmail
 ) {
 }

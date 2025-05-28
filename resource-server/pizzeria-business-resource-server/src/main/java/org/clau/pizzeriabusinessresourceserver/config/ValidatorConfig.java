@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class ValidatorConfig {
 
 	@Bean

@@ -8,6 +8,8 @@ public final class ValidationRules {
 
 	public static final String COMPLEX_LETTERS_NUMBERS_MAX_150_OPTIONAL = "^[a-zA-Z0-9ÁÉÍÓÚáéíóúÑñ!¡¿?.-:,ºª\"\s]{0,150}$";
 
+	public static final String COMPLEX_LETTERS_NUMBERS_MAX_150_REQUIRED = "^[a-zA-Z0-9ÁÉÍÓÚáéíóúÑñ!¡¿?.-:,ºª\"\s]{2,150}$";
+
 	private ValidationRules() {
 	}
 }

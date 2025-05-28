@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import({StoreControllerTests.MockStoreService.class})
 public class StoreControllerTests {
 
-	private final String path = Route.BASE + Route.V1 + Route.STORE_BASE;
+	private final String path = Route.API + Route.V1 + Route.STORE_BASE;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -116,6 +116,7 @@ public class StoreControllerTests {
 						.withFatal(false)
 						.withLogged(false)
 						.build())
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.build();
 
 		Mono<Object> offers = Mono.just(responseDTOStub);
@@ -135,6 +136,7 @@ public class StoreControllerTests {
 		APIError expected = responseDTOStub.getApiError();
 
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+		assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
 
 		assertThat(actual.getId()).isEqualTo(expected.getId());
 		assertThat(actual.getCause()).isEqualTo(expected.getCause());

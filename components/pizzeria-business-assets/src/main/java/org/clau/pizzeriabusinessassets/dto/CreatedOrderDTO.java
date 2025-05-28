@@ -1,7 +1,10 @@
 package org.clau.pizzeriabusinessassets.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotNull;
+import org.clau.pizzeriabusinessassets.jackson.OrderDeserializer;
 
+@JsonDeserialize(using = OrderDeserializer.class)
 public record CreatedOrderDTO(
 
 		@NotNull

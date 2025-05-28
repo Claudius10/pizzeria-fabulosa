@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import({OfferControllerTests.MockOfferService.class})
 public class OfferControllerTests {
 
-	private final String path = Route.BASE + Route.V1 + Route.OFFER_BASE;
+	private final String path = Route.API + Route.V1 + Route.OFFER_BASE;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -114,6 +114,7 @@ public class OfferControllerTests {
 						.withFatal(false)
 						.withLogged(false)
 						.build())
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.build();
 
 		Mono<Object> offers = Mono.just(responseDTOStub);
@@ -133,6 +134,7 @@ public class OfferControllerTests {
 		APIError expected = responseDTOStub.getApiError();
 
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+		assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
 
 		assertThat(actual.getId()).isEqualTo(expected.getId());
 		assertThat(actual.getCause()).isEqualTo(expected.getCause());

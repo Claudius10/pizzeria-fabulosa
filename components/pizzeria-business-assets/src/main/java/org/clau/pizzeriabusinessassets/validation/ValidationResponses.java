@@ -6,9 +6,9 @@ public final class ValidationResponses {
 
 	public static final String EMAIL_INVALID = "InvalidCustomerEmail";
 
-	public static final String EMAIL_NO_MATCH = "NoMatchEmail";
-
 	public static final String NUMBER_INVALID = "InvalidCustomerNumber";
+
+	public static final String ADDRESS_INVALID = "InvalidAddress";
 
 	public static final String ORDER_DETAILS_DELIVERY_HOUR = "InvalidOrderDetailsDeliveryHour";
 

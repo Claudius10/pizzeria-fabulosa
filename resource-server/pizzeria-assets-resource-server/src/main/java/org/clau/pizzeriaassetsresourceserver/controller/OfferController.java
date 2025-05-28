@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.V1 + Route.OFFER_BASE)
+@RequestMapping(Route.API + Route.V1 + Route.OFFER_BASE)
 public class OfferController {
 
 	private final OfferService offerService;

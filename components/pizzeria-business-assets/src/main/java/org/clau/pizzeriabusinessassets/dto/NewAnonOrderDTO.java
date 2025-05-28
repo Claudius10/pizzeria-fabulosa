@@ -2,6 +2,9 @@ package org.clau.pizzeriabusinessassets.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import org.clau.pizzeriabusinessassets.validation.ValidationResponses;
+import org.clau.pizzeriabusinessassets.validation.ValidationRules;
 
 public record NewAnonOrderDTO(
 
@@ -9,8 +12,7 @@ public record NewAnonOrderDTO(
 		@Valid
 		CustomerDTO customer,
 
-		@NotNull
-		@Valid
+		@Pattern(regexp = ValidationRules.COMPLEX_LETTERS_NUMBERS_MAX_150_REQUIRED, message = ValidationResponses.ADDRESS_INVALID)
 		String address,
 
 		@NotNull

@@ -30,7 +30,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.V1 + Route.ORDER_BASE)
+@RequestMapping(Route.API + Route.V1 + Route.ORDER_BASE)
 public class OrderController {
 
 	private final OrderService orderService;
@@ -48,7 +48,7 @@ public class OrderController {
 		Optional<ValidationResult> validate = newOrderValidator.validate(new OrderValidatorInput(order.cart(), order.orderDetails()));
 
 		if (validate.isPresent()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDTO.builder()
+			return ResponseEntity.badRequest().body(ResponseDTO.builder()
 					.apiError(APIError.builder()
 							.withId(UUID.randomUUID().getMostSignificantBits())
 							.withCreatedOn(TimeUtils.getNowAccountingDST())
@@ -59,6 +59,7 @@ public class OrderController {
 							.withLogged(false)
 							.withFatal(false)
 							.build())
+					.status(HttpStatus.BAD_REQUEST)
 					.build());
 		}
 
@@ -71,7 +72,8 @@ public class OrderController {
 
 		Optional<OrderProjection> order = orderService.findOrderDTOById(orderId);
 
-		return order.map(orderDTO -> ResponseEntity.ok().body(orderDTO)).orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+		return order.map(orderDTO -> ResponseEntity.ok().body(orderDTO))
+				.orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
 	}
 
 	@DeleteMapping(Route.ORDER_ID)
@@ -95,6 +97,7 @@ public class OrderController {
 								.withLogged(false)
 								.withFatal(false)
 								.build())
+						.status(HttpStatus.BAD_REQUEST)
 						.build());
 			}
 		}

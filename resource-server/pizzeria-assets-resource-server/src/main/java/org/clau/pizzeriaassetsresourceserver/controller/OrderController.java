@@ -1,4 +1,4 @@
-package org.clau.pizzeriabusinessresourceserver.controller;
+package org.clau.pizzeriaassetsresourceserver.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -7,14 +7,14 @@ import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.util.TimeUtils;
+import org.clau.pizzeriaassetsresourceserver.service.OrderService;
+import org.clau.pizzeriaassetsresourceserver.util.Constant;
 import org.clau.pizzeriabusinessassets.dto.NewAnonOrderDTO;
 import org.clau.pizzeriabusinessassets.model.Order;
 import org.clau.pizzeriabusinessassets.validation.ValidationResponses;
 import org.clau.pizzeriabusinessassets.validation.order.CompositeValidator;
 import org.clau.pizzeriabusinessassets.validation.order.OrderValidatorInput;
 import org.clau.pizzeriabusinessassets.validation.order.ValidationResult;
-import org.clau.pizzeriabusinessresourceserver.service.OrderService;
-import org.clau.pizzeriabusinessresourceserver.util.Constant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +27,8 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.BASE + Route.V1 + Route.ORDER_BASE + Route.ANON_BASE)
-public class AnonController {
+@RequestMapping(Route.API + Route.V1 + Route.ORDER_BASE)
+public class OrderController {
 
 	private final OrderService orderService;
 
@@ -40,7 +40,7 @@ public class AnonController {
 		Optional<ValidationResult> validate = newOrderValidator.validate(new OrderValidatorInput(newAnonOrder.cart(), newAnonOrder.orderDetails()));
 
 		if (validate.isPresent()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDTO.builder()
+			return ResponseEntity.badRequest().body(ResponseDTO.builder()
 					.apiError(APIError.builder()
 							.withId(UUID.randomUUID().getMostSignificantBits())
 							.withCreatedOn(TimeUtils.getNowAccountingDST())
@@ -51,6 +51,7 @@ public class AnonController {
 							.withLogged(false)
 							.withFatal(false)
 							.build())
+					.status(HttpStatus.BAD_REQUEST)
 					.build());
 		}
 

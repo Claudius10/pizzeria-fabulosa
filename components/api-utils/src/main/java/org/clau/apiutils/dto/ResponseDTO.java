@@ -3,6 +3,7 @@ package org.clau.apiutils.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.clau.apiutils.model.APIError;
+import org.springframework.http.HttpStatus;
 
 @Builder
 @Getter
@@ -13,4 +14,6 @@ public class ResponseDTO {
 
 	@NotNull
 	private final APIError apiError;
+
+	private final HttpStatus status;
 }
