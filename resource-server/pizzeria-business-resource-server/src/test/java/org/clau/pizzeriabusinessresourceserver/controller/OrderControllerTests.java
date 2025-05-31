@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.apiutils.util.SecurityCookies.ACCESS_TOKEN;
+import static org.clau.apiutils.constant.Security.ACCESS_TOKEN;
 import static org.clau.pizzeriabusinessassets.util.TestUtils.userOrderStub;
 import static org.clau.pizzeriabusinessresourceserver.TestUtils.getResponse;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
