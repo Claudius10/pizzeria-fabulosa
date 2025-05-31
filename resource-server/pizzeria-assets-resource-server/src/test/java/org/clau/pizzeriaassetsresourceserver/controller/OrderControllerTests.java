@@ -97,10 +97,11 @@ public class OrderControllerTests {
 		assertThat(actual.getCart().getTotalCost()).isEqualTo(expected.cart().totalCost());
 		assertThat(actual.getCart().getTotalCostOffers()).isZero();
 
-		assertThat(actual.getCart().getCartItems().size()).isEqualTo(expected.cart().cartItemsDTO().size());
+		assertThat(actual.getCart().getCartItems().size()).isEqualTo(expected.cart().cartItems().size());
 
 		CartItem actualItem = actual.getCart().getCartItems().getFirst();
-		CartItemDTO expectedItem = expected.cart().cartItemsDTO().getFirst();
+		CartItemDTO expectedItem = expected.cart().cartItems().getFirst();
+
 		assertThat(actualItem.getName()).isEqualTo(expectedItem.name());
 		assertThat(actualItem.getDescription()).isEqualTo(expectedItem.description());
 		assertThat(actualItem.getFormats()).isEqualTo(expectedItem.formats());

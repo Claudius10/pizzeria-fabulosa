@@ -134,7 +134,7 @@ public class ProductServiceTests {
 		expectRequestCount(1);
 		expectRequest(request -> {
 			assertThat(request.getPath()).isEqualTo(path + "?type=pizza&pageSize=5&pageNumber=0");
-			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON.toString());
+			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
 		});
 	}
 
@@ -199,7 +199,7 @@ public class ProductServiceTests {
 		expectRequestCount(1);
 		expectRequest(request -> {
 			assertThat(request.getPath()).isEqualTo(path + "?type=pizza&pageSize=5&pageNumber=0");
-			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON.toString());
+			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
 		});
 	}
 

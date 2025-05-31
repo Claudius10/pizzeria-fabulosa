@@ -2,8 +2,6 @@ package org.clau.pizzeriabusinessresourceserver.dao;
 
 import org.clau.pizzeriabusinessassets.model.Order;
 import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
-import org.clau.pizzeriabusinessresourceserver.dao.projection.OrderProjection;
-import org.clau.pizzeriabusinessresourceserver.dao.projection.OrderSummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,9 +10,7 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-	Optional<OrderProjection> findOrderDTOById(Long orderId);
-
-	Page<OrderSummaryProjection> findAllByUserId(Long userId, Pageable pageable);
+	Page<Order> findAllByUserId(Long userId, Pageable pageable);
 
 	Optional<CreatedOnProjection> findCreatedOnById(Long orderId);
 }

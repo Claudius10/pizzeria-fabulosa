@@ -34,14 +34,14 @@ public class Order {
 
 	private String address;
 
-	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL, optional = false)
 	@JsonManagedReference
 	private OrderDetails orderDetails;
 
 	// NOTE - bidirectional OneToOne association's non-owning side
 	//  can only be lazy fetched if the association is never null ->
 	//  optional = false
-	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL, optional = false)
 	@JsonManagedReference
 	private Cart cart;
 

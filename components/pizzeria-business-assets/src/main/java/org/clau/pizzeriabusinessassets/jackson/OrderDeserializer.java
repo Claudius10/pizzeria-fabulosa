@@ -43,9 +43,9 @@ public class OrderDeserializer extends JsonDeserializer<CreatedOrderDTO> {
 
 	private CustomerDTO buildCustomerDTO(JsonNode root) {
 
-		String anonCustomerName = root.get("anonCustomerName").asText();
-		Integer anonCustomerContactNumber = root.get("anonCustomerContactNumber").asInt();
-		String anonCustomerEmail = root.get("anonCustomerEmail").asText();
+		String anonCustomerName = root.get("anonCustomerName").isNull() ? null : root.get("anonCustomerName").asText();
+		Integer anonCustomerContactNumber = root.get("anonCustomerContactNumber").isNull() ? null : root.get("anonCustomerContactNumber").asInt();
+		String anonCustomerEmail = root.get("anonCustomerEmail").isNull() ? null : root.get("anonCustomerEmail").asText();
 
 		return new CustomerDTO(anonCustomerName, anonCustomerContactNumber, anonCustomerEmail);
 	}

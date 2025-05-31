@@ -2,14 +2,12 @@ package org.clau.pizzeriabusinessassets.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
-
+/**
+ * Return DTO for finding user order by id
+ */
 public record OrderDTO(
 		@NotNull
 		Long id,
-
-		@NotNull
-		LocalDateTime createdOn,
 
 		@NotNull
 		String formattedCreatedOn,

@@ -99,7 +99,7 @@ public class OrderControllerTests {
 
 		assertThat(actual.orderDetails()).isEqualTo(expected.orderDetails());
 
-		assertThat(actual.cart().cartItemsDTO()).isEqualTo(expected.cart().cartItemsDTO());
+		assertThat(actual.cart().cartItems()).isEqualTo(expected.cart().cartItems());
 		assertThat(actual.cart().totalCost()).isEqualTo(expected.cart().totalCost());
 		assertThat(actual.cart().totalQuantity()).isEqualTo(expected.cart().totalQuantity());
 		assertThat(actual.cart().totalCostOffers()).isEqualTo(expected.cart().totalCostOffers());

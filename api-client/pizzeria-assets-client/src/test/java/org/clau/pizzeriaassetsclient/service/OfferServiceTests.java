@@ -123,7 +123,7 @@ public class OfferServiceTests {
 		expectRequestCount(1);
 		expectRequest(request -> {
 			assertThat(request.getPath()).isEqualTo(path);
-			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON.toString());
+			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
 		});
 	}
 
@@ -188,7 +188,7 @@ public class OfferServiceTests {
 		expectRequestCount(1);
 		expectRequest(request -> {
 			assertThat(request.getPath()).isEqualTo(path);
-			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON.toString());
+			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
 		});
 	}
 

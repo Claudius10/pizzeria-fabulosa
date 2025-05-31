@@ -6,11 +6,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 
+import static org.clau.apiutils.constant.Security.ACCESS_TOKEN;
+import static org.clau.apiutils.constant.Security.ID_TOKEN;
+
 public final class SecurityCookies {
-
-	public static final String ACCESS_TOKEN = "Pizzeria.Fabulosa.ACCESS_TOKEN";
-
-	public static final String ID_TOKEN = "Pizzeria.Fabulosa.ID_TOKEN";
 
 	private SecurityCookies() {
 	}

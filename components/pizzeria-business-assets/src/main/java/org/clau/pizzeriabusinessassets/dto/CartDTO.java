@@ -24,6 +24,6 @@ public record CartDTO(
 		Double totalCostOffers,
 
 		@NotNull
-		List<CartItemDTO> cartItemsDTO
+		List<CartItemDTO> cartItems
 ) {
 }

@@ -11,8 +11,6 @@ import org.clau.pizzeriabusinessassets.model.OrderDetails;
 import org.clau.pizzeriabusinessassets.util.OrderUtils;
 import org.clau.pizzeriabusinessresourceserver.dao.OrderRepository;
 import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
-import org.clau.pizzeriabusinessresourceserver.dao.projection.OrderProjection;
-import org.clau.pizzeriabusinessresourceserver.dao.projection.OrderSummaryProjection;
 import org.clau.pizzeriabusinessresourceserver.service.OrderService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,12 +28,12 @@ public class OrderServiceImpl implements OrderService {
 	private final OrderRepository orderRepository;
 
 	@Override
-	public Optional<OrderProjection> findOrderDTOById(Long orderId) {
-		return orderRepository.findOrderDTOById(orderId);
+	public Optional<Order> findById(Long orderId) {
+		return orderRepository.findById(orderId);
 	}
 
 	@Override
-	public Order createUserOrder(Long userId, NewUserOrderDTO newUserOrder) {
+	public Order create(Long userId, NewUserOrderDTO newUserOrder) {
 
 		Cart cart = Cart.builder()
 				.withTotalQuantity(newUserOrder.cart().totalQuantity())
@@ -43,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
 				.withTotalCostOffers(newUserOrder.cart().totalCostOffers())
 				.build();
 
-		newUserOrder.cart().cartItemsDTO().stream()
+		newUserOrder.cart().cartItems().stream()
 				.map(cartItemDTO -> CartItem.builder()
 						.withType(cartItemDTO.type())
 						.withName(cartItemDTO.name())
@@ -84,20 +82,20 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public void deleteUserOrderById(Long orderId) {
+	public void deleteById(Long orderId) {
 		orderRepository.deleteById(orderId);
 	}
 
 	@Override
-	public Page<OrderSummaryProjection> findUserOrderSummary(Long userId, int size, int page) {
-		Sort.TypedSort<Order> order = Sort.sort(Order.class);
-		Sort sort = order.by(Order::getId).descending();
-		PageRequest pageRequest = PageRequest.of(page, size, sort);
+	public Page<Order> findSummary(Long userId, int size, int page) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.sort(Order.class).by(Order::getId).descending());
 		return orderRepository.findAllByUserId(userId, pageRequest);
 	}
 
+	// for internal use only
+
 	@Override
-	public Optional<CreatedOnProjection> findCreatedOnDTOById(Long orderId) {
+	public Optional<CreatedOnProjection> findCreatedOnById(Long orderId) {
 		return orderRepository.findCreatedOnById(orderId);
 	}
 }

@@ -20,6 +20,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Mono<Object> findAllByType(String productType, int size, int page) {
+
 		Mono<Object> mono = this.webClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path(path)

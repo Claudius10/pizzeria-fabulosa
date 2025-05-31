@@ -1,6 +1,10 @@
 package org.clau.pizzeriabusinessassets.util;
 
 import org.clau.pizzeriabusinessassets.dto.*;
+import org.clau.pizzeriabusinessassets.model.Cart;
+import org.clau.pizzeriabusinessassets.model.CartItem;
+import org.clau.pizzeriabusinessassets.model.Order;
+import org.clau.pizzeriabusinessassets.model.OrderDetails;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,45 +17,21 @@ public final class TestUtils {
 		// no init
 	}
 
-	public static NewAnonOrderDTO anonOrderStub(String customerName,
-												int customerNumber,
-												String customerEmail,
-												String street,
-												int streetNumber,
-												String floor,
-												String door,
-												Double changeRequested,
-												String deliveryHour,
-												String paymentType,
-												String comment,
-												boolean emptyCart) {
+	public static NewAnonOrderDTO anonOrderStub(
+			String customerName,
+			int customerNumber,
+			String customerEmail,
+			String street,
+			int streetNumber,
+			String floor,
+			String door,
+			Double changeRequested,
+			String deliveryHour,
+			String paymentType,
+			String comment,
+			boolean emptyCart) {
 
-		CartDTO cartStub = new CartDTO(
-				1,
-				14.75D,
-				0.0,
-				List.of(new CartItemDTO(
-						null,
-						"pizza",
-						14.75D,
-						1,
-						Map.of("es", "Cuatro Quesos", "en", "Cuatro Quesos"),
-						Map.of(
-								"es", List.of("Salsa de Tomate", "Mozzarella 100%", "Parmesano", "Emmental", "Queso Azul"),
-								"en", List.of("Tomato Sauce", "100% Mozzarella", "Parmesan Cheese", "Emmental Cheese", "Blue Cheese")
-						),
-						Map.of("m", Map.of("es", "Mediana", "en", "Medium"), "l", Map.of(), "s", Map.of())
-				))
-		);
-
-		if (emptyCart) {
-			cartStub = new CartDTO(
-					0,
-					0D,
-					0D,
-					List.of()
-			);
-		}
+		CartDTO cartStub = cartDTOStub(emptyCart);
 
 		String address = street + " " + streetNumber + " " + floor + " " + door;
 
@@ -68,9 +48,43 @@ public final class TestUtils {
 
 	public static NewUserOrderDTO userOrderStub(boolean emptyCart) {
 
+		CartDTO cart = cartDTOStub(emptyCart);
+
+		OrderDetailsDTO orderDetails = orderDetailsDTOStub();
+
+		String address = "Baker Street 221b";
+		return new NewUserOrderDTO(address, orderDetails, cart);
+	}
+
+	public static CreatedOrderDTO createdOrderDTOStub() {
+
+		CustomerDTO customerDTO = customerDTOStub();
+
+		OrderDetailsDTO orderDetailsDTO = orderDetailsDTOStub();
+
+		CartDTO cartDTO = cartDTOStub(false);
+
+		String formattedCreatedOn = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+		String address = "Baker Street 221b";
+
+		return new CreatedOrderDTO(1L, formattedCreatedOn, customerDTO, address, orderDetailsDTO, cartDTO);
+	}
+
+	public static OrderDetailsDTO orderDetailsDTOStub() {
+		return new OrderDetailsDTO(
+				"ASAP",
+				"Card",
+				20D,
+				null,
+				false,
+				null
+		);
+	}
+
+	public static CartDTO cartDTOStub(boolean empty) {
 		CartDTO cart;
 
-		if (emptyCart) {
+		if (empty) {
 			cart = new CartDTO(
 					0,
 					0.0,
@@ -97,58 +111,59 @@ public final class TestUtils {
 			);
 		}
 
-		OrderDetailsDTO orderDetails = new OrderDetailsDTO(
-				"ASAP",
-				"Card",
-				20D,
-				null,
-				false,
-				null
-		);
-
-		String address = "Baker Street 221b";
-		return new NewUserOrderDTO(address, orderDetails, cart);
+		return cart;
 	}
 
-	public static CreatedOrderDTO createdOrderDTOStub() {
-
-		CustomerDTO customerDTO = new CustomerDTO(
+	public static CustomerDTO customerDTOStub() {
+		return new CustomerDTO(
 				"Tester",
 				111222333,
 				"tester@gmail.com"
 		);
+	}
 
-		OrderDetailsDTO orderDetailsDTO = new OrderDetailsDTO(
-				"ASAP",
-				"Card",
-				null,
-				null,
-				false,
-				null
-		);
+	public static Order userOrderStub() {
+		return Order.builder()
+				.withId(1L)
+				.withUserId(1L)
+				.withCreatedOn(LocalDateTime.now())
+				.withFormattedCreatedOn(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+				.withAddress("221b Baker Street")
+				.withOrderDetails(orderDetailsStub())
+				.withCart(cartStub())
+				.build();
+	}
 
-		List<CartItemDTO> cartItemDTOList = List.of(
-				new CartItemDTO(
-						1L,
-						"pizza",
-						13.30,
-						1,
-						Map.of("en", "Gluten Free"),
-						Map.of("en", List.of("Tomato Sauce", "100% Mozzarella", "Parmesan Cheese", "Emmental Cheese", "Blue Cheese")),
-						Map.of("m", Map.of("en", "Medium"))
+	public static OrderDetails orderDetailsStub() {
+		return OrderDetails.builder()
+				.withId(1L)
+				.withPaymentMethod("Cash")
+				.withDeliveryTime("20:15")
+				.withStorePickUp(false)
+				.build();
+	}
+
+	public static Cart cartStub() {
+		return Cart.builder()
+				.withId(1L)
+				.withTotalCost(20.0)
+				.withTotalCostOffers(10.0)
+				.withTotalQuantity(2)
+				.withCartItems(List.of(
+								CartItem.builder()
+										.withId(1L)
+										.withType("pizza")
+										.withName(Map.of("es", "Cuatro Quesos", "en", "Cuatro Quesos"))
+										.withDescription(Map.of(
+												"es", List.of("Salsa de Tomate", "Mozzarella 100%", "Parmesano", "Emmental", "Queso Azul"),
+												"en", List.of("Tomato Sauce", "100% Mozzarella", "Parmesan Cheese", "Emmental Cheese", "Blue Cheese")
+										))
+										.withFormats(Map.of("m", Map.of("es", "Mediana", "en", "Medium"), "l", Map.of(), "s", Map.of()))
+										.withPrice(10.0)
+										.withQuantity(2)
+										.build()
+						)
 				)
-		);
-
-		CartDTO cartDTO = new CartDTO(
-				1,
-				13.30,
-				0.0,
-				cartItemDTOList
-		);
-
-		String formattedCreatedOn = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
-		String address = "Baker Street 221b";
-
-		return new CreatedOrderDTO(1L, formattedCreatedOn, customerDTO, address, orderDetailsDTO, cartDTO);
+				.build();
 	}
 }

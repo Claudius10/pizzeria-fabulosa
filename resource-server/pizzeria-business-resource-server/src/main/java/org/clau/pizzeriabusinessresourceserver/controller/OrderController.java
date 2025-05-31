@@ -15,8 +15,6 @@ import org.clau.pizzeriabusinessassets.validation.order.OrderValidatorInput;
 import org.clau.pizzeriabusinessassets.validation.order.ValidationResult;
 import org.clau.pizzeriabusinessassets.validation.order.Validator;
 import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
-import org.clau.pizzeriabusinessresourceserver.dao.projection.OrderProjection;
-import org.clau.pizzeriabusinessresourceserver.dao.projection.OrderSummaryProjection;
 import org.clau.pizzeriabusinessresourceserver.service.OrderService;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
 import org.springframework.data.domain.Page;
@@ -40,7 +38,7 @@ public class OrderController {
 	private final Validator<LocalDateTime> deleteOrderValidator;
 
 	@PostMapping
-	public ResponseEntity<?> createUserOrder(
+	public ResponseEntity<?> create(
 			@RequestBody @Valid NewUserOrderDTO order,
 			@RequestParam(name = Route.USER_ID_PARAM) Long userId,
 			HttpServletRequest request) {
@@ -63,23 +61,23 @@ public class OrderController {
 					.build());
 		}
 
-		Order createdOrder = orderService.createUserOrder(userId, order);
+		Order createdOrder = orderService.create(userId, order);
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
 	}
 
 	@GetMapping(Route.ORDER_ID)
-	public ResponseEntity<?> findOrderDTOById(@PathVariable Long orderId) {
+	public ResponseEntity<?> findById(@PathVariable Long orderId) {
 
-		Optional<OrderProjection> order = orderService.findOrderDTOById(orderId);
+		Optional<Order> order = orderService.findById(orderId);
 
 		return order.map(orderDTO -> ResponseEntity.ok().body(orderDTO))
-				.orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+				.orElse(ResponseEntity.noContent().build());
 	}
 
 	@DeleteMapping(Route.ORDER_ID)
-	public ResponseEntity<?> deleteOrderById(@PathVariable Long orderId, HttpServletRequest request) {
+	public ResponseEntity<?> deleteById(@PathVariable Long orderId, HttpServletRequest request) {
 
-		Optional<CreatedOnProjection> createdOnDTOById = orderService.findCreatedOnDTOById(orderId);
+		Optional<CreatedOnProjection> createdOnDTOById = orderService.findCreatedOnById(orderId);
 
 		if (createdOnDTOById.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -102,22 +100,18 @@ public class OrderController {
 			}
 		}
 
-		orderService.deleteUserOrderById(orderId);
+		orderService.deleteById(orderId);
 		return ResponseEntity.ok(orderId);
 	}
 
 	@GetMapping(Route.ORDER_SUMMARY)
-	public ResponseEntity<?> findUserOrdersSummary(
+	public ResponseEntity<Page<Order>> findSummary(
 			@RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
 			@RequestParam(name = Route.PAGE_SIZE) Integer pageSize,
 			@RequestParam(name = Route.USER_ID_PARAM) Long userId) {
 
-		Page<OrderSummaryProjection> orderSummaryPage = orderService.findUserOrderSummary(userId, pageSize, pageNumber);
+		Page<Order> summary = orderService.findSummary(userId, pageSize, pageNumber);
 
-		if (orderSummaryPage.getTotalElements() == 0) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-		}
-
-		return ResponseEntity.ok(orderSummaryPage);
+		return ResponseEntity.ok(summary);
 	}
 }

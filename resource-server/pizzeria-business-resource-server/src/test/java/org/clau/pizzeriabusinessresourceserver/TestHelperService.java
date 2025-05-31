@@ -7,7 +7,6 @@ import org.clau.pizzeriabusinessassets.model.CartItem;
 import org.clau.pizzeriabusinessassets.model.Order;
 import org.clau.pizzeriabusinessassets.model.OrderDetails;
 import org.clau.pizzeriabusinessresourceserver.dao.OrderRepository;
-import org.clau.pizzeriabusinessresourceserver.dao.projection.OrderProjection;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,7 +21,7 @@ public class TestHelperService {
 
 	private final OrderRepository orderRepository;
 
-	public OrderProjection createOrder(Long userId, int minusMins) {
+	public Order createOrder(Long userId, int minusMins) {
 
 		Cart cart = Cart.builder()
 				.withTotalQuantity(1)
@@ -67,7 +66,7 @@ public class TestHelperService {
 		return findOrder(id);
 	}
 
-	public OrderProjection findOrder(Long orderId) {
-		return orderRepository.findOrderDTOById(orderId).orElse(null);
+	public Order findOrder(Long orderId) {
+		return orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
 	}
 }

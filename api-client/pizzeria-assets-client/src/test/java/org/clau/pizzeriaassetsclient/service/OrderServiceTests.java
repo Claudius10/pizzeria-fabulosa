@@ -9,6 +9,7 @@ import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
 import org.clau.pizzeriaassetsclient.service.impl.OrderServiceImpl;
+import org.clau.pizzeriabusinessassets.dto.CartItemDTO;
 import org.clau.pizzeriabusinessassets.dto.CreatedOrderDTO;
 import org.clau.pizzeriabusinessassets.dto.NewAnonOrderDTO;
 import org.clau.pizzeriabusinessassets.model.Cart;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -110,7 +112,7 @@ public class OrderServiceTests {
 						.withTotalCost(body.cart().totalCost())
 						.withTotalCostOffers(body.cart().totalCostOffers())
 						.withTotalQuantity(body.cart().totalQuantity())
-						.withCartItems(body.cart().cartItemsDTO().stream().map(item -> CartItem.builder()
+						.withCartItems(body.cart().cartItems().stream().map(item -> CartItem.builder()
 								.withId(1L)
 								.withDescription(item.description())
 								.withPrice(item.price())
@@ -161,16 +163,18 @@ public class OrderServiceTests {
 					assertThat(actual.cart().totalCostOffers()).isEqualTo(expected.getCart().getTotalCostOffers());
 					assertThat(actual.cart().totalQuantity()).isEqualTo(expected.getCart().getTotalQuantity());
 
-					assertThat(actual.cart().cartItemsDTO()).hasSameSizeAs(expected.getCart().getCartItems());
+					List<CartItemDTO> actualItems = actual.cart().cartItems();
+					List<CartItem> expectedItems = expected.getCart().getCartItems();
+					assertThat(actualItems).hasSameSizeAs(expectedItems);
 
-					for (int i = 0; i < actual.cart().cartItemsDTO().size(); i++) {
-						assertThat(actual.cart().cartItemsDTO().get(i).id()).isEqualTo(expected.getCart().getCartItems().get(i).getId());
-						assertThat(actual.cart().cartItemsDTO().get(i).description()).isEqualTo(expected.getCart().getCartItems().get(i).getDescription());
-						assertThat(actual.cart().cartItemsDTO().get(i).price()).isEqualTo(expected.getCart().getCartItems().get(i).getPrice());
-						assertThat(actual.cart().cartItemsDTO().get(i).quantity()).isEqualTo(expected.getCart().getCartItems().get(i).getQuantity());
-						assertThat(actual.cart().cartItemsDTO().get(i).formats()).isEqualTo(expected.getCart().getCartItems().get(i).getFormats());
-						assertThat(actual.cart().cartItemsDTO().get(i).type()).isEqualTo(expected.getCart().getCartItems().get(i).getType());
-						assertThat(actual.cart().cartItemsDTO().get(i).name()).isEqualTo(expected.getCart().getCartItems().get(i).getName());
+					for (int i = 0; i < actualItems.size(); i++) {
+						assertThat(actualItems.get(i).id()).isEqualTo(expectedItems.get(i).getId());
+						assertThat(actualItems.get(i).description()).isEqualTo(expectedItems.get(i).getDescription());
+						assertThat(actualItems.get(i).price()).isEqualTo(expectedItems.get(i).getPrice());
+						assertThat(actualItems.get(i).quantity()).isEqualTo(expectedItems.get(i).getQuantity());
+						assertThat(actualItems.get(i).formats()).isEqualTo(expectedItems.get(i).getFormats());
+						assertThat(actualItems.get(i).type()).isEqualTo(expectedItems.get(i).getType());
+						assertThat(actualItems.get(i).name()).isEqualTo(expectedItems.get(i).getName());
 					}
 
 				})
@@ -181,8 +185,8 @@ public class OrderServiceTests {
 		expectRequest(request -> {
 			assertThat(request.getPath()).isEqualTo(path);
 			assertThat(request.getMethod()).isEqualTo(HttpMethod.POST.name());
-			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo("application/json");
-			assertThat(request.getHeader(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
+			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
+			assertThat(request.getHeader(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
 		});
 	}
 
@@ -259,7 +263,7 @@ public class OrderServiceTests {
 		expectRequestCount(1);
 		expectRequest(request -> {
 			assertThat(request.getPath()).isEqualTo(path);
-			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON.toString());
+			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
 		});
 	}
 

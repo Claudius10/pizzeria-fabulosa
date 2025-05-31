@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.clau</groupId>
     <artifactId>pizzeria-assets-client</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>pizzeria-assets-client</name>
     <description>pizzeria-assets-client</description>
     <url/>

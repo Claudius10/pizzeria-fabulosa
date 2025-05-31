@@ -31,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
 				.withTotalCostOffers(newAnonOrder.cart().totalCostOffers())
 				.build();
 
-		newAnonOrder.cart().cartItemsDTO().stream()
+		newAnonOrder.cart().cartItems().stream()
 				.map(cartItemDTO -> CartItem.builder()
 						.withType(cartItemDTO.type())
 						.withName(cartItemDTO.name())

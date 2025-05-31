@@ -19,6 +19,6 @@ public class CartValidator implements Validator<OrderValidatorInput> {
 	}
 
 	private boolean isCartEmpty(CartDTO cart) {
-		return cart == null || cart.cartItemsDTO().isEmpty() || cart.totalQuantity() == 0;
+		return cart == null || cart.cartItems().isEmpty() || cart.totalQuantity() == 0;
 	}
 }
