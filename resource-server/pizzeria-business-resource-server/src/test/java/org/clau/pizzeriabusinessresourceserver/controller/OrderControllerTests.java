@@ -7,13 +7,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
-import org.clau.apiutils.util.SecurityCookies;
 import org.clau.pizzeriabusinessassets.dto.CartItemDTO;
 import org.clau.pizzeriabusinessassets.dto.NewUserOrderDTO;
 import org.clau.pizzeriabusinessassets.model.CartItem;
 import org.clau.pizzeriabusinessassets.model.Order;
 import org.clau.pizzeriabusinessassets.validation.ValidationResponses;
-import org.clau.pizzeriabusinessresourceserver.MyTestcontainersConfiguration;
+import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.TestHelperService;
 import org.clau.pizzeriabusinessresourceserver.TestJwtHelperService;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
@@ -38,10 +37,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.apiutils.constant.Security.ACCESS_TOKEN;
 import static org.clau.pizzeriabusinessassets.util.TestUtils.userOrderStub;
 import static org.clau.pizzeriabusinessresourceserver.TestUtils.getResponse;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -50,7 +50,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @DirtiesContext
 @AutoConfigureMockMvc
-@Import(MyTestcontainersConfiguration.class)
+@Import(MyTestConfiguration.class)
 @Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 public class OrderControllerTests {
 
@@ -90,7 +90,8 @@ public class OrderControllerTests {
 		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(expected))
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 60, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -150,7 +151,8 @@ public class OrderControllerTests {
 		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(expected))
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 60, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -180,7 +182,8 @@ public class OrderControllerTests {
 		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + userId)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(expected))
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 60, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn().getResponse();
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
@@ -191,7 +194,8 @@ public class OrderControllerTests {
 
 		// get api call to find user order
 		MockHttpServletResponse getResponse = mockMvc.perform(get(path + Route.ORDER_ID, orderId)
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 60, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -247,7 +251,8 @@ public class OrderControllerTests {
 
 		// get api call to find user order
 		MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_ID, orderId)
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 60, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -273,7 +278,8 @@ public class OrderControllerTests {
 
 		// delete api call to delete order
 		MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, order.getId())
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 30, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn()
 				.getResponse();
 
@@ -302,7 +308,8 @@ public class OrderControllerTests {
 
 		// delete api call to delete order
 		MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, order.getId())
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 30, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn()
 				.getResponse();
 
@@ -330,7 +337,8 @@ public class OrderControllerTests {
 
 		// delete api call to delete order
 		MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, orderId)
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 30, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn()
 				.getResponse();
 
@@ -360,7 +368,8 @@ public class OrderControllerTests {
 
 		// get api call to get OrderSummary
 		MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 30, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn()
 				.getResponse();
 
@@ -423,7 +432,8 @@ public class OrderControllerTests {
 
 		// get api call to get OrderSummary
 		MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 30, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn()
 				.getResponse();
 
@@ -456,7 +466,8 @@ public class OrderControllerTests {
 
 		// get api call to get OrderSummary
 		MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 30, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn()
 				.getResponse();
 

@@ -1,0 +1,31 @@
+server:
+  port: 9443
+  ssl:
+    bundle: pizzeria-security-ssl
+    client-auth: want
+
+spring:
+  application:
+    name: "pizzeria-security-server"
+  ssl:
+    bundle:
+      jks:
+        pizzeria-security-ssl:
+          key:
+            alias: pizzeria-security-server
+            password: password
+          keystore:
+            location: classpath:keystore.p12
+            password: password
+            type: PKCS12
+          truststore:
+            location: classpath:keystore.p12
+            password: password
+            type: PKCS12
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: trace
+    org.springframework.web: INFO
+    org.springframework.security.oauth2: trace

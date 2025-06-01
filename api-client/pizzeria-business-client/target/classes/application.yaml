@@ -1,9 +1,51 @@
 server:
-  port: 8084
+  port: 8080
 
 spring:
   application:
     name: "pizzeria-business-client"
+  ssl:
+    bundle:
+      jks:
+        business-client:
+          key:
+            alias: pizzeria-business-client
+            password: password
+          keystore:
+            location: classpath:keystore.p12
+            password: password
+            type: PKCS12
+          truststore:
+            location: classpath:keystore.p12
+            password: password
+            type: PKCS12
+
+  security:
+    oauth2:
+      client:
+        registration:
+          business-client-oidc:
+            provider: spring
+            client-id: business-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
+            scope: openid, profile
+            client-name: business-client-oidc
+          business-client-authorization-code:
+            provider: spring
+            client-id: business-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8080/authorized"
+            scope: order
+            client-name: business-client-authorization-code
+        provider:
+          spring:
+            issuer-uri: http://localhost:9000
+
+business-resource:
+  base-uri: https://127.0.0.1:8443
 
 springdoc:
   api-docs:
@@ -14,6 +56,7 @@ springdoc:
 
 logging:
   level:
-    root: info
-    org.springframework.security: info
-    org.springframework.web: info
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: TRACE
+    org.springframework.security.oauth2: TRACE

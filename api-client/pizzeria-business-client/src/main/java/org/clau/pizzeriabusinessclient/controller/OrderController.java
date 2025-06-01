@@ -1,20 +1,20 @@
 package org.clau.pizzeriabusinessclient.controller;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.clau.apiutils.constant.Route;
-import org.clau.apiutils.constant.Security;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.pizzeriabusinessassets.dto.NewUserOrderDTO;
 import org.clau.pizzeriabusinessclient.controller.swagger.OrderControllerSwagger;
 import org.clau.pizzeriabusinessclient.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.WebUtils;
-import reactor.core.publisher.Mono;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
+import org.springframework.web.bind.annotation.*;
+
+import static org.clau.pizzeriabusinessclient.util.Constant.AUTHORIZATION_CODE;
+import static org.clau.pizzeriabusinessclient.util.Constant.CLIENT_NAME;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,63 +23,63 @@ public class OrderController implements OrderControllerSwagger {
 
 	private final OrderService orderService;
 
-	@Override
-	public Mono<ResponseEntity<Object>> create(NewUserOrderDTO order, Long userId, HttpServletRequest request) {
-		Cookie accessToken = WebUtils.getCookie(request, Security.ACCESS_TOKEN);
+	@PostMapping(params = AUTHORIZATION_CODE)
+	public ResponseEntity<?> create(
+			@RequestBody @Valid NewUserOrderDTO order,
+			@RequestParam Long userId,
+			@RegisteredOAuth2AuthorizedClient(CLIENT_NAME) OAuth2AuthorizedClient authorizedClient) {
 
-		Mono<ResponseEntity<Object>> result = orderService.create(userId, order, accessToken.getValue()).map(response -> {
-			if (response instanceof ResponseDTO responseDTO) {
-				return ResponseEntity.status(responseDTO.getStatus()).body(response);
-			} else {
-				return ResponseEntity.status(HttpStatus.CREATED).body(response);
-			}
-		});
+		Object response = orderService.create(userId, order, authorizedClient).block();
 
-		return result;
+		if (response instanceof ResponseDTO responseDTO) {
+			return ResponseEntity.status(responseDTO.getStatus()).body(responseDTO);
+		} else {
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		}
 	}
 
-	@Override
-	public Mono<ResponseEntity<Object>> findById(Long orderId, HttpServletRequest request) {
-		Cookie accessToken = WebUtils.getCookie(request, Security.ACCESS_TOKEN);
+	@GetMapping(value = Route.ORDER_ID, params = AUTHORIZATION_CODE)
+	public ResponseEntity<?> findById(
+			@PathVariable Long orderId,
+			@RegisteredOAuth2AuthorizedClient(CLIENT_NAME) OAuth2AuthorizedClient authorizedClient) {
 
-		Mono<ResponseEntity<Object>> result = orderService.findById(orderId, accessToken.getValue()).map(response -> {
-			if (response instanceof ResponseDTO responseDTO) {
-				return ResponseEntity.status(responseDTO.getStatus()).body(response);
-			} else {
-				return ResponseEntity.status(HttpStatus.CREATED).body(response);
-			}
-		});
+		Object response = orderService.findById(orderId, authorizedClient).block();
 
-		return result;
+		if (response instanceof ResponseDTO responseDTO) {
+			return ResponseEntity.status(responseDTO.getStatus()).body(responseDTO);
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		}
 	}
 
-	@Override
-	public Mono<ResponseEntity<Object>> deleteById(Long orderId, HttpServletRequest request) {
-		Cookie accessToken = WebUtils.getCookie(request, Security.ACCESS_TOKEN);
+	@DeleteMapping(value = Route.ORDER_ID, params = AUTHORIZATION_CODE)
+	public ResponseEntity<?> deleteById(
+			@PathVariable Long orderId,
+			@RegisteredOAuth2AuthorizedClient(CLIENT_NAME) OAuth2AuthorizedClient authorizedClient) {
 
-		Mono<ResponseEntity<Object>> result = orderService.deleteById(orderId, accessToken.getValue()).map(response -> {
-			if (response instanceof ResponseDTO responseDTO) {
-				return ResponseEntity.status(responseDTO.getStatus()).body(response);
-			} else {
-				return ResponseEntity.status(HttpStatus.CREATED).body(response);
-			}
-		});
+		Object response = orderService.deleteById(orderId, authorizedClient).block();
 
-		return result;
+		if (response instanceof ResponseDTO responseDTO) {
+			return ResponseEntity.status(responseDTO.getStatus()).body(responseDTO);
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		}
 	}
 
-	@Override
-	public Mono<ResponseEntity<Object>> findSummary(Integer pageNumber, Integer pageSize, Long userId, HttpServletRequest request) {
-		Cookie accessToken = WebUtils.getCookie(request, Security.ACCESS_TOKEN);
+	@GetMapping(value = Route.ORDER_SUMMARY)
+	public ResponseEntity<?> findSummary(
+			@RequestParam(name = "grant_type") String grantType,
+			@RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
+			@RequestParam(name = Route.PAGE_SIZE) Integer pageSize,
+			@RequestParam Long userId,
+			@RegisteredOAuth2AuthorizedClient(CLIENT_NAME) OAuth2AuthorizedClient authorizedClient) {
 
-		Mono<ResponseEntity<Object>> result = orderService.findSummary(userId, pageSize, pageNumber, accessToken.getValue()).map(response -> {
-			if (response instanceof ResponseDTO responseDTO) {
-				return ResponseEntity.status(responseDTO.getStatus()).body(response);
-			} else {
-				return ResponseEntity.status(HttpStatus.CREATED).body(response);
-			}
-		});
+		Object response = orderService.findSummary(userId, pageSize, pageNumber, authorizedClient).block();
 
-		return result;
+		if (response instanceof ResponseDTO responseDTO) {
+			return ResponseEntity.status(responseDTO.getStatus()).body(responseDTO);
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		}
 	}
 }

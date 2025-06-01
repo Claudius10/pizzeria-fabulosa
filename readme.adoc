@@ -1,7 +1,1 @@
-Ports:
-
-* 8080 -> un-used
-* 8081 -> pizzeria-assets-resource-server
-* 8082 -> pizzeria-assets-client
-* 8083 -> pizzeria-business-resource-server
-* 8084 -> pizzeria-business-client
+In progress

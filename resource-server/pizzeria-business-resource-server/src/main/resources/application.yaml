@@ -1,9 +1,36 @@
 server:
-  port: 8083
+  port: 8443
+  ssl:
+    bundle: business-resource-ssl
+    client-auth: need
 
 spring:
+
   application:
     name: "pizzeria-business-resource-server"
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
+
+  ssl:
+    bundle:
+      jks:
+        business-resource-ssl:
+          key:
+            alias: pizzeria-business-resource-server
+            password: password
+          keystore:
+            location: classpath:keystore.p12
+            password: password
+            type: PKCS12
+          truststore:
+            location: classpath:keystore.p12
+            password: password
+            type: PKCS12
+
   datasource:
     url: jdbc:mariadb://localhost:3306/pizzeria
     username: root
@@ -33,14 +60,7 @@ logging:
   level:
     org.hibernate: info
     org.hibernate.sql: info
-    org.springframework.security: info
+    org.springframework.security: trace
+    org.springframework.security.oauth2: trace
     org.springframework.web: info
     root: info
-
-ssl:
-  keyStoreType: PKCS12
-  keyStorePath: /test
-  keyStorePassword: test
-  keyAlias: test
-
-domain: 192.168.1.128

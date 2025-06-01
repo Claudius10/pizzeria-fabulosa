@@ -6,7 +6,6 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.clau.apiutils.constant.Route;
-import org.clau.apiutils.constant.Security;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
 import org.clau.pizzeriabusinessassets.dto.*;
@@ -48,8 +47,6 @@ import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 public class OrderServiceTests {
 
 	private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
-
-	private final String accessToken = "access-token";
 
 	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -129,7 +126,7 @@ public class OrderServiceTests {
 
 		// Act
 
-		Mono<Object> result = service.create(userId, newUserOrderDTO, accessToken);
+		Mono<Object> result = service.create(userId, newUserOrderDTO, null);
 
 		// Assert
 
@@ -180,7 +177,6 @@ public class OrderServiceTests {
 			assertThat(request.getMethod()).isEqualTo(HttpMethod.POST.name());
 			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
 			assertThat(request.getHeader(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
-			assertThat(request.getHeader(HttpHeaders.COOKIE)).isEqualTo(Security.ACCESS_TOKEN + "=" + accessToken);
 		});
 	}
 
@@ -221,7 +217,7 @@ public class OrderServiceTests {
 
 		// Act
 
-		Mono<Object> result = service.create(userId, userOrderStub(false), accessToken);
+		Mono<Object> result = service.create(userId, userOrderStub(false), null);
 
 		// Assert
 
@@ -248,7 +244,6 @@ public class OrderServiceTests {
 		expectRequest(request -> {
 			assertThat(request.getPath()).isEqualTo(path + "?" + Route.USER_ID_PARAM + "=" + userId);
 			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
-			assertThat(request.getHeader(HttpHeaders.COOKIE)).isEqualTo(Security.ACCESS_TOKEN + "=" + accessToken);
 		});
 	}
 
@@ -278,7 +273,7 @@ public class OrderServiceTests {
 
 		// Act
 
-		Mono<Object> result = service.findById(orderId, accessToken);
+		Mono<Object> result = service.findById(orderId, null);
 
 		StepVerifier.create(result)
 				.consumeNextWith(response -> {
@@ -322,7 +317,6 @@ public class OrderServiceTests {
 			assertThat(request.getPath()).isEqualTo(path + "/" + orderId);
 			assertThat(request.getMethod()).isEqualTo(HttpMethod.GET.name());
 			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
-			assertThat(request.getHeader(HttpHeaders.COOKIE)).isEqualTo(Security.ACCESS_TOKEN + "=" + accessToken);
 		});
 	}
 
@@ -350,7 +344,7 @@ public class OrderServiceTests {
 
 		// Act
 
-		Mono<Object> result = service.deleteById(expected, accessToken);
+		Mono<Object> result = service.deleteById(expected, null);
 
 		StepVerifier.create(result)
 				.consumeNextWith(response -> {
@@ -406,7 +400,7 @@ public class OrderServiceTests {
 
 		// Act
 
-		Mono<Object> result = service.findSummary(userId, size, page, accessToken);
+		Mono<Object> result = service.findSummary(userId, size, page, null);
 
 		StepVerifier.create(result)
 				.consumeNextWith(response -> {
@@ -434,10 +428,9 @@ public class OrderServiceTests {
 
 		expectRequestCount(1);
 		expectRequest(request -> {
-			assertThat(request.getPath()).isEqualTo(path + "?pageNumber=" + page + "&pageSize=" + size + "&userId=" + userId);
+			assertThat(request.getPath()).isEqualTo(path + Route.ORDER_SUMMARY + "?pageNumber=" + page + "&pageSize=" + size + "&userId=" + userId);
 			assertThat(request.getMethod()).isEqualTo(HttpMethod.GET.name());
 			assertThat(request.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
-			assertThat(request.getHeader(HttpHeaders.COOKIE)).isEqualTo(Security.ACCESS_TOKEN + "=" + accessToken);
 		});
 	}
 

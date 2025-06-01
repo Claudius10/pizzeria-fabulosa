@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.constant.SecurityResponse;
 import org.clau.apiutils.dto.ResponseDTO;
-import org.clau.apiutils.util.SecurityCookies;
-import org.clau.pizzeriabusinessresourceserver.MyTestcontainersConfiguration;
+import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.TestJwtHelperService;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
 import org.junit.jupiter.api.Test;
@@ -23,9 +22,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.apiutils.util.SecurityCookies.ACCESS_TOKEN;
 import static org.clau.pizzeriabusinessresourceserver.TestUtils.getResponse;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @DirtiesContext
 @AutoConfigureMockMvc
-@Import(MyTestcontainersConfiguration.class)
+@Import(MyTestConfiguration.class)
 public class SecurityTests {
 
 	private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
@@ -61,7 +61,8 @@ public class SecurityTests {
 		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + 1)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(""))
-						.cookie(SecurityCookies.prepareCookie(ACCESS_TOKEN, accessToken, 60, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", accessToken)))
 				.andReturn().getResponse();
 
 		// Assert
@@ -75,13 +76,16 @@ public class SecurityTests {
 	}
 
 	@Test
-	void givenApiCallToResource_whenNoTokenCookie_thenReturnUnauthorized() throws Exception {
+	void givenApiCallToResource_whenNoBearerToken_thenReturnUnauthorized() throws Exception {
 
 		// Act
 
 		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + 1)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString("")))
+						.content(objectMapper.writeValueAsString(""))
+						.with(csrf())
+				)
+
 				.andReturn().getResponse();
 
 		// Assert
@@ -95,22 +99,23 @@ public class SecurityTests {
 	}
 
 	@Test
-	void givenApiCallToResource_whenCookiesButNoAuth_thenReturnUnauthorized() throws Exception {
+	void givenApiCallToResource_whenBadAuthorizationHeader_thenReturnUnauthorized() throws Exception {
 
 		// Act
 
 		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + 1)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(""))
-						.cookie(SecurityCookies.prepareCookie("randomCookie", "value", 1800, true, false)))
+						.with(csrf())
+						.header("Authorization", format("Bearer %s", "random-value")))
 				.andReturn().getResponse();
 
 		// Assert
 
 		ResponseDTO responseObj = getResponse(response, objectMapper);
 		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
-		assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.MISSING_TOKEN);
-		assertThat(responseObj.getApiError().getCause()).isEqualTo("InsufficientAuthenticationException");
+		assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.INVALID_TOKEN);
+		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponse.INVALID_TOKEN);
 		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
 	}
 
