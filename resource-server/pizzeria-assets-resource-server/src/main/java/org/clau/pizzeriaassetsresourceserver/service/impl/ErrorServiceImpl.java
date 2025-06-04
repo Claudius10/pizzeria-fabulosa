@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.util.TimeUtils;
 import org.clau.pizzeriaassetsresourceserver.dao.ErrorRepository;
+import org.clau.pizzeriaassetsresourceserver.service.ErrorService;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor

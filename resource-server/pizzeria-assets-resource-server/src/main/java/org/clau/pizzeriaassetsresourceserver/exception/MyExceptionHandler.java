@@ -8,6 +8,7 @@ import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.util.ExceptionLogger;
 import org.clau.apiutils.util.ServerUtils;
 import org.clau.apiutils.util.TimeUtils;
+import org.clau.pizzeriaassetsresourceserver.service.ErrorService;
 import org.clau.pizzeriaassetsresourceserver.util.Constant;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

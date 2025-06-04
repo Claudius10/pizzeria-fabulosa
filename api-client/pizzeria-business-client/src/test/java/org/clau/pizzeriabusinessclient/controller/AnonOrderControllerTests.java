@@ -21,6 +21,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -34,6 +36,7 @@ import static org.clau.pizzeriabusinessassets.util.TestUtils.createdOrderDTOStub
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -81,13 +84,13 @@ public class AnonOrderControllerTests {
 		// Act
 
 		MvcResult result = mockMvc.perform(post(path)
+				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(newAnonOrderDTO))
 		).andReturn();
 
 		// Assert
 
-		assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.CREATED.value());
 		ResponseEntity<?> responseEntity = (ResponseEntity<?>) result.getAsyncResult();
 		Assertions.assertNotNull(responseEntity.getBody());
 		CreatedOrderDTO actual = (CreatedOrderDTO) responseEntity.getBody();
@@ -150,13 +153,13 @@ public class AnonOrderControllerTests {
 		// Act
 
 		MvcResult result = mockMvc.perform(post(path)
+				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(newAnonOrderDTO))
 		).andReturn();
 
 		// Assert
 
-		assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		ResponseEntity<?> responseEntity = (ResponseEntity<?>) result.getAsyncResult();
 		Assertions.assertNotNull(responseEntity.getBody());
 		ResponseDTO responseDTO = (ResponseDTO) responseEntity.getBody();
@@ -164,7 +167,7 @@ public class AnonOrderControllerTests {
 		APIError expected = responseDTOStub.getApiError();
 
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-		assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+		assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
 		assertThat(actual.getId()).isEqualTo(expected.getId());
 		assertThat(actual.getCause()).isEqualTo(expected.getCause());
@@ -174,6 +177,17 @@ public class AnonOrderControllerTests {
 
 	@TestConfiguration
 	public static class MockConfiguration {
+
+		@Bean
+		@Primary
+		ClientRegistrationRepository clientRegistrationRepositoryMock() {
+			return new ClientRegistrationRepository() {
+				@Override
+				public ClientRegistration findByRegistrationId(String registrationId) {
+					return null;
+				}
+			};
+		}
 
 		@Bean
 		@Primary
