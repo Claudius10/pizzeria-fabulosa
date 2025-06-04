@@ -7,6 +7,7 @@ import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
@@ -23,6 +24,7 @@ import reactor.netty.tcp.SslProvider;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+@Profile("!test")
 @Configuration(proxyBeanMethods = false)
 public class WebClientConfig {
 
@@ -35,9 +37,12 @@ public class WebClientConfig {
 		ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 =
 				new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
 
+		SslBundle bundle = sslBundles.getBundle("business-client-ssl");
+		ClientHttpConnector clientConnector = createClientConnector(bundle);
+
 		return WebClient.builder()
 				.baseUrl(baseUri)
-				.clientConnector(createClientConnector(sslBundles.getBundle("business-client")))
+				.clientConnector(clientConnector)
 				.apply(oauth2.oauth2Configuration())
 				.build();
 	}

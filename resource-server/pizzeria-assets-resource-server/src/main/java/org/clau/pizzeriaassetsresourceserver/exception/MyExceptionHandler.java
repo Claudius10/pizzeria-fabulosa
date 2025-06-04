@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
-import org.clau.apiutils.service.ErrorService;
 import org.clau.apiutils.util.ExceptionLogger;
 import org.clau.apiutils.util.ServerUtils;
 import org.clau.apiutils.util.TimeUtils;
@@ -46,7 +45,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 		ResponseDTO response = ResponseDTO.builder()
 				.apiError(error)
-				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.build();
 
 		return new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -65,7 +64,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 		ResponseDTO response = ResponseDTO.builder()
 				.apiError(error)
-				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.build();
 
 		ExceptionLogger.log(ex, log, response);
@@ -107,7 +106,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 						.withLogged(false)
 						.withFatal(false)
 						.build())
-				.status(HttpStatus.BAD_REQUEST)
+				.status(HttpStatus.BAD_REQUEST.value())
 				.build();
 
 		ExceptionLogger.log(ex, log, response);

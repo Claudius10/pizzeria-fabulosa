@@ -57,7 +57,7 @@ public class OrderController {
 							.withLogged(false)
 							.withFatal(false)
 							.build())
-					.status(HttpStatus.BAD_REQUEST)
+					.status(HttpStatus.BAD_REQUEST.value())
 					.build());
 		}
 
@@ -95,7 +95,7 @@ public class OrderController {
 								.withLogged(false)
 								.withFatal(false)
 								.build())
-						.status(HttpStatus.BAD_REQUEST)
+						.status(HttpStatus.BAD_REQUEST.value())
 						.build());
 			}
 		}

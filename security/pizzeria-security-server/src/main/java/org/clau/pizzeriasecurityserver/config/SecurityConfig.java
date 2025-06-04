@@ -20,13 +20,9 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-		http.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/assets/**", "/login").permitAll()
-						.anyRequest().authenticated())
-				.formLogin(formLogin -> {
-					formLogin.loginPage("/login");
-					formLogin.defaultSuccessUrl("/success", true);
-				});
+		http
+				.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+				.formLogin(login -> login.defaultSuccessUrl("/logged-in", true));
 
 		return http.build();
 	}
@@ -38,7 +34,14 @@ public class SecurityConfig {
 				.password("password")
 				.roles("USER")
 				.build();
-		return new InMemoryUserDetailsManager(user);
+
+		UserDetails userTwo = User.withDefaultPasswordEncoder()
+				.username("userTwo")
+				.password("password")
+				.roles("USER")
+				.build();
+
+		return new InMemoryUserDetailsManager(user, userTwo);
 	}
 
 	@Bean

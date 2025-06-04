@@ -15,17 +15,17 @@ spring:
             alias: pizzeria-security-server
             password: password
           keystore:
-            location: classpath:keystore.p12
+            location: /home/claudio/IdeaProjects/pizzeria-fabulosa/security/pizzeria-security-server/src/main/resources/keystore.p12
             password: password
             type: PKCS12
           truststore:
-            location: classpath:keystore.p12
+            location: /home/claudio/IdeaProjects/pizzeria-fabulosa/security/pizzeria-security-server/src/main/resources/keystore.p12
             password: password
             type: PKCS12
 
 logging:
   level:
     root: INFO
-    org.springframework.security: trace
     org.springframework.web: INFO
-    org.springframework.security.oauth2: trace
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG

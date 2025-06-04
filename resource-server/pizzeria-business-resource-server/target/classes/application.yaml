@@ -20,14 +20,14 @@ spring:
       jks:
         business-resource-ssl:
           key:
-            alias: pizzeria-business-resource-server
+            alias: pizzeria-business-resource
             password: password
           keystore:
-            location: classpath:keystore.p12
+            location: /home/claudio/IdeaProjects/pizzeria-fabulosa/resource-server/pizzeria-business-resource-server/src/main/resources/keystore.p12
             password: password
             type: PKCS12
           truststore:
-            location: classpath:keystore.p12
+            location: /home/claudio/IdeaProjects/pizzeria-fabulosa/resource-server/pizzeria-business-resource-server/src/main/resources/keystore.p12
             password: password
             type: PKCS12
 

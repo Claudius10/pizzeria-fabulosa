@@ -159,7 +159,7 @@ public class OrderControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
 		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
@@ -317,7 +317,7 @@ public class OrderControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 		assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
 		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);

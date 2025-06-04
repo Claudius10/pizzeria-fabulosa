@@ -202,7 +202,7 @@ public class OrderServiceTests {
 						.withFatal(false)
 						.withLogged(false)
 						.build())
-				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.build();
 
 		String json = objectMapper.writeValueAsString(responseDTOStub);
@@ -225,7 +225,7 @@ public class OrderServiceTests {
 				.consumeNextWith(response -> {
 
 					ResponseDTO responseDTO = (ResponseDTO) response;
-					assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+					assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
 					APIError actual = responseDTO.getApiError();
 					APIError expected = responseDTO.getApiError();

@@ -2,7 +2,7 @@ package org.clau.pizzeriabusinessclient.util;
 
 public final class Constant {
 
-	public static final String CLIENT_NAME = "business-client-authorization-code";
+	public static final String CLIENT_NAME = "business-client";
 
 	public static final String AUTHORIZATION_CODE = "grant_type=authorization_code";
 

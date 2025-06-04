@@ -3,7 +3,6 @@ package org.clau.pizzeriaassetsresourceserver.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.clau.apiutils.model.APIError;
-import org.clau.apiutils.service.ErrorService;
 import org.clau.apiutils.util.TimeUtils;
 import org.clau.pizzeriaassetsresourceserver.dao.ErrorRepository;
 import org.springframework.stereotype.Service;

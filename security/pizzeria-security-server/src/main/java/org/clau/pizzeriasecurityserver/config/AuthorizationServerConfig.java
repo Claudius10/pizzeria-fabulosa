@@ -4,8 +4,8 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import org.clau.pizzeriasecurityserver.federation.FederatedIdentityIdTokenCustomizer;
 import org.clau.pizzeriasecurityserver.jose.Jwks;
+import org.clau.pizzeriasecurityserver.service.OidcUserInfoService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -16,6 +16,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
@@ -45,15 +47,13 @@ public class AuthorizationServerConfig {
 
 		OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = authorizationServer();
 
-		http.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+		http
+				.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
 				.with(authorizationServerConfigurer, (authorizationServer) ->
-						authorizationServer
-								.authorizationEndpoint(Customizer.withDefaults()) // Enable OpenID Connect 1.0
-								.oidc(Customizer.withDefaults())
+						authorizationServer.oidc(Customizer.withDefaults())
 				)
 				.authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
 				// Redirect to the /login page when not authenticated from the authorization endpoint
-				// NOTE: DefaultSecurityConfig is configured with formLogin.loginPage("/login")
 				.exceptionHandling((exceptions) -> exceptions
 						.defaultAuthenticationEntryPointFor(
 								new LoginUrlAuthenticationEntryPoint("/login"),
@@ -65,26 +65,48 @@ public class AuthorizationServerConfig {
 	}
 
 	@Bean
+	public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer(OidcUserInfoService userInfoService) {
+		return (context) -> {
+
+			if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
+
+				OidcUserInfo userInfo = userInfoService.loadUser(context.getPrincipal().getName());
+
+				context.getClaims().claims(claims -> claims.putAll(userInfo.getClaims()));
+			}
+		};
+	}
+
+	@Bean
 	public RegisteredClientRepository registeredClientRepository() {
-		RegisteredClient businessClient = RegisteredClient.withId(UUID.randomUUID().toString())
-				.clientId("business-client")
-				.clientSecret("{noop}secret")
+
+		RegisteredClient userClient = RegisteredClient.withId(UUID.randomUUID().toString())
+				.clientId("user-client")
+				.clientSecret("{noop}user")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/business-client-oidc")
-				.redirectUri("http://127.0.0.1:8080/authorized")
+				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/user-client")
 				.postLogoutRedirectUri("http://127.0.0.1:8080/logged-out")
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
-				.scope("user.read")
-				.scope("order")
-				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
+				.scope(OidcScopes.EMAIL)
+				.scope(OidcScopes.ADDRESS)
+				.scope(OidcScopes.PHONE)
+				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
 				.build();
 
+		RegisteredClient businessClient = RegisteredClient.withId(UUID.randomUUID().toString())
+				.clientId("business-client")
+				.clientSecret("{noop}business")
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.redirectUri("http://127.0.0.1:8081/login/oauth2/code/business-client")
+				.scope(OidcScopes.OPENID)
+				.scope("order")
+				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+				.build();
 
-		InMemoryRegisteredClientRepository registeredClientRepository = new InMemoryRegisteredClientRepository(businessClient);
+		InMemoryRegisteredClientRepository registeredClientRepository = new InMemoryRegisteredClientRepository(userClient, businessClient);
 //		registeredClientRepository.save(businessClient);
 
 		return registeredClientRepository;
@@ -95,10 +117,15 @@ public class AuthorizationServerConfig {
 		return new InMemoryOAuth2AuthorizationService();
 	}
 
-	@Bean
-	public OAuth2TokenCustomizer<JwtEncodingContext> idTokenCustomizer() {
-		return new FederatedIdentityIdTokenCustomizer();
-	}
+//	@Bean
+//	public OAuth2AuthorizationConsentService authorizationConsentService() {
+//		return new InMemoryOAuth2AuthorizationConsentService();
+//	}
+
+//	@Bean
+//	public OAuth2TokenCustomizer<JwtEncodingContext> idTokenCustomizer() {
+//		return new FederatedIdentityIdTokenCustomizer();
+//	}
 
 	@Bean
 	public JWKSource<SecurityContext> jwkSource() {

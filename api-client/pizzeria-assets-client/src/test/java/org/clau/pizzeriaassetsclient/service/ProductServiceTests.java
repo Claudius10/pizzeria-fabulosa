@@ -160,7 +160,7 @@ public class ProductServiceTests {
 						.withFatal(false)
 						.withLogged(false)
 						.build())
-				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.build();
 
 		String json = objectMapper.writeValueAsString(responseDTOStub);

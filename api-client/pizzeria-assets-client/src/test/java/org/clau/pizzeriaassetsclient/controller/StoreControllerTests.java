@@ -116,7 +116,7 @@ public class StoreControllerTests {
 						.withFatal(false)
 						.withLogged(false)
 						.build())
-				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.build();
 
 		Mono<Object> offers = Mono.just(responseDTOStub);

@@ -6,11 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.clau.apiutils.constant.SecurityResponse;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
-import org.clau.apiutils.service.ErrorService;
 import org.clau.apiutils.util.ExceptionLogger;
-import org.clau.apiutils.util.SecurityCookies;
 import org.clau.apiutils.util.ServerUtils;
 import org.clau.apiutils.util.TimeUtils;
+import org.clau.pizzeriabusinessresourceserver.service.ErrorService;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -57,7 +56,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 		ResponseDTO response = ResponseDTO.builder()
 				.apiError(error)
-				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.build();
 
 		return new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,11 +67,6 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		ResponseDTO response = buildUnknownException(ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
 		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	}
-
-	private String extractPath(WebRequest request) {
-		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-		return ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 	}
 
 	@Override
@@ -105,7 +99,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 						.withLogged(false)
 						.withFatal(false)
 						.build())
-				.status(HttpStatus.BAD_REQUEST)
+				.status(HttpStatus.BAD_REQUEST.value())
 				.build();
 
 		ExceptionLogger.log(ex, log, response);
@@ -151,7 +145,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return ResponseDTO.builder()
 				.apiError(error)
-				.status(HttpStatus.UNAUTHORIZED)
+				.status(HttpStatus.UNAUTHORIZED.value())
 				.build();
 	}
 
@@ -162,14 +156,12 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 		boolean fatal = false;
 		boolean logged = false;
-		boolean deleteCookies = false;
 
 		switch (ex) {
 			case InsufficientAuthenticationException ignored -> errorMessage = SecurityResponse.MISSING_TOKEN;
 			case BadCredentialsException ignored -> errorMessage = SecurityResponse.BAD_CREDENTIALS;
 			case InvalidBearerTokenException ignored -> {
 				errorMessage = SecurityResponse.INVALID_TOKEN;
-				deleteCookies = true;
 			}
 			default -> {
 				fatal = true;
@@ -194,14 +186,9 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 					.build();
 		}
 
-		if (deleteCookies) {
-			SecurityCookies.eatAllCookies(((ServletWebRequest) request).getRequest(),
-					((ServletWebRequest) request).getResponse(), domain);
-		}
-
 		return ResponseDTO.builder()
 				.apiError(error)
-				.status(HttpStatus.UNAUTHORIZED)
+				.status(HttpStatus.UNAUTHORIZED.value())
 				.build();
 	}
 
@@ -216,7 +203,12 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return ResponseDTO.builder()
 				.apiError(error)
-				.status(status)
+				.status(status.value())
 				.build();
+	}
+
+	private String extractPath(WebRequest request) {
+		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+		return ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 	}
 }

@@ -69,7 +69,7 @@ public class SecurityTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
+		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		assertThat(responseObj.getApiError().getMessage()).isEqualTo("Access Denied");
 		assertThat(responseObj.getApiError().getCause()).isEqualTo("AuthorizationDeniedException");
 		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
@@ -92,7 +92,7 @@ public class SecurityTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
+		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.MISSING_TOKEN);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo("InsufficientAuthenticationException");
 		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
@@ -113,7 +113,7 @@ public class SecurityTests {
 		// Assert
 
 		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
+		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 		assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.INVALID_TOKEN);
 		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponse.INVALID_TOKEN);
 		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);

@@ -18,17 +18,10 @@ public final class Route {
 
 	public static final String DOCS = "/docs";
 
-	// AUTH
-
-	public static final String AUTH_BASE = "/auth";
-
-	public static final String AUTH_LOGIN = "/login";
-
-	public static final String AUTH_LOGOUT = "/logout";
-
 	// ANON
 
-	public static final String ANON_REGISTER = "/register";
+	public static final String ANON_BASE = "/anon";
+
 
 	// RESOURCE
 
@@ -64,6 +57,7 @@ public final class Route {
 
 	// MISC
 
+	public static final String REGISTER = "/register";
 	public static final String PAGE_NUMBER = "pageNumber";
 	public static final String PAGE_SIZE = "pageSize";
 	public static final String USER_ID_PARAM = "userId";
