@@ -134,7 +134,7 @@ public class OfferControllerTests {
 		APIError expected = responseDTOStub.getApiError();
 
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-		assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+		assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
 		assertThat(actual.getId()).isEqualTo(expected.getId());
 		assertThat(actual.getCause()).isEqualTo(expected.getCause());

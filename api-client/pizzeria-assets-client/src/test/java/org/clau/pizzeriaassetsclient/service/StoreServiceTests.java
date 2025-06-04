@@ -172,7 +172,7 @@ public class StoreServiceTests {
 				.consumeNextWith(response -> {
 
 					ResponseDTO responseDTO = (ResponseDTO) response;
-					assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+					assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
 					APIError actual = responseDTO.getApiError();
 					APIError expected = responseDTO.getApiError();
