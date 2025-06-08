@@ -3,6 +3,7 @@ package org.clau.pizzeriaassetsclient.controller;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
+import org.clau.pizzeriaassetsclient.MyTestcontainersConfig;
 import org.clau.pizzeriaassetsclient.service.StoreService;
 import org.clau.pizzeriastoreassets.model.Store;
 import org.junit.jupiter.api.Assertions;
@@ -33,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-@Import({StoreControllerTests.MockStoreService.class})
+@Import({StoreControllerTests.MockStoreService.class, MyTestcontainersConfig.class})
 public class StoreControllerTests {
 
 	private final String path = Route.API + Route.V1 + Route.STORE_BASE;

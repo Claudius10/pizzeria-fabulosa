@@ -6,12 +6,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.clau.apiutils.constant.Response;
 import org.clau.apiutils.constant.Route;
-import org.clau.apiutils.constant.Security;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.pizzeriabusinessassets.dto.CreatedOrderDTO;
 import org.clau.pizzeriabusinessassets.dto.NewUserOrderDTO;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "User orders API")
-@SecurityRequirement(name = Security.ACCESS_TOKEN)
 public interface OrderControllerSwagger {
 
 	@Operation(operationId = "create", summary = "Create user order")

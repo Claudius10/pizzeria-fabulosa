@@ -32,7 +32,7 @@
 
     <dependencies>
 
-        <!-- Spring -->
+        <!-- Spring Starter -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

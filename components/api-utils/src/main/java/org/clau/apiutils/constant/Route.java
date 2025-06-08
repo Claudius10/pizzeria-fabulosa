@@ -22,6 +22,7 @@ public final class Route {
 
 	public static final String ANON_BASE = "/anon";
 
+	public static final String ANON_REGISTER = "/register";
 
 	// RESOURCE
 
@@ -57,7 +58,6 @@ public final class Route {
 
 	// MISC
 
-	public static final String REGISTER = "/register";
 	public static final String PAGE_NUMBER = "pageNumber";
 	public static final String PAGE_SIZE = "pageSize";
 	public static final String USER_ID_PARAM = "userId";

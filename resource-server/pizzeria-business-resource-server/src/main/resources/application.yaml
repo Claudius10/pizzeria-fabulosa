@@ -58,9 +58,9 @@ spring:
 
 logging:
   level:
-    org.hibernate: info
-    org.hibernate.sql: info
-    org.springframework.security: trace
-    org.springframework.security.oauth2: trace
-    org.springframework.web: info
-    root: info
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.hibernate: INFO
+    org.hibernate.sql: INFO

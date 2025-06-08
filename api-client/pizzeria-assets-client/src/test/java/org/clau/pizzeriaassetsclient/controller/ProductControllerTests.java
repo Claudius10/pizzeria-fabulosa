@@ -3,6 +3,7 @@ package org.clau.pizzeriaassetsclient.controller;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
+import org.clau.pizzeriaassetsclient.MyTestcontainersConfig;
 import org.clau.pizzeriaassetsclient.service.ProductService;
 import org.clau.pizzeriastoreassets.dto.ProductListDTO;
 import org.clau.pizzeriastoreassets.model.Product;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-@Import({ProductControllerTests.MockProductService.class})
+@Import({ProductControllerTests.MockProductService.class, MyTestcontainersConfig.class})
 public class ProductControllerTests {
 
 	private final String path = Route.API + Route.V1 + Route.PRODUCT_BASE;

@@ -1,5 +1,6 @@
 package org.clau.pizzeriauserclient.config;
 
+import org.clau.apiutils.constant.Route;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,6 +25,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(authorize ->
 						authorize
 								.requestMatchers("/logged-out").permitAll()
+								.requestMatchers(Route.API + Route.V1 + Route.ANON_BASE + Route.ALL).permitAll()
 								.anyRequest().authenticated())
 				.oauth2Client(withDefaults())
 				.oauth2Login(withDefaults())

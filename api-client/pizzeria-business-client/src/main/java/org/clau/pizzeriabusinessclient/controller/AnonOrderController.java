@@ -24,7 +24,9 @@ public class AnonOrderController implements AnonOrderControllerSwagger {
 
 	@PostMapping
 	public Mono<ResponseEntity<Object>> createAnonOrder(@RequestBody @Valid NewAnonOrderDTO newAnonOrderDTO) {
+
 		Mono<ResponseEntity<Object>> result = anonOrderService.createAnonOrder(newAnonOrderDTO).map(response -> {
+
 			if (response instanceof ResponseDTO responseDTO) {
 				return ResponseEntity.status(responseDTO.getStatus()).body(response);
 			} else {

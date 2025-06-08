@@ -3,9 +3,8 @@ package org.clau.pizzeriabusinessassets.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import org.clau.pizzeriabusinessassets.validation.ValidationResponses;
-import org.clau.pizzeriabusinessassets.validation.ValidationRules;
-import org.clau.pizzeriabusinessassets.validation.constraints.annotation.DoubleLengthNullable;
+import org.clau.apiutils.constant.ValidationResponses;
+import org.clau.apiutils.constant.ValidationRules;
 
 public record OrderDetailsDTO(
 
@@ -15,7 +14,6 @@ public record OrderDetailsDTO(
 		@NotBlank(message = ValidationResponses.ORDER_DETAILS_PAYMENT)
 		String paymentMethod,
 
-		@DoubleLengthNullable(min = 0, max = 5, message = ValidationResponses.ORDER_DETAILS_BILL)
 		Double billToChange,
 
 		@Pattern(regexp = ValidationRules.COMPLEX_LETTERS_NUMBERS_MAX_150_OPTIONAL, message = ValidationResponses.ORDER_DETAILS_COMMENT)

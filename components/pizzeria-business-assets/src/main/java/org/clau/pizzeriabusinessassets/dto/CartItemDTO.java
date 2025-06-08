@@ -2,9 +2,9 @@ package org.clau.pizzeriabusinessassets.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.clau.pizzeriabusinessassets.validation.ValidationResponses;
-import org.clau.pizzeriabusinessassets.validation.constraints.annotation.DoubleLength;
-import org.clau.pizzeriabusinessassets.validation.constraints.annotation.IntegerLength;
+import org.clau.apiutils.constant.ValidationResponses;
+import org.clau.apiutils.validation.annotation.DoubleLength;
+import org.clau.apiutils.validation.annotation.IntegerLength;
 
 import java.util.List;
 import java.util.Map;

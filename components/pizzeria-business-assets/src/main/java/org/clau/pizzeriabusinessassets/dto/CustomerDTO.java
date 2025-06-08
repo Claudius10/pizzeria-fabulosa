@@ -3,9 +3,9 @@ package org.clau.pizzeriabusinessassets.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import org.clau.pizzeriabusinessassets.validation.ValidationResponses;
-import org.clau.pizzeriabusinessassets.validation.ValidationRules;
-import org.clau.pizzeriabusinessassets.validation.constraints.annotation.IntegerLength;
+import org.clau.apiutils.constant.ValidationResponses;
+import org.clau.apiutils.constant.ValidationRules;
+import org.clau.apiutils.validation.annotation.IntegerLength;
 
 public record CustomerDTO(
 

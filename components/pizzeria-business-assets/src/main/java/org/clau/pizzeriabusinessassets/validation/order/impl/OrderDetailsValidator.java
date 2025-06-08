@@ -1,8 +1,8 @@
 package org.clau.pizzeriabusinessassets.validation.order.impl;
 
+import org.clau.apiutils.constant.ValidationResponses;
 import org.clau.pizzeriabusinessassets.dto.CartDTO;
 import org.clau.pizzeriabusinessassets.dto.OrderDetailsDTO;
-import org.clau.pizzeriabusinessassets.validation.ValidationResponses;
 import org.clau.pizzeriabusinessassets.validation.order.OrderValidatorInput;
 import org.clau.pizzeriabusinessassets.validation.order.ValidationResult;
 import org.clau.pizzeriabusinessassets.validation.order.Validator;

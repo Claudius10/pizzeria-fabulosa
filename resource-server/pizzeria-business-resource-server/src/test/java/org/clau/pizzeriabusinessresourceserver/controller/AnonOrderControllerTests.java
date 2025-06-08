@@ -2,12 +2,12 @@ package org.clau.pizzeriabusinessresourceserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.apiutils.constant.Route;
+import org.clau.apiutils.constant.ValidationResponses;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.pizzeriabusinessassets.dto.CartItemDTO;
 import org.clau.pizzeriabusinessassets.dto.NewAnonOrderDTO;
 import org.clau.pizzeriabusinessassets.model.CartItem;
 import org.clau.pizzeriabusinessassets.model.Order;
-import org.clau.pizzeriabusinessassets.validation.ValidationResponses;
 import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
 import org.junit.jupiter.api.Test;

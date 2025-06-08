@@ -6,12 +6,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.apiutils.constant.Route;
+import org.clau.apiutils.constant.ValidationResponses;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.pizzeriabusinessassets.dto.CartItemDTO;
 import org.clau.pizzeriabusinessassets.dto.NewUserOrderDTO;
 import org.clau.pizzeriabusinessassets.model.CartItem;
 import org.clau.pizzeriabusinessassets.model.Order;
-import org.clau.pizzeriabusinessassets.validation.ValidationResponses;
 import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.TestHelperService;
 import org.clau.pizzeriabusinessresourceserver.TestJwtHelperService;
@@ -91,7 +91,8 @@ public class OrderControllerTests {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(expected))
 						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
+						.header("Authorization", format("Bearer %s", accessToken))
+				)
 				.andReturn().getResponse();
 
 		// Assert

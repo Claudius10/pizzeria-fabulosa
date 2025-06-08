@@ -7,7 +7,6 @@ import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.util.ExceptionLogger;
 import org.clau.apiutils.util.ServerUtils;
-import org.clau.apiutils.util.TimeUtils;
 import org.clau.pizzeriabusinessclient.service.ErrorService;
 import org.clau.pizzeriabusinessclient.util.Constant;
 import org.springframework.http.HttpHeaders;
@@ -21,9 +20,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.UUID;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -35,7 +33,8 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> createResponseEntity(@Nullable Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
 
-		String path = extractPath(request);
+		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 
 		String cause = body != null ? body.toString() : null;
 		String message = "See cause";
@@ -51,69 +50,57 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<ResponseDTO> handleUnknownException(Exception ex, WebRequest request) {
-		ResponseDTO response = buildUnknownException(ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
+	@ExceptionHandler(WebClientException.class)
+	protected ResponseEntity<ResponseDTO> handleWebClientException(WebClientException ex, WebRequest request) {
+		boolean fatal = true;
+		ResponseDTO response = buildResponse(ex, request, fatal, HttpStatus.INTERNAL_SERVER_ERROR.value());
 		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
 
 	@ExceptionHandler(AccessDeniedException.class)
 	protected ResponseEntity<ResponseDTO> accessDeniedException(AccessDeniedException ex, WebRequest request) {
-
-		String path = extractPath(request);
-		ResponseDTO response = buildResponse(ex, path);
+		boolean fatal = false;
+		ResponseDTO response = buildResponse(ex, request, fatal, HttpStatus.UNAUTHORIZED.value());
 		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 	}
 
 	@ExceptionHandler(AuthenticationException.class)
 	protected ResponseEntity<ResponseDTO> authenticationException(AuthenticationException ex, WebRequest request) {
-
-		String path = extractPath(request);
-		ResponseDTO response = buildResponse(ex, path);
+		boolean fatal = false;
+		ResponseDTO response = buildResponse(ex, request, fatal, HttpStatus.UNAUTHORIZED.value());
 		ExceptionLogger.log(ex, log, response);
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 	}
 
-	private ResponseDTO buildResponse(RuntimeException ex, String path) {
+	@ExceptionHandler(Exception.class)
+	protected ResponseEntity<ResponseDTO> handleUnknownException(Exception ex, WebRequest request) {
+		boolean fatal = true;
+		ResponseDTO response = buildResponse(ex, request, fatal, HttpStatus.INTERNAL_SERVER_ERROR.value());
+		ExceptionLogger.log(ex, log, response);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	}
+
+	private ResponseDTO buildResponse(Exception ex, WebRequest request, boolean fatal, int status) {
+
+		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 
 		String exSimpleName = ex.getClass().getSimpleName();
-
-		APIError error = APIError.builder()
-				.withId(UUID.randomUUID().getMostSignificantBits())
-				.withCreatedOn(TimeUtils.getNowAccountingDST())
-				.withCause(exSimpleName)
-				.withMessage(ex.getMessage())
-				.withOrigin(Constant.APP_NAME)
-				.withPath(path)
-				.withLogged(false)
-				.withFatal(false)
-				.build();
-
-		return ResponseDTO.builder()
-				.apiError(error)
-				.status(HttpStatus.UNAUTHORIZED.value())
-				.build();
-	}
-
-	private ResponseDTO buildUnknownException(Exception ex, WebRequest request, HttpStatus status) {
-		String path = extractPath(request);
-
-		String cause = ex.getClass().getSimpleName();
 		String message = ex.getMessage();
-		boolean fatal = true;
 
-		APIError error = errorService.create(cause, message, Constant.APP_NAME, path, fatal);
+		APIError error = errorService.create(
+				exSimpleName,
+				message,
+				Constant.APP_NAME,
+				path,
+				fatal
+		);
 
 		return ResponseDTO.builder()
 				.apiError(error)
-				.status(status.value())
+				.status(status)
 				.build();
-	}
-
-	private String extractPath(WebRequest request) {
-		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-		return ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 	}
 }
