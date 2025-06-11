@@ -1,29 +1,13 @@
 server:
-  port: 9443
-  ssl:
-    bundle: pizzeria-security-ssl
-    client-auth: want
+  port: 9000
+
+angular-app:
+  base-uri: http://127.0.0.1:4200
 
 spring:
 
   application:
     name: "pizzeria-security-server"
-
-  ssl:
-    bundle:
-      jks:
-        pizzeria-security-ssl:
-          key:
-            alias: pizzeria-security-server
-            password: password
-          keystore:
-            location: /home/claudio/IdeaProjects/pizzeria-fabulosa/security/pizzeria-security-server/src/main/resources/keystore.p12
-            password: password
-            type: PKCS12
-          truststore:
-            location: /home/claudio/IdeaProjects/pizzeria-fabulosa/security/pizzeria-security-server/src/main/resources/keystore.p12
-            password: password
-            type: PKCS12
 
   datasource:
     url: jdbc:mariadb://localhost:3306/pizzeria

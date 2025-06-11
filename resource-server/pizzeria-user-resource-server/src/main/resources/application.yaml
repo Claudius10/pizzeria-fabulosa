@@ -1,8 +1,5 @@
 server:
-  port: 8444
-  ssl:
-    bundle: user-resource-ssl
-    client-auth: need
+  port: 8082
 
 spring:
 
@@ -14,22 +11,6 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://localhost:9000/oauth2/jwks
-
-  ssl:
-    bundle:
-      jks:
-        user-resource-ssl:
-          key:
-            alias: pizzeria-user-resource
-            password: password
-          keystore:
-            location: /home/claudio/IdeaProjects/pizzeria-fabulosa/resource-server/pizzeria-user-resource-server/src/main/resources/keystore.p12
-            password: password
-            type: PKCS12
-          truststore:
-            location: /home/claudio/IdeaProjects/pizzeria-fabulosa/resource-server/pizzeria-user-resource-server/src/main/resources/keystore.p12
-            password: password
-            type: PKCS12
 
   datasource:
     url: jdbc:mariadb://localhost:3306/pizzeria
@@ -55,6 +36,13 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
+
+springdoc:
+  api-docs:
+    path: /api/v1/docs
+  swagger-ui:
+    path: /api/v1/docs/swagger
+    operations-sorter: method
 
 logging:
   level:

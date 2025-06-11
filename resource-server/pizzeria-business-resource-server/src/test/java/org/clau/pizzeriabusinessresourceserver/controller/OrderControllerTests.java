@@ -1,16 +1,10 @@
 package org.clau.pizzeriabusinessresourceserver.controller;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.constant.ValidationResponses;
 import org.clau.apiutils.dto.ResponseDTO;
-import org.clau.pizzeriabusinessassets.dto.CartItemDTO;
-import org.clau.pizzeriabusinessassets.dto.NewUserOrderDTO;
-import org.clau.pizzeriabusinessassets.model.CartItem;
+import org.clau.pizzeriabusinessassets.dto.*;
 import org.clau.pizzeriabusinessassets.model.Order;
 import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.TestHelperService;
@@ -22,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -34,7 +25,6 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -55,9 +45,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class OrderControllerTests {
 
 	private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
-
-	private final TypeReference<CustomPageImpl<Order>> orderSummaryTypeReference = new TypeReference<>() {
-	};
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -98,39 +85,42 @@ public class OrderControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-		Order actual = objectMapper.readValue(response.getContentAsString(), Order.class);
+		CreatedOrderDTO actual = objectMapper.readValue(response.getContentAsString(), CreatedOrderDTO.class);
 
-		assertThat(actual.getId()).isNotNull();
-		assertThat(actual.getUserId()).isEqualTo(userId);
+		assertThat(actual.id()).isNotZero();
 
-		assertThat(actual.getAnonCustomerName()).isNull();
-		assertThat(actual.getAnonCustomerEmail()).isNull();
-		assertThat(actual.getAnonCustomerContactNumber()).isNull();
+		assertThat(actual.formattedCreatedOn()).isNotNull();
 
-		assertThat(actual.getAddress()).isEqualTo(expected.address());
+		assertThat(actual.customer()).isNull();
 
-		assertThat(actual.getOrderDetails().getDeliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
-		assertThat(actual.getOrderDetails().getPaymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
-		assertThat(actual.getOrderDetails().getStorePickUp()).isEqualTo(expected.orderDetails().storePickUp());
-		assertThat(actual.getOrderDetails().getComment()).isNull();
-		assertThat(actual.getOrderDetails().getBillToChange()).isEqualTo(expected.orderDetails().billToChange());
-		assertThat(actual.getOrderDetails().getChangeToGive()).isEqualTo(expected.orderDetails().billToChange() - expected.cart().totalCost());
+		assertThat(actual.address()).isEqualTo(expected.address());
 
-		assertThat(actual.getCart().getTotalCost()).isEqualTo(expected.cart().totalCost());
-		assertThat(actual.getCart().getTotalCostOffers()).isEqualTo(expected.cart().totalCostOffers());
-		assertThat(actual.getCart().getTotalQuantity()).isEqualTo(expected.cart().totalQuantity());
+		assertThat(actual.orderDetails().paymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
+		assertThat(actual.orderDetails().deliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
+		assertThat(actual.orderDetails().comment()).isEqualTo(expected.orderDetails().comment());
+		assertThat(actual.orderDetails().billToChange()).isEqualTo(expected.orderDetails().billToChange());
+		assertThat(actual.orderDetails().storePickUp()).isEqualTo(expected.orderDetails().storePickUp());
+		assertThat(actual.orderDetails().changeToGive()).isNotZero();
 
-		assertThat(actual.getCart().getCartItems().size()).isEqualTo(expected.cart().cartItems().size());
+		assertThat(actual.cart().totalCost()).isEqualTo(expected.cart().totalCost());
+		assertThat(actual.cart().totalQuantity()).isEqualTo(expected.cart().totalQuantity());
+		assertThat(actual.cart().totalCostOffers()).isEqualTo(expected.cart().totalCostOffers());
 
-		CartItem actualItem = actual.getCart().getCartItems().getFirst();
+		assertThat(actual.cart().cartItems().size()).isEqualTo(expected.cart().cartItems().size());
+
+		CartItemDTO actualItem = new CartItemDTO(
+				null,
+				actual.cart().cartItems().getFirst().type(),
+				actual.cart().cartItems().getFirst().price(),
+				actual.cart().cartItems().getFirst().quantity(),
+				actual.cart().cartItems().getFirst().name(),
+				actual.cart().cartItems().getFirst().description(),
+				actual.cart().cartItems().getFirst().formats()
+		);
+
 		CartItemDTO expectedItem = expected.cart().cartItems().getFirst();
 
-		assertThat(actualItem.getName()).isEqualTo(expectedItem.name());
-		assertThat(actualItem.getDescription()).isEqualTo(expectedItem.description());
-		assertThat(actualItem.getFormats()).isEqualTo(expectedItem.formats());
-		assertThat(actualItem.getType()).isEqualTo(expectedItem.type());
-		assertThat(actualItem.getQuantity()).isEqualTo(expectedItem.quantity());
-		assertThat(actualItem.getPrice()).isEqualTo(expectedItem.price());
+		assertThat(actualItem).isEqualTo(expectedItem);
 	}
 
 	@Test
@@ -203,39 +193,36 @@ public class OrderControllerTests {
 
 		assertThat(getResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-		Order actual = objectMapper.readValue(getResponse.getContentAsString(), Order.class);
+		OrderDTO actual = objectMapper.readValue(getResponse.getContentAsString(), OrderDTO.class);
 
-		assertThat(actual.getId()).isNotNull();
-		assertThat(actual.getUserId()).isEqualTo(userId);
+		assertThat(actual.id()).isNotZero();
+		assertThat(actual.formattedCreatedOn()).isNotNull();
+		assertThat(actual.address()).isEqualTo(expected.address());
 
-		assertThat(actual.getAnonCustomerName()).isNull();
-		assertThat(actual.getAnonCustomerEmail()).isNull();
-		assertThat(actual.getAnonCustomerContactNumber()).isNull();
+		assertThat(actual.orderDetails().paymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
+		assertThat(actual.orderDetails().deliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
+		assertThat(actual.orderDetails().comment()).isEqualTo(expected.orderDetails().comment());
+		assertThat(actual.orderDetails().billToChange()).isEqualTo(expected.orderDetails().billToChange());
+		assertThat(actual.orderDetails().storePickUp()).isEqualTo(expected.orderDetails().storePickUp());
+		assertThat(actual.orderDetails().changeToGive()).isNotZero();
 
-		assertThat(actual.getAddress()).isEqualTo(expected.address());
+		assertThat(actual.cart().totalCost()).isEqualTo(expected.cart().totalCost());
+		assertThat(actual.cart().totalQuantity()).isEqualTo(expected.cart().totalQuantity());
+		assertThat(actual.cart().totalCostOffers()).isEqualTo(expected.cart().totalCostOffers());
 
-		assertThat(actual.getOrderDetails().getDeliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
-		assertThat(actual.getOrderDetails().getPaymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
-		assertThat(actual.getOrderDetails().getStorePickUp()).isEqualTo(expected.orderDetails().storePickUp());
-		assertThat(actual.getOrderDetails().getComment()).isNull();
-		assertThat(actual.getOrderDetails().getBillToChange()).isEqualTo(expected.orderDetails().billToChange());
-		assertThat(actual.getOrderDetails().getChangeToGive()).isEqualTo(expected.orderDetails().billToChange() - expected.cart().totalCost());
+		CartItemDTO actualItem = new CartItemDTO(
+				null,
+				actual.cart().cartItems().getFirst().type(),
+				actual.cart().cartItems().getFirst().price(),
+				actual.cart().cartItems().getFirst().quantity(),
+				actual.cart().cartItems().getFirst().name(),
+				actual.cart().cartItems().getFirst().description(),
+				actual.cart().cartItems().getFirst().formats()
+		);
 
-		assertThat(actual.getCart().getTotalCost()).isEqualTo(expected.cart().totalCost());
-		assertThat(actual.getCart().getTotalCostOffers()).isEqualTo(expected.cart().totalCostOffers());
-		assertThat(actual.getCart().getTotalQuantity()).isEqualTo(expected.cart().totalQuantity());
-
-		assertThat(actual.getCart().getCartItems().size()).isEqualTo(expected.cart().cartItems().size());
-
-		CartItem actualItem = actual.getCart().getCartItems().getFirst();
 		CartItemDTO expectedItem = expected.cart().cartItems().getFirst();
 
-		assertThat(actualItem.getName()).isEqualTo(expectedItem.name());
-		assertThat(actualItem.getDescription()).isEqualTo(expectedItem.description());
-		assertThat(actualItem.getFormats()).isEqualTo(expectedItem.formats());
-		assertThat(actualItem.getType()).isEqualTo(expectedItem.type());
-		assertThat(actualItem.getQuantity()).isEqualTo(expectedItem.quantity());
-		assertThat(actualItem.getPrice()).isEqualTo(expectedItem.price());
+		assertThat(actualItem).isEqualTo(expectedItem);
 	}
 
 	@Test
@@ -360,7 +347,7 @@ public class OrderControllerTests {
 
 		// create user order
 		int minutesInThePast = 0;
-		Order expected = testHelperService.createOrder(userId, minutesInThePast);
+		Order expectedOrder = testHelperService.createOrder(userId, minutesInThePast);
 
 		int pageSize = 5;
 		int pageNumber = 0;
@@ -378,42 +365,21 @@ public class OrderControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-		CustomPageImpl<Order> actual = objectMapper.readValue(response.getContentAsString(), orderSummaryTypeReference);
-		assertThat(actual.getSize()).isEqualTo(pageSize);
-		assertThat(actual.getNumber()).isEqualTo(pageNumber);
-		assertThat(actual.getTotalElements()).isEqualTo(1);
-		assertThat(actual.hasNext()).isFalse();
-		assertThat(actual.isLast()).isTrue();
+		OrderSummaryListDTO actual = objectMapper.readValue(response.getContentAsString(), OrderSummaryListDTO.class);
 
-		Order order = actual.getContent().getFirst();
+		assertThat(actual.size()).isEqualTo(pageSize);
+		assertThat(actual.number()).isEqualTo(pageNumber);
+		assertThat(actual.totalElements()).isEqualTo(1);
+		assertThat(actual.last()).isTrue();
 
-		assertThat(order.getId()).isEqualTo(expected.getId());
-		assertThat(order.getUserId()).isEqualTo(expected.getUserId());
+		OrderSummaryDTO actualOrder = actual.content().getFirst();
 
-		assertThat(order.getAnonCustomerName()).isEqualTo(expected.getAnonCustomerName());
-		assertThat(order.getAnonCustomerEmail()).isEqualTo(expected.getAnonCustomerEmail());
-		assertThat(order.getAnonCustomerContactNumber()).isEqualTo(expected.getAnonCustomerContactNumber());
-
-		assertThat(order.getOrderDetails().getDeliveryTime()).isEqualTo(expected.getOrderDetails().getDeliveryTime());
-		assertThat(order.getOrderDetails().getPaymentMethod()).isEqualTo(expected.getOrderDetails().getPaymentMethod());
-		assertThat(order.getOrderDetails().getStorePickUp()).isEqualTo(expected.getOrderDetails().getStorePickUp());
-		assertThat(order.getOrderDetails().getComment()).isEqualTo(expected.getOrderDetails().getComment());
-		assertThat(order.getOrderDetails().getBillToChange()).isEqualTo(expected.getOrderDetails().getBillToChange());
-		assertThat(order.getOrderDetails().getChangeToGive()).isEqualTo(expected.getOrderDetails().getChangeToGive());
-
-		assertThat(order.getCart().getTotalCost()).isEqualTo(expected.getCart().getTotalCost());
-		assertThat(order.getCart().getTotalCostOffers()).isEqualTo(expected.getCart().getTotalCostOffers());
-		assertThat(order.getCart().getTotalQuantity()).isEqualTo(expected.getCart().getTotalQuantity());
-		assertThat(order.getCart().getCartItems().size()).isEqualTo(expected.getCart().getCartItems().size());
-
-		CartItem cartItem = order.getCart().getCartItems().getFirst();
-
-		assertThat(cartItem.getName()).isEqualTo(expected.getCart().getCartItems().getFirst().getName());
-		assertThat(cartItem.getDescription()).isEqualTo(expected.getCart().getCartItems().getFirst().getDescription());
-		assertThat(cartItem.getFormats()).isEqualTo(expected.getCart().getCartItems().getFirst().getFormats());
-		assertThat(cartItem.getType()).isEqualTo(expected.getCart().getCartItems().getFirst().getType());
-		assertThat(cartItem.getQuantity()).isEqualTo(expected.getCart().getCartItems().getFirst().getQuantity());
-		assertThat(cartItem.getPrice()).isEqualTo(expected.getCart().getCartItems().getFirst().getPrice());
+		assertThat(actualOrder.id()).isEqualTo(expectedOrder.getId());
+		assertThat(actualOrder.formattedCreatedOn()).isEqualTo(expectedOrder.getFormattedCreatedOn());
+		assertThat(actualOrder.paymentMethod()).isEqualTo(expectedOrder.getOrderDetails().getPaymentMethod());
+		assertThat(actualOrder.quantity()).isEqualTo(expectedOrder.getCart().getTotalQuantity());
+		assertThat(actualOrder.cost()).isEqualTo(expectedOrder.getCart().getTotalCost());
+		assertThat(actualOrder.costAfterOffers()).isEqualTo(expectedOrder.getCart().getTotalCostOffers());
 	}
 
 	@Test
@@ -441,13 +407,13 @@ public class OrderControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		CustomPageImpl<Order> actual = objectMapper.readValue(response.getContentAsString(), orderSummaryTypeReference);
-		assertThat(actual.getSize()).isEqualTo(pageSize);
-		assertThat(actual.getNumber()).isEqualTo(pageNumber);
-		assertThat(actual.getTotalElements()).isZero();
-		assertThat(actual.hasNext()).isFalse();
-		assertThat(actual.isLast()).isTrue();
-		assertThat(actual.getContent().size()).isZero();
+		OrderSummaryListDTO actual = objectMapper.readValue(response.getContentAsString(), OrderSummaryListDTO.class);
+
+		assertThat(actual.size()).isEqualTo(pageSize);
+		assertThat(actual.number()).isEqualTo(pageNumber);
+		assertThat(actual.totalElements()).isZero();
+		assertThat(actual.last()).isTrue();
+		assertThat(actual.content()).isEmpty();
 	}
 
 	@Test
@@ -474,42 +440,12 @@ public class OrderControllerTests {
 
 		// Assert
 
-		CustomPageImpl<Order> actual = objectMapper.readValue(response.getContentAsString(), orderSummaryTypeReference);
-		assertThat(actual.getSize()).isEqualTo(pageSize);
-		assertThat(actual.getNumber()).isEqualTo(pageNumber);
-		assertThat(actual.getTotalElements()).isZero();
-		assertThat(actual.hasNext()).isFalse();
-		assertThat(actual.isLast()).isTrue();
-		assertThat(actual.getContent().size()).isZero();
-	}
+		OrderSummaryListDTO actual = objectMapper.readValue(response.getContentAsString(), OrderSummaryListDTO.class);
 
-	// for Jackson deserialization
-	private static class CustomPageImpl<T> extends PageImpl<T> {
-
-		@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-		public CustomPageImpl(
-				@JsonProperty("content") List<T> content,
-				@JsonProperty("number") int number,
-				@JsonProperty("size") int size,
-				@JsonProperty("totalElements") Long totalElements,
-				@JsonProperty("pageable") JsonNode pageable,
-				@JsonProperty("last") boolean last,
-				@JsonProperty("totalPages") int totalPages,
-				@JsonProperty("sort") JsonNode sort,
-				@JsonProperty("numberOfElements") int numberOfElements) {
-			super(content, PageRequest.of(number, size), totalElements);
-		}
-
-		public CustomPageImpl(List<T> content, Pageable pageable, long total) {
-			super(content, pageable, total);
-		}
-
-		public CustomPageImpl(List<T> content) {
-			super(content);
-		}
-
-		public CustomPageImpl() {
-			super(new ArrayList<>());
-		}
+		assertThat(actual.size()).isEqualTo(pageSize);
+		assertThat(actual.number()).isEqualTo(pageNumber);
+		assertThat(actual.totalElements()).isZero();
+		assertThat(actual.last()).isTrue();
+		assertThat(actual.content()).isEmpty();
 	}
 }

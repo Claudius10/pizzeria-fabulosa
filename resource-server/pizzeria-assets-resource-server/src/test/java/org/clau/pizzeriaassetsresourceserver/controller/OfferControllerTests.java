@@ -1,10 +1,10 @@
 package org.clau.pizzeriaassetsresourceserver.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.apiutils.constant.Route;
 import org.clau.pizzeriaassetsresourceserver.MyTestcontainersConfiguration;
 import org.clau.pizzeriaassetsresourceserver.dao.OfferRepository;
+import org.clau.pizzeriastoreassets.dto.OfferListDTO;
 import org.clau.pizzeriastoreassets.model.Offer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class OfferControllerTests {
 
-	private final String path = Route.API + Route.V1 + Route.OFFER_BASE;
+	private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.OFFER_BASE;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -67,10 +67,8 @@ public class OfferControllerTests {
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-		TypeReference<List<Offer>> typeReference = new TypeReference<>() {
-		};
-
-		List<Offer> actual = objectMapper.readValue(response.getContentAsString(), typeReference);
+		OfferListDTO offerList = objectMapper.readValue(response.getContentAsString(), OfferListDTO.class);
+		List<Offer> actual = offerList.offers();
 
 		assertThat(actual).hasSize(1);
 		assertThat(actual.getFirst().getId()).isEqualTo(1);

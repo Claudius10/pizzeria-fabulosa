@@ -8,12 +8,13 @@ import org.clau.apiutils.constant.ValidationResponses;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.util.TimeUtils;
-import org.clau.pizzeriabusinessassets.dto.NewUserOrderDTO;
+import org.clau.pizzeriabusinessassets.dto.*;
 import org.clau.pizzeriabusinessassets.model.Order;
 import org.clau.pizzeriabusinessassets.validation.order.CompositeValidator;
 import org.clau.pizzeriabusinessassets.validation.order.OrderValidatorInput;
 import org.clau.pizzeriabusinessassets.validation.order.ValidationResult;
 import org.clau.pizzeriabusinessassets.validation.order.Validator;
+import org.clau.pizzeriabusinessresourceserver.controller.swagger.OrderControllerSwagger;
 import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
 import org.clau.pizzeriabusinessresourceserver.service.OrderService;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
@@ -29,7 +30,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(Route.API + Route.V1 + Route.ORDER_BASE)
-public class OrderController {
+public class OrderController implements OrderControllerSwagger {
 
 	private final OrderService orderService;
 
@@ -62,15 +63,73 @@ public class OrderController {
 		}
 
 		Order createdOrder = orderService.create(userId, order);
-		return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
+
+		CreatedOrderDTO createdOrderDTO = new CreatedOrderDTO(
+				createdOrder.getId(),
+				createdOrder.getFormattedCreatedOn(),
+				null,
+				createdOrder.getAddress(),
+				new OrderDetailsDTO(
+						createdOrder.getOrderDetails().getDeliveryTime(),
+						createdOrder.getOrderDetails().getPaymentMethod(),
+						createdOrder.getOrderDetails().getBillToChange(),
+						createdOrder.getOrderDetails().getComment(),
+						createdOrder.getOrderDetails().getStorePickUp(),
+						createdOrder.getOrderDetails().getChangeToGive()
+				),
+				new CartDTO(
+						createdOrder.getCart().getTotalQuantity(),
+						createdOrder.getCart().getTotalCost(),
+						createdOrder.getCart().getTotalCostOffers(),
+						createdOrder.getCart().getCartItems().stream().map(item -> new CartItemDTO(
+								item.getId(),
+								item.getType(),
+								item.getPrice(),
+								item.getQuantity(),
+								item.getName(),
+								item.getDescription(),
+								item.getFormats()
+						)).toList()
+				)
+		);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdOrderDTO);
 	}
 
 	@GetMapping(Route.ORDER_ID)
-	public ResponseEntity<?> findById(@PathVariable Long orderId) {
+	public ResponseEntity<OrderDTO> findById(@PathVariable Long orderId) {
 
 		Optional<Order> order = orderService.findById(orderId);
 
-		return order.map(orderDTO -> ResponseEntity.ok().body(orderDTO))
+		return order.map(theOrder -> ResponseEntity.ok().body(
+						new OrderDTO(
+								theOrder.getId(),
+								theOrder.getFormattedCreatedOn(),
+								theOrder.getAddress(),
+								new OrderDetailsDTO(
+										theOrder.getOrderDetails().getDeliveryTime(),
+										theOrder.getOrderDetails().getPaymentMethod(),
+										theOrder.getOrderDetails().getBillToChange(),
+										theOrder.getOrderDetails().getComment(),
+										theOrder.getOrderDetails().getStorePickUp(),
+										theOrder.getOrderDetails().getChangeToGive()
+								),
+								new CartDTO(
+										theOrder.getCart().getTotalQuantity(),
+										theOrder.getCart().getTotalCost(),
+										theOrder.getCart().getTotalCostOffers(),
+										theOrder.getCart().getCartItems().stream().map(item -> new CartItemDTO(
+												item.getId(),
+												item.getType(),
+												item.getPrice(),
+												item.getQuantity(),
+												item.getName(),
+												item.getDescription(),
+												item.getFormats()
+										)).toList()
+								)
+						)
+				))
 				.orElse(ResponseEntity.noContent().build());
 	}
 
@@ -105,13 +164,29 @@ public class OrderController {
 	}
 
 	@GetMapping(Route.ORDER_SUMMARY)
-	public ResponseEntity<Page<Order>> findSummary(
+	public ResponseEntity<OrderSummaryListDTO> findSummary(
 			@RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
 			@RequestParam(name = Route.PAGE_SIZE) Integer pageSize,
 			@RequestParam(name = Route.USER_ID_PARAM) Long userId) {
 
 		Page<Order> summary = orderService.findSummary(userId, pageSize, pageNumber);
 
-		return ResponseEntity.ok(summary);
+		OrderSummaryListDTO orderSummaryListDTO = new OrderSummaryListDTO(
+				summary.getContent().stream().map(order ->
+						new OrderSummaryDTO(
+								order.getId(),
+								order.getFormattedCreatedOn(),
+								order.getOrderDetails().getPaymentMethod(),
+								order.getCart().getTotalQuantity(),
+								order.getCart().getTotalCost(),
+								order.getCart().getTotalCostOffers()
+						)).toList(),
+				summary.getNumber(),
+				summary.getSize(),
+				summary.getTotalElements(),
+				summary.isLast()
+		);
+
+		return ResponseEntity.ok(orderSummaryListDTO);
 	}
 }

@@ -26,6 +26,8 @@ public final class Route {
 
 	// RESOURCE
 
+	public static final String RESOURCE = "/resource";
+
 	public static final String PRODUCT_BASE = "/product";
 
 	public static final String PRODUCT_TYPE = "type";

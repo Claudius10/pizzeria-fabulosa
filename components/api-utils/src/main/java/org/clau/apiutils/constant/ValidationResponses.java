@@ -2,9 +2,9 @@ package org.clau.apiutils.constant;
 
 public final class ValidationResponses {
 
-	public static final String NAME_INVALID = "InvalidCustomerName";
+	public static final String NAME_INVALID = "InvalidName";
 
-	public static final String EMAIL_INVALID = "InvalidCustomerEmail";
+	public static final String EMAIL_INVALID = "InvalidEmail";
 
 	public static final String EMAIL_NO_MATCH = "NoMatchEmail";
 
@@ -12,7 +12,7 @@ public final class ValidationResponses {
 
 	public static final String PASSWORD_NO_MATCH = "NoMatchPassword";
 
-	public static final String NUMBER_INVALID = "InvalidCustomerNumber";
+	public static final String NUMBER_INVALID = "InvalidPhoneNumber";
 
 	public static final String ADDRESS_INVALID = "InvalidAddress";
 

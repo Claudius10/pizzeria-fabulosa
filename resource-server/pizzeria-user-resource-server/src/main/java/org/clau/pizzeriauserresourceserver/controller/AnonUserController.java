@@ -9,6 +9,7 @@ import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.util.TimeUtils;
 import org.clau.pizzeriauserassets.dto.RegisterDTO;
+import org.clau.pizzeriauserresourceserver.controller.swagger.AnonUserControllerSwagger;
 import org.clau.pizzeriauserresourceserver.service.AnonUserService;
 import org.clau.pizzeriauserresourceserver.util.Constant;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(Route.API + Route.V1 + Route.ANON_BASE)
-public class AnonUserController {
+public class AnonUserController implements AnonUserControllerSwagger {
 
 	private final AnonUserService anonUserService;
 

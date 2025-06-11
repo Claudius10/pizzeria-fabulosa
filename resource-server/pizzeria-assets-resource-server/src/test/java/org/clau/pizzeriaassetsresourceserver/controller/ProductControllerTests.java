@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class ProductControllerTests {
 
-	private final String path = Route.API + Route.V1 + Route.PRODUCT_BASE;
+	private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.PRODUCT_BASE;
 
 	@Autowired
 	private MockMvc mockMvc;

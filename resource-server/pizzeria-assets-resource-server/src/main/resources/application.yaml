@@ -29,6 +29,13 @@ spring:
     hibernate:
       ddl-auto: update
 
+springdoc:
+  api-docs:
+    path: /api/v1/docs
+  swagger-ui:
+    path: /api/v1/docs/swagger
+    operations-sorter: method
+
 logging:
   level:
     org.hibernate: info

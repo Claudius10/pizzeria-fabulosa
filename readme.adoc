@@ -1,1 +1,11 @@
-In progress
+Ports:
+
+Security client -> 9000
+
+Backend client -> 8080
+
+Assets resource -> 8081
+
+User resource -> 8082
+
+Business resource -> 8083

@@ -7,7 +7,6 @@ import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.util.ExceptionLogger;
 import org.clau.apiutils.util.ServerUtils;
-import org.clau.apiutils.util.TimeUtils;
 import org.clau.pizzeriaassetsresourceserver.service.ErrorService;
 import org.clau.pizzeriaassetsresourceserver.util.Constant;
 import org.springframework.http.HttpHeaders;
@@ -15,16 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -36,81 +30,44 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> createResponseEntity(@Nullable Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
 
-		String path = extractPath(request);
-
+		boolean fatal = false;
 		String cause = body != null ? body.toString() : null;
 		String message = "See cause";
-		boolean fatal = false;
 
-		APIError error = errorService.create(cause, message, Constant.APP_NAME, path, fatal);
+		ResponseDTO response = buildResponse(cause, message, request, fatal, statusCode.value());
 
-		ResponseDTO response = ResponseDTO.builder()
-				.apiError(error)
-				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-				.build();
-
-		return new ResponseEntity<>(response, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(response, headers, statusCode);
 	}
 
 	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<ResponseDTO> unknownException(Exception ex, WebRequest request) {
+	protected ResponseEntity<ResponseDTO> handleUnknownException(Exception ex, WebRequest request) {
 
-		String path = extractPath(request);
-
+		boolean fatal = true;
 		String cause = ex.getClass().getSimpleName();
 		String message = ex.getMessage();
-		boolean fatal = true;
 
-		APIError error = errorService.create(cause, message, Constant.APP_NAME, path, fatal);
-
-		ResponseDTO response = ResponseDTO.builder()
-				.apiError(error)
-				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-				.build();
-
+		ResponseDTO response = buildResponse(cause, message, request, fatal, HttpStatus.INTERNAL_SERVER_ERROR.value());
 		ExceptionLogger.log(ex, log, response);
+
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
 
-	private String extractPath(WebRequest request) {
+	private ResponseDTO buildResponse(String cause, String message, WebRequest request, boolean fatal, int status) {
+
 		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-		return ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
-	}
+		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(
-			MethodArgumentNotValidException ex,
-			HttpHeaders headers,
-			HttpStatusCode status,
-			WebRequest request
-	) {
+		APIError error = errorService.create(
+				cause,
+				message,
+				Constant.APP_NAME,
+				path,
+				fatal
+		);
 
-		String path = extractPath(request);
-		String exSimpleName = ex.getClass().getSimpleName();
-		List<String> errorMessages = new ArrayList<>();
-
-		ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
-			errorMessages.add(String.format("Field: %s - Error: %s - Value: %s",
-					fieldError.getField(),
-					fieldError.getDefaultMessage(),
-					fieldError.getRejectedValue()));
-		});
-
-		ResponseDTO response = ResponseDTO.builder()
-				.apiError(APIError.builder()
-						.withId(UUID.randomUUID().getMostSignificantBits())
-						.withCreatedOn(TimeUtils.getNowAccountingDST())
-						.withCause(exSimpleName)
-						.withMessage(String.valueOf(errorMessages))
-						.withOrigin(Constant.APP_NAME)
-						.withPath(path)
-						.withLogged(false)
-						.withFatal(false)
-						.build())
-				.status(HttpStatus.BAD_REQUEST.value())
+		return ResponseDTO.builder()
+				.apiError(error)
+				.status(status)
 				.build();
-
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
 }

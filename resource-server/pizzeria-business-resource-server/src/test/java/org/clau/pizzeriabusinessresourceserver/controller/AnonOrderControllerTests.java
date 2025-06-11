@@ -5,9 +5,8 @@ import org.clau.apiutils.constant.Route;
 import org.clau.apiutils.constant.ValidationResponses;
 import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.pizzeriabusinessassets.dto.CartItemDTO;
+import org.clau.pizzeriabusinessassets.dto.CreatedOrderDTO;
 import org.clau.pizzeriabusinessassets.dto.NewAnonOrderDTO;
-import org.clau.pizzeriabusinessassets.model.CartItem;
-import org.clau.pizzeriabusinessassets.model.Order;
 import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
 import org.junit.jupiter.api.Test;
@@ -79,36 +78,42 @@ public class AnonOrderControllerTests {
 		// Assert
 
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-		Order actual = objectMapper.readValue(response.getContentAsString(), Order.class);
+		CreatedOrderDTO actual = objectMapper.readValue(response.getContentAsString(), CreatedOrderDTO.class);
 
-		assertThat(actual.getAnonCustomerName()).isEqualTo(expected.customer().anonCustomerName());
-		assertThat(actual.getAnonCustomerContactNumber()).isEqualTo(expected.customer().anonCustomerContactNumber());
-		assertThat(actual.getAnonCustomerEmail()).isEqualTo(expected.customer().anonCustomerEmail());
+		assertThat(actual.id()).isNotZero();
 
-		assertThat(actual.getAddress()).isEqualTo(expected.address());
+		assertThat(actual.formattedCreatedOn()).isNotNull();
 
-		assertThat(actual.getOrderDetails().getPaymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
-		assertThat(actual.getOrderDetails().getDeliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
-		assertThat(actual.getOrderDetails().getStorePickUp()).isFalse();
-		assertThat(actual.getOrderDetails().getBillToChange()).isEqualTo(expected.orderDetails().billToChange());
-		assertThat(actual.getOrderDetails().getChangeToGive()).isEqualTo(expected.orderDetails().billToChange() - expected.cart().totalCost());
-		assertThat(actual.getOrderDetails().getComment()).isNull();
+		assertThat(actual.customer()).isEqualTo(expected.customer());
 
-		assertThat(actual.getCart().getTotalQuantity()).isEqualTo(expected.cart().totalQuantity());
-		assertThat(actual.getCart().getTotalCost()).isEqualTo(expected.cart().totalCost());
-		assertThat(actual.getCart().getTotalCostOffers()).isZero();
+		assertThat(actual.address()).isEqualTo(expected.address());
 
-		assertThat(actual.getCart().getCartItems().size()).isEqualTo(expected.cart().cartItems().size());
+		assertThat(actual.orderDetails().paymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
+		assertThat(actual.orderDetails().deliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
+		assertThat(actual.orderDetails().comment()).isEqualTo(expected.orderDetails().comment());
+		assertThat(actual.orderDetails().billToChange()).isEqualTo(expected.orderDetails().billToChange());
+		assertThat(actual.orderDetails().storePickUp()).isEqualTo(expected.orderDetails().storePickUp());
+		assertThat(actual.orderDetails().changeToGive()).isNotZero();
 
-		CartItem actualItem = actual.getCart().getCartItems().getFirst();
-		CartItemDTO expectedItem = expected.cart().cartItems().getFirst();
+		assertThat(actual.cart().totalCost()).isEqualTo(expected.cart().totalCost());
+		assertThat(actual.cart().totalQuantity()).isEqualTo(expected.cart().totalQuantity());
+		assertThat(actual.cart().totalCostOffers()).isEqualTo(expected.cart().totalCostOffers());
 
-		assertThat(actualItem.getName()).isEqualTo(expectedItem.name());
-		assertThat(actualItem.getDescription()).isEqualTo(expectedItem.description());
-		assertThat(actualItem.getFormats()).isEqualTo(expectedItem.formats());
-		assertThat(actualItem.getType()).isEqualTo(expectedItem.type());
-		assertThat(actualItem.getQuantity()).isEqualTo(expectedItem.quantity());
-		assertThat(actualItem.getPrice()).isEqualTo(expectedItem.price());
+		List<CartItemDTO> actualItems = actual.cart()
+				.cartItems()
+				.stream()
+				.map(item -> new CartItemDTO(
+						null,
+						item.type(),
+						item.price(),
+						item.quantity(),
+						item.name(),
+						item.description(),
+						item.formats()
+				))
+				.toList();
+
+		assertThat(actualItems).isEqualTo(expected.cart().cartItems());
 	}
 
 	@Test

@@ -1,0 +1,65 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+
+spring:
+  application:
+    name: "pizzeria-backend-client"
+  security:
+    oauth2:
+      client:
+        registration:
+          pizzeria-client:
+            provider: spring
+            client-id: pizzeria-client
+            client-secret: pizzeria
+            client-name: pizzeria-client
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
+            scope: openid, user, order
+        provider:
+          spring:
+            issuer-uri: http://localhost:9000
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: userinfo
+            uri: http://localhost:9000
+            predicates:
+              - Path=/userinfo
+            filters:
+              - TokenRelay=
+          - id: user-api
+            uri: http://localhost:8082
+            predicates:
+              - Path=/api/v1/user/**
+            filters:
+              - TokenRelay=
+          - id: anon-user-api
+            uri: http://localhost:8082
+            predicates:
+              - Path=/api/v1/anon/**
+          - id: user-order-api
+            uri: http://localhost:8083
+            predicates:
+              - Path=/api/v1/order/**
+            filters:
+              - TokenRelay=
+          - id: anon-user-order-api
+            uri: http://localhost:8082
+            predicates:
+              - Path=/api/v1/anon/order/**
+          - id: resource
+            uri: http://localhost:8081
+            predicates:
+              - Path=/api/v1/resource/**
+
+angular-app:
+  base-uri: http://127.0.0.1:4200

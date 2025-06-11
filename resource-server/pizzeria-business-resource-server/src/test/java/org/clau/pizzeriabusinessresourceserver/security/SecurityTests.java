@@ -67,9 +67,9 @@ public class SecurityTests {
 
 		// Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
 		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
 		assertThat(responseObj.getApiError().getMessage()).isEqualTo("Access Denied");
 		assertThat(responseObj.getApiError().getCause()).isEqualTo("AuthorizationDeniedException");
 		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
