@@ -63,7 +63,7 @@ public class OrderControllerTests {
 
 		// Arrange
 
-		Long userId = 1L;
+		long userId = 1L;
 
 		// create JWT token
 		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
@@ -128,7 +128,7 @@ public class OrderControllerTests {
 
 		// Arrange
 
-		Long userId = 1L;
+		long userId = 1L;
 
 		// create JWT token
 		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
@@ -161,7 +161,7 @@ public class OrderControllerTests {
 
 		// Arrange
 
-		Long userId = 1L;
+		long userId = 1L;
 
 		// create JWT token
 		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
