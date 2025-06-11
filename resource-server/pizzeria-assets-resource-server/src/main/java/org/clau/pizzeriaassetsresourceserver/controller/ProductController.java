@@ -22,7 +22,7 @@ public class ProductController implements ProductControllerSwagger {
 
 	@GetMapping
 	public ResponseEntity<ProductListDTO> findAllByType(
-			@RequestParam String type,
+			@RequestParam(name = Route.PRODUCT_TYPE) String type,
 			@RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
 			@RequestParam(name = Route.PAGE_SIZE) Integer pageSize) {
 

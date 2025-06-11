@@ -14,10 +14,6 @@ public final class Route {
 
 	public static final String ALL = "/**";
 
-	// DOCS
-
-	public static final String DOCS = "/docs";
-
 	// ANON
 
 	public static final String ANON_BASE = "/anon";
@@ -45,10 +41,6 @@ public final class Route {
 	public static final String USER_BASE = "/user";
 
 	public static final String USER_ID = "/{userId}";
-	public static final String USER_ORDER = "/order";
-	public static final String USER_ADDRESS_ID = "/{addressId}";
-
-	public static final String USER_ADDRESS = "/address";
 
 	// ORDER
 
