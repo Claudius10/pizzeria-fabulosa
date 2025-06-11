@@ -49,6 +49,8 @@ import java.util.function.Function;
 
 import static org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer.authorizationServer;
 
+// https://github.com/spring-projects/spring-authorization-server/tree/main/samples
+
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 
