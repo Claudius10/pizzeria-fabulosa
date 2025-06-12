@@ -5,7 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.clau.pizzeriasecurityserver.security.jose.Jwks;
-import org.clau.pizzeriasecurityserver.security.service.impl.OidcUserInfoServiceImpl;
+import org.clau.pizzeriasecurityserver.service.impl.OidcUserInfoServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +14,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -95,11 +96,13 @@ public class AuthorizationServerConfig {
 	}
 
 	@Bean
-	public RegisteredClientRepository registeredClientRepository() {
+	public RegisteredClientRepository registeredClientRepository(PasswordEncoder bCrypt) {
+
+		String secret = bCrypt.encode("pizzeria");
 
 		RegisteredClient pizzeriaClient = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("pizzeria-client")
-				.clientSecret("{noop}pizzeria")
+				.clientSecret(secret)
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/pizzeria-client")

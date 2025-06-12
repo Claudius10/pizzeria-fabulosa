@@ -1,4 +1,4 @@
-package org.clau.pizzeriasecurityserver.web.exception;
+package org.clau.pizzeriasecurityserver.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.util.ExceptionLogger;
 import org.clau.apiutils.util.ServerUtils;
 import org.clau.pizzeriasecurityserver.util.Constant;
-import org.clau.pizzeriasecurityserver.web.service.ErrorService;
+import org.clau.pizzeriasecurityserver.service.ErrorService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;

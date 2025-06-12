@@ -1,10 +1,12 @@
-package org.clau.pizzeriasecurityserver.security.service.impl;
+package org.clau.pizzeriasecurityserver.service.impl;
+
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriasecurityserver.security.dao.UserRepository;
-import org.clau.pizzeriasecurityserver.security.service.OidcUserService;
+import org.clau.pizzeriasecurityserver.dao.UserRepository;
+import org.clau.pizzeriasecurityserver.service.OidcUserService;
 import org.clau.pizzeriauserassets.model.User;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.stereotype.Service;
@@ -18,11 +20,9 @@ public class OidcUserInfoServiceImpl implements OidcUserService {
 
 	private final UserRepository userRepository;
 
-	@Override
+	@Cacheable(value = "oidc-user-info", key = "#email")
 	public OidcUserInfo loadUser(String email) {
-
 		Optional<User> user = userRepository.findByEmail(email);
-
 		return user.map(this::createUserInfo).orElseThrow(() -> new UsernameNotFoundException(email));
 	}
 

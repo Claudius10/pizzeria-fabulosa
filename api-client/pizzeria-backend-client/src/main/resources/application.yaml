@@ -53,7 +53,7 @@ spring:
             filters:
               - TokenRelay=
           - id: anon-user-order-api
-            uri: http://localhost:8082
+            uri: http://localhost:8083
             predicates:
               - Path=/api/v1/anon/order/**
           - id: resource

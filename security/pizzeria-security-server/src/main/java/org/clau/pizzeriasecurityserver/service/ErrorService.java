@@ -1,4 +1,4 @@
-package org.clau.pizzeriasecurityserver.web.service;
+package org.clau.pizzeriasecurityserver.service;
 
 import org.clau.apiutils.model.APIError;
 

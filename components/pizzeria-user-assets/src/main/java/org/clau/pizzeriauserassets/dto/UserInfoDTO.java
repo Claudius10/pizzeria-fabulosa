@@ -18,13 +18,13 @@ public record UserInfoDTO(
 		String email,
 
 		@NotNull
-		Boolean emailVerified,
+		Boolean email_verified,
 
 		@NotBlank
-		String phoneNumber,
+		String phone_number,
 
 		@NotNull
-		Boolean phoneNumberVerified,
+		Boolean phone_number_verified,
 
 		@NotBlank
 		String address,
@@ -33,9 +33,9 @@ public record UserInfoDTO(
 		String locale,
 
 		@NotBlank
-		String zoneInfo,
+		String zoneinfo,
 
 		@NotBlank
-		String updatedAt
+		String updated_at
 ) {
 }

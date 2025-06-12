@@ -1,11 +1,11 @@
-package org.clau.pizzeriasecurityserver.web.service.impl;
+package org.clau.pizzeriasecurityserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.clau.apiutils.model.APIError;
 import org.clau.apiutils.util.TimeUtils;
-import org.clau.pizzeriasecurityserver.web.dao.ErrorRepository;
-import org.clau.pizzeriasecurityserver.web.service.ErrorService;
+import org.clau.pizzeriasecurityserver.dao.ErrorRepository;
+import org.clau.pizzeriasecurityserver.service.ErrorService;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor

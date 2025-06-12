@@ -1,4 +1,4 @@
-package org.clau.pizzeriasecurityserver.security.dao;
+package org.clau.pizzeriasecurityserver.dao;
 
 import org.clau.pizzeriauserassets.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

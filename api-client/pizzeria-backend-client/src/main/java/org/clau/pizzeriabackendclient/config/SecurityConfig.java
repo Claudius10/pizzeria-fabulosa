@@ -57,6 +57,7 @@ public class SecurityConfig {
 								.requestMatchers("/api/v1/docs.yaml").permitAll()
 								.requestMatchers("/api/v1/docs/**").permitAll()
 								.requestMatchers("/api/v1/resource/**").permitAll()
+								.requestMatchers("/api/v1/anon/**").permitAll()
 								.anyRequest().authenticated()
 				)
 				.csrf(csrf ->
@@ -67,7 +68,7 @@ public class SecurityConfig {
 				.oauth2Client(withDefaults())
 				.oauth2Login(oauth2Login ->
 						oauth2Login
-								.successHandler(new SimpleUrlAuthenticationSuccessHandler(angularBaseUri)))
+								.successHandler(new SimpleUrlAuthenticationSuccessHandler("/logged-in")))
 				.logout(logout ->
 						logout
 								.addLogoutHandler(logoutHandler(cookieCsrfTokenRepository))

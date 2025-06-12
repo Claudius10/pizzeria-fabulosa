@@ -1,8 +1,8 @@
-package org.clau.pizzeriasecurityserver.security.service.impl;
+package org.clau.pizzeriasecurityserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriasecurityserver.security.dao.UserRepository;
+import org.clau.pizzeriasecurityserver.dao.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
