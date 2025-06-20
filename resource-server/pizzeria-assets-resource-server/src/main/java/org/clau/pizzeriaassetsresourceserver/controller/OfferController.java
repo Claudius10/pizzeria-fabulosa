@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(Route.API + Route.V1 + Route.RESOURCE + Route.OFFER_BASE)
 public class OfferController implements OfferControllerSwagger {
 
-	private final OfferService offerService;
+   private final OfferService offerService;
 
-	@GetMapping
-	public ResponseEntity<OfferListDTO> findAll() {
-		return ResponseEntity.ok(new OfferListDTO(offerService.findAll()));
-	}
+   @GetMapping
+   public ResponseEntity<OfferListDTO> findAll() {
+	  return ResponseEntity.ok(new OfferListDTO(offerService.findAll()));
+   }
 }

@@ -11,8 +11,8 @@ import org.clau.apiutils.model.APIError;
 @ToString
 public class ResponseDTO {
 
-	@NotNull
-	private final APIError apiError;
+   @NotNull
+   private final APIError apiError;
 
-	private final int status;
+   private final int status;
 }

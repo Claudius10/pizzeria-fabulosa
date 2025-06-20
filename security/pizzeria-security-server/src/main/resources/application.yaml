@@ -1,8 +1,12 @@
 server:
   port: 9000
 
-angular-app:
-  base-uri: http://127.0.0.1:4200
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
 
 spring:
 
@@ -32,9 +36,5 @@ spring:
     hibernate:
       ddl-auto: update
 
-logging:
-  level:
-    root: INFO
-    org.springframework.web: INFO
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
+angular-app:
+  base-uri: http://127.0.0.1:4200

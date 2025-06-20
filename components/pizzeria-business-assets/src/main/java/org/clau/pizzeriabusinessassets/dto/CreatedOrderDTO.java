@@ -4,20 +4,20 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreatedOrderDTO(
 
-		@NotNull
-		Long id,
+   @NotNull
+   Long id,
 
-		@NotNull
-		String formattedCreatedOn,
+   @NotNull
+   String formattedCreatedOn,
 
-		CustomerDTO customer,
+   CustomerDTO customer,
 
-		@NotNull
-		String address,
+   @NotNull
+   String address,
 
-		@NotNull
-		OrderDetailsDTO orderDetails,
+   @NotNull
+   OrderDetailsDTO orderDetails,
 
-		@NotNull
-		CartDTO cart) {
+   @NotNull
+   CartDTO cart) {
 }

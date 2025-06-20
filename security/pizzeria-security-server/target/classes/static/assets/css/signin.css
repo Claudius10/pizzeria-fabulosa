@@ -5,9 +5,16 @@ body {
 
 body {
     display: flex;
-    align-items: start;
-    padding-top: 100px;
+    justify-content: center;
+    padding-top: 25px;
     background-color: #f5f5f5;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-style: italic;
+    font-size: 3rem;
 }
 
 .form-signin {
@@ -15,18 +22,17 @@ body {
     padding: 15px;
 }
 
-.form-signin .form-floating:focus-within {
-    z-index: 2;
+.form-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
-.form-signin input[type="username"] {
-    margin-bottom: -1px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
+.primary-color {
+    color: #ffc107;
 }
 
-.form-signin input[type="password"] {
-    margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+.form-control:focus {
+    border-color: #ffc107;
+    box-shadow: none;
 }

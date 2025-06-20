@@ -17,15 +17,15 @@ import java.util.List;
 @Configuration(proxyBeanMethods = false)
 public class ValidatorConfig {
 
-	@Bean
-	CompositeValidator<OrderValidatorInput> newOrderValidator() {
-		NewOrderValidator newOrderValidator = new NewOrderValidator();
-		newOrderValidator.setValidators(List.of(new CartValidator(), new OrderDetailsValidator()));
-		return newOrderValidator;
-	}
+   @Bean
+   CompositeValidator<OrderValidatorInput> newOrderValidator() {
+	  NewOrderValidator newOrderValidator = new NewOrderValidator();
+	  newOrderValidator.setValidators(List.of(new CartValidator(), new OrderDetailsValidator()));
+	  return newOrderValidator;
+   }
 
-	@Bean
-	Validator<LocalDateTime> deleteOrderValidator() {
-		return new DeleteTimeLimitValidator();
-	}
+   @Bean
+   Validator<LocalDateTime> deleteOrderValidator() {
+	  return new DeleteTimeLimitValidator();
+   }
 }

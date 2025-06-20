@@ -22,24 +22,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TestJwtHelperService {
 
-	private final JWTKeys keys;
+   private final JWTKeys keys;
 
-	private JwtEncoder jwtEncoder;
+   private JwtEncoder jwtEncoder;
 
-	@PostConstruct
-	private void buildEncoder() {
-		JWK jwk = new RSAKey.Builder(keys.getPublicKey()).privateKey(keys.getPrivateKey()).build();
-		JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-		jwtEncoder = new NimbusJwtEncoder(jwks);
-	}
+   @PostConstruct
+   private void buildEncoder() {
+	  JWK jwk = new RSAKey.Builder(keys.getPublicKey()).privateKey(keys.getPrivateKey()).build();
+	  JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+	  jwtEncoder = new NimbusJwtEncoder(jwks);
+   }
 
-	public String generateAccessToken(List<String> scopes) {
-		JwtClaimsSet claims = JwtClaimsSet.builder()
-				.issuedAt(Instant.now())
-				.issuer("http://192.168.1.128:9000")
-				.expiresAt(Instant.now().plus(1, ChronoUnit.MINUTES))
-				.claim("scope", String.join(" ", scopes))
-				.build();
-		return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-	}
+   public String generateAccessToken(List<String> scopes) {
+	  JwtClaimsSet claims = JwtClaimsSet.builder()
+		 .issuedAt(Instant.now())
+		 .issuer("http://192.168.1.128:9000")
+		 .expiresAt(Instant.now().plus(1, ChronoUnit.MINUTES))
+		 .claim("scope", String.join(" ", scopes))
+		 .build();
+	  return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+   }
 }

@@ -13,16 +13,16 @@ import org.springframework.http.ResponseEntity;
 @Tag(name = "Offer API")
 public interface OfferControllerSwagger {
 
-	@Operation(operationId = "findAll", summary = "Returns all offers")
-	@ApiResponse(
-			responseCode = Response.OK,
-			description = "Returns offer list",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = OfferListDTO.class))
-	)
-	@ApiResponse(
-			responseCode = Response.INTERNAL_SERVER_ERROR,
-			description = "Unexpected exception occurred",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
-	)
-	ResponseEntity<OfferListDTO> findAll();
+   @Operation(operationId = "findAll", summary = "Returns all offers")
+   @ApiResponse(
+	  responseCode = Response.OK,
+	  description = "Returns offer list",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = OfferListDTO.class))
+   )
+   @ApiResponse(
+	  responseCode = Response.INTERNAL_SERVER_ERROR,
+	  description = "Unexpected exception occurred",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
+   )
+   ResponseEntity<OfferListDTO> findAll();
 }

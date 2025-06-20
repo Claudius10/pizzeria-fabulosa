@@ -7,7 +7,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.session.SessionRegistry;
@@ -30,60 +29,63 @@ import java.util.Collections;
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
-	@Value("${angular-app.base-uri}")
-	private String angularBaseUri;
+   @Value("${angular-app.base-uri}")
+   private String angularBaseUri;
 
-	@Bean
-	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+   @Bean
+   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-		http
-				.cors(cors ->
-						cors.configurationSource(corsConfigurationSource()))
-				.authorizeHttpRequests(authorize ->
-						authorize.anyRequest().authenticated())
-				.formLogin(Customizer.withDefaults());
+	  http
+		 .cors(cors ->
+			cors.configurationSource(corsConfigurationSource()))
+		 .authorizeHttpRequests(authorize ->
+			authorize
+			   .requestMatchers("/assets/**", "/login").permitAll()
+			   .anyRequest().authenticated())
+		 .formLogin(login ->
+			login.loginPage("/login"));
 
-		return http.build();
-	}
+	  return http.build();
+   }
 
-	@Bean
-	PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(6);
-	}
+   @Bean
+   PasswordEncoder passwordEncoder() {
+	  return new BCryptPasswordEncoder(6);
+   }
 
-	@Bean
-	AuthenticationManager authManager(UserDetailsService userDetailsService, PasswordEncoder bCrypt) {
-		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
-		authenticationProvider.setPasswordEncoder(bCrypt);
-		authenticationProvider.setHideUserNotFoundExceptions(false);
-		return new ProviderManager(authenticationProvider);
-	}
+   @Bean
+   AuthenticationManager authManager(UserDetailsService userDetailsService, PasswordEncoder bCrypt) {
+	  DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
+	  authenticationProvider.setPasswordEncoder(bCrypt);
+	  authenticationProvider.setHideUserNotFoundExceptions(false);
+	  return new ProviderManager(authenticationProvider);
+   }
 
-	@Bean
-	SessionRegistry sessionRegistry() {
-		// If OpenID Connect 1.0 is enabled, a SessionRegistry instance is used to track authenticated sessions.
-		return new SessionRegistryImpl();
-	}
+   @Bean
+   SessionRegistry sessionRegistry() {
+	  // If OpenID Connect 1.0 is enabled, a SessionRegistry instance is used to track authenticated sessions.
+	  return new SessionRegistryImpl();
+   }
 
-	@Bean
-	HttpSessionEventPublisher httpSessionEventPublisher() {
-		// HttpSessionEventPublisher is responsible for notifying SessionRegistryImpl of session lifecycle events,
-		// for example, SessionDestroyedEvent, to provide the ability to remove the SessionInformation instance.
-		return new HttpSessionEventPublisher();
-	}
+   @Bean
+   HttpSessionEventPublisher httpSessionEventPublisher() {
+	  // HttpSessionEventPublisher is responsible for notifying SessionRegistryImpl of session lifecycle events,
+	  // for example, SessionDestroyedEvent, to provide the ability to remove the SessionInformation instance.
+	  return new HttpSessionEventPublisher();
+   }
 
-	private CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Collections.singletonList(angularBaseUri));
+   private CorsConfigurationSource corsConfigurationSource() {
+	  CorsConfiguration config = new CorsConfiguration();
+	  config.setAllowedOrigins(Collections.singletonList(angularBaseUri));
 
-		config.addAllowedHeader("X-XSRF-TOKEN");
-		config.addAllowedHeader(HttpHeaders.CONTENT_TYPE);
+	  config.addAllowedHeader("X-XSRF-TOKEN");
+	  config.addAllowedHeader(HttpHeaders.CONTENT_TYPE);
 
-		config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"));
-		config.setAllowCredentials(true);
+	  config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"));
+	  config.setAllowCredentials(true);
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config);
-		return source;
-	}
+	  UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	  source.registerCorsConfiguration("/**", config);
+	  return source;
+   }
 }

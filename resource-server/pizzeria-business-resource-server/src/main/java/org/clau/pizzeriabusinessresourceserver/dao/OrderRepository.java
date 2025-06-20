@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-	Page<Order> findAllByUserId(Long userId, Pageable pageable);
+   Page<Order> findAllByUserId(Long userId, Pageable pageable);
 
-	Optional<CreatedOnProjection> findCreatedOnById(Long orderId);
+   Optional<CreatedOnProjection> findCreatedOnById(Long orderId);
 }

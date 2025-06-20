@@ -17,13 +17,13 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = IntegerLengthValidator.class)
 public @interface IntegerLength {
-	String message() default "InvalidIntegerValue";
+   String message() default "InvalidIntegerValue";
 
-	Class<?>[] groups() default {};
+   Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+   Class<? extends Payload>[] payload() default {};
 
-	int min();
+   int min();
 
-	int max();
+   int max();
 }

@@ -5,10 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
-@EntityScan(basePackages = {"org.clau.pizzeriastoreassets.model", "org.clau.pizzeriabusinessassets.model", "org.clau.apiutils.model"})
+@EntityScan(basePackages = {"org.clau.pizzeriastoreassets.model", "org.clau.pizzeriabusinessassets.model", "org.clau.pizzeriauserassets.model", "org.clau.apiutils.model"})
 public class PizzeriaAssetsResource {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PizzeriaAssetsResource.class, args);
-	}
+   public static void main(String[] args) {
+	  SpringApplication.run(PizzeriaAssetsResource.class, args);
+   }
 }

@@ -17,26 +17,26 @@ import java.util.Map;
 @Getter
 public class Offer {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "offer_generator")
-	@SequenceGenerator(name = "offer_generator", sequenceName = "offer_seq", allocationSize = 1)
-	private Long id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "offer_generator")
+   @SequenceGenerator(name = "offer_generator", sequenceName = "offer_seq", allocationSize = 1)
+   private Long id;
 
-	@NotNull
-	private String image;
+   @NotNull
+   private String image;
 
-	@NotNull
-	@Type(JsonType.class)
-	@Column(columnDefinition = "json")
-	private Map<String, String> name; // <"es":"texto", "en":"text">
+   @NotNull
+   @Type(JsonType.class)
+   @Column(columnDefinition = "json")
+   private Map<String, String> name; // <"es":"texto", "en":"text">
 
-	@NotNull
-	@Type(JsonType.class)
-	@Column(columnDefinition = "json")
-	private Map<String, String> description;
+   @NotNull
+   @Type(JsonType.class)
+   @Column(columnDefinition = "json")
+   private Map<String, String> description;
 
-	@NotNull
-	@Type(JsonType.class)
-	@Column(columnDefinition = "json")
-	private Map<String, String> caveat;
+   @NotNull
+   @Type(JsonType.class)
+   @Column(columnDefinition = "json")
+   private Map<String, String> caveat;
 }

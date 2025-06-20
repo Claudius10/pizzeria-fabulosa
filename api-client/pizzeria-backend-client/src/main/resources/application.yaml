@@ -36,30 +36,26 @@ spring:
               - Path=/userinfo
             filters:
               - TokenRelay=
-          - id: user-api
+          - id: resource
+            uri: http://localhost:8081
+            predicates:
+              - Path=/api/v1/resource/**
+          - id: anon
+            uri: http://localhost:8081
+            predicates:
+              - Path=/api/v1/anon/**
+          - id: user-account-api
             uri: http://localhost:8082
             predicates:
               - Path=/api/v1/user/**
             filters:
               - TokenRelay=
-          - id: anon-user-api
-            uri: http://localhost:8082
-            predicates:
-              - Path=/api/v1/anon/**
           - id: user-order-api
             uri: http://localhost:8083
             predicates:
               - Path=/api/v1/order/**
             filters:
               - TokenRelay=
-          - id: anon-user-order-api
-            uri: http://localhost:8083
-            predicates:
-              - Path=/api/v1/anon/order/**
-          - id: resource
-            uri: http://localhost:8081
-            predicates:
-              - Path=/api/v1/resource/**
 
 angular-app:
   base-uri: http://127.0.0.1:4200

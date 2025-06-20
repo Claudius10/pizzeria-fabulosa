@@ -18,13 +18,13 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = DoubleLengthNullableValidator.class)
 @Documented
 public @interface DoubleLengthNullable {
-	String message() default "InvalidDoubleValue";
+   String message() default "InvalidDoubleValue";
 
-	Class<?>[] groups() default {};
+   Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+   Class<? extends Payload>[] payload() default {};
 
-	double min();
+   double min();
 
-	double max();
+   double max();
 }

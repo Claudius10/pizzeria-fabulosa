@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(Route.API + Route.V1 + Route.RESOURCE + Route.STORE_BASE)
 public class StoreController implements StoreControllerSwagger {
 
-	private final StoreService storeService;
+   private final StoreService storeService;
 
-	@GetMapping
-	public ResponseEntity<StoreListDTO> findAll() {
-		return ResponseEntity.ok(new StoreListDTO(storeService.findAll()));
-	}
+   @GetMapping
+   public ResponseEntity<StoreListDTO> findAll() {
+	  return ResponseEntity.ok(new StoreListDTO(storeService.findAll()));
+   }
 }

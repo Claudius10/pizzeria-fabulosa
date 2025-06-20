@@ -9,15 +9,15 @@ import java.util.Optional;
 
 public interface OrderService {
 
-	Optional<Order> findById(Long orderId);
+   Optional<Order> findById(Long orderId);
 
-	Order create(Long userId, NewUserOrderDTO newUserOrder);
+   Order create(Long userId, NewUserOrderDTO newUserOrder);
 
-	void deleteById(Long orderId);
+   void deleteById(Long orderId);
 
-	Page<Order> findSummary(Long userId, int size, int page);
+   Page<Order> findSummary(Long userId, int size, int page);
 
-	// for internal use only
+   // for internal use only
 
-	Optional<CreatedOnProjection> findCreatedOnById(Long orderId);
+   Optional<CreatedOnProjection> findCreatedOnById(Long orderId);
 }

@@ -9,26 +9,26 @@ import org.clau.pizzeriabusinessassets.validation.order.Validator;
 
 public class OrderDetailsValidator implements Validator<OrderValidatorInput> {
 
-	public ValidationResult validate(OrderValidatorInput order) {
+   public ValidationResult validate(OrderValidatorInput order) {
 
-		CartDTO cart = order.cart();
-		OrderDetailsDTO orderDetails = order.orderDetails();
-		Double billToChange = orderDetails.billToChange() == null ? 0 : orderDetails.billToChange();
-		Double totalCost = cart.totalCost();
-		Double totalCostOffers = cart.totalCostOffers() == null ? 0 : cart.totalCostOffers();
+	  CartDTO cart = order.cart();
+	  OrderDetailsDTO orderDetails = order.orderDetails();
+	  Double billToChange = orderDetails.billToChange() == null ? 0 : orderDetails.billToChange();
+	  Double totalCost = cart.totalCost();
+	  Double totalCostOffers = cart.totalCostOffers() == null ? 0 : cart.totalCostOffers();
 
-		if (!isChangeRequestedValid(billToChange, totalCostOffers, totalCost)) {
-			return new ValidationResult(ValidationResponses.ORDER_DETAILS_BILL, false);
-		}
+	  if (!isChangeRequestedValid(billToChange, totalCostOffers, totalCost)) {
+		 return new ValidationResult(ValidationResponses.ORDER_DETAILS_BILL, false);
+	  }
 
-		return new ValidationResult(null, true);
-	}
+	  return new ValidationResult(null, true);
+   }
 
-	// changeRequested > totalCostAfterOffers || changeRequested > totalCost
-	private boolean isChangeRequestedValid(Double billToChange, Double totalCostAfterOffers, Double totalCost) {
-		if (billToChange == null || billToChange == 0) {
-			return true;
-		}
-		return (totalCostAfterOffers <= 0 || billToChange >= totalCostAfterOffers) && (totalCostAfterOffers != 0 || billToChange >= totalCost);
-	}
+   // changeRequested > totalCostAfterOffers || changeRequested > totalCost
+   private boolean isChangeRequestedValid(Double billToChange, Double totalCostAfterOffers, Double totalCost) {
+	  if (billToChange == null || billToChange == 0) {
+		 return true;
+	  }
+	  return (totalCostAfterOffers <= 0 || billToChange >= totalCostAfterOffers) && (totalCostAfterOffers != 0 || billToChange >= totalCost);
+   }
 }

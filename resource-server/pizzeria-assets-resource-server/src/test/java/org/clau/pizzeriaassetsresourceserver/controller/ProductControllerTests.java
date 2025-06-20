@@ -33,56 +33,56 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class ProductControllerTests {
 
-	private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.PRODUCT_BASE;
+   private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.PRODUCT_BASE;
 
-	@Autowired
-	private MockMvc mockMvc;
+   @Autowired
+   private MockMvc mockMvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+   @Autowired
+   private ObjectMapper objectMapper;
 
-	@Autowired
-	private ProductRepository productRepository;
+   @Autowired
+   private ProductRepository productRepository;
 
-	@BeforeAll
-	public void init() {
-		Product product = Product.builder()
-				.withType("pizza")
-				.withImage("image1")
-				.withName(Map.of("en", "Gluten Free"))
-				.withDescription(Map.of("en", List.of("Bacon", "Cheese")))
-				.withFormats(Map.of("m", Map.of("en", "Medium", "es", "Mediana")))
-				.withPrices(Map.of("m", 13.30))
-				.withAllergens(Map.of("en", List.of("Lactose")))
-				.build();
-		productRepository.save(product);
-	}
+   @BeforeAll
+   public void init() {
+	  Product product = Product.builder()
+		 .withType("pizza")
+		 .withImage("image1")
+		 .withName(Map.of("en", "Gluten Free"))
+		 .withDescription(Map.of("en", List.of("Bacon", "Cheese")))
+		 .withFormats(Map.of("m", Map.of("en", "Medium", "es", "Mediana")))
+		 .withPrices(Map.of("m", 13.30))
+		 .withAllergens(Map.of("en", List.of("Lactose")))
+		 .build();
+	  productRepository.save(product);
+   }
 
-	@Test
-	void givenGetProductApiCall_thenReturnResource() throws Exception {
+   @Test
+   void givenGetProductApiCall_thenReturnResource() throws Exception {
 
-		// Act
+	  // Act
 
-		// get api call to find product list
-		MockHttpServletResponse response = mockMvc.perform(get(path + "?type=pizza&pageNumber=0&pageSize=5"))
-				.andReturn().getResponse();
+	  // get api call to find product list
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?type=pizza&pageNumber=0&pageSize=5"))
+		 .andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-		// can't directly deserialize the Page/PageImpl or Slice/SliceImpl, so got to use the DTO
-		ProductListDTO actual = objectMapper.readValue(response.getContentAsString(), ProductListDTO.class);
+	  // can't directly deserialize the Page/PageImpl or Slice/SliceImpl, so got to use the DTO
+	  ProductListDTO actual = objectMapper.readValue(response.getContentAsString(), ProductListDTO.class);
 
-		assertThat(actual.size()).isEqualTo(5);
-		assertThat(actual.number()).isEqualTo(0);
-		assertThat(actual.totalElements()).isEqualTo(1);
-		assertThat(actual.last()).isEqualTo(true);
-		assertThat(actual.content().getFirst().getId()).isEqualTo(1L);
-		assertThat(actual.content().getFirst().getType()).isEqualTo("pizza");
-		assertThat(actual.content().getFirst().getImage()).isEqualTo("image1");
-		assertThat(actual.content().getFirst().getName().get("en")).isEqualTo("Gluten Free");
-		assertThat(actual.content().getFirst().getDescription().get("en")).isEqualTo(List.of("Bacon", "Cheese"));
-		assertThat(actual.content().getFirst().getPrices().get("m")).isEqualTo(13.30);
-	}
+	  assertThat(actual.size()).isEqualTo(5);
+	  assertThat(actual.number()).isEqualTo(0);
+	  assertThat(actual.totalElements()).isEqualTo(1);
+	  assertThat(actual.last()).isEqualTo(true);
+	  assertThat(actual.content().getFirst().getId()).isEqualTo(1L);
+	  assertThat(actual.content().getFirst().getType()).isEqualTo("pizza");
+	  assertThat(actual.content().getFirst().getImage()).isEqualTo("image1");
+	  assertThat(actual.content().getFirst().getName().get("en")).isEqualTo("Gluten Free");
+	  assertThat(actual.content().getFirst().getDescription().get("en")).isEqualTo(List.of("Bacon", "Cheese"));
+	  assertThat(actual.content().getFirst().getPrices().get("m")).isEqualTo(13.30);
+   }
 }

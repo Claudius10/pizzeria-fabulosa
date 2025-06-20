@@ -18,24 +18,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(Route.API + Route.V1 + Route.RESOURCE + Route.PRODUCT_BASE)
 public class ProductController implements ProductControllerSwagger {
 
-	private final ProductService productService;
+   private final ProductService productService;
 
-	@GetMapping
-	public ResponseEntity<ProductListDTO> findAllByType(
-			@RequestParam(name = Route.PRODUCT_TYPE) String type,
-			@RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
-			@RequestParam(name = Route.PAGE_SIZE) Integer pageSize) {
+   @GetMapping
+   public ResponseEntity<ProductListDTO> findAllByType(
+	  @RequestParam(name = Route.PRODUCT_TYPE) String type,
+	  @RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
+	  @RequestParam(name = Route.PAGE_SIZE) Integer pageSize) {
 
-		Page<Product> allByType = productService.findAllByType(type, pageSize, pageNumber);
+	  Page<Product> allByType = productService.findAllByType(type, pageSize, pageNumber);
 
-		ProductListDTO productListDTO = new ProductListDTO(
-				allByType.getContent(),
-				allByType.getNumber(),
-				allByType.getSize(),
-				allByType.getTotalElements(),
-				allByType.isLast()
-		);
+	  ProductListDTO productListDTO = new ProductListDTO(
+		 allByType.getContent(),
+		 allByType.getNumber(),
+		 allByType.getSize(),
+		 allByType.getTotalElements(),
+		 allByType.isLast()
+	  );
 
-		return ResponseEntity.ok(productListDTO);
-	}
+	  return ResponseEntity.ok(productListDTO);
+   }
 }

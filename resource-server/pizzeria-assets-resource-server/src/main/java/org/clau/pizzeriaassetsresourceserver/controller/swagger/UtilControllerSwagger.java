@@ -14,16 +14,16 @@ import java.time.LocalDateTime;
 @Tag(name = "Util API")
 public interface UtilControllerSwagger {
 
-	@Operation(operationId = "getNowAccountingDST", summary = "Returns the local date and time accounting for DST")
-	@ApiResponse(
-			responseCode = Response.OK,
-			description = "Returns the local date and time accounting for DST",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = LocalDateTime.class))
-	)
-	@ApiResponse(
-			responseCode = Response.INTERNAL_SERVER_ERROR,
-			description = "Unexpected exception occurred",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
-	)
-	ResponseEntity<LocalDateTime> getNowAccountingDST();
+   @Operation(operationId = "getNowAccountingDST", summary = "Returns the local date and time accounting for DST")
+   @ApiResponse(
+	  responseCode = Response.OK,
+	  description = "Returns the local date and time accounting for DST",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = LocalDateTime.class))
+   )
+   @ApiResponse(
+	  responseCode = Response.INTERNAL_SERVER_ERROR,
+	  description = "Unexpected exception occurred",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
+   )
+   ResponseEntity<LocalDateTime> getNowAccountingDST();
 }

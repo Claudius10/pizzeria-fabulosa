@@ -8,19 +8,19 @@ import org.clau.apiutils.constant.ValidationRules;
 
 public record NewAnonOrderDTO(
 
-		@NotNull
-		@Valid
-		CustomerDTO customer,
+   @NotNull
+   @Valid
+   CustomerDTO customer,
 
-		@Pattern(regexp = ValidationRules.COMPLEX_LETTERS_NUMBERS_MAX_150_REQUIRED, message = ValidationResponses.ADDRESS_INVALID)
-		String address,
+   @Pattern(regexp = ValidationRules.COMPLEX_LETTERS_NUMBERS_MAX_150_REQUIRED, message = ValidationResponses.ADDRESS_INVALID)
+   String address,
 
-		@NotNull
-		@Valid
-		OrderDetailsDTO orderDetails,
+   @NotNull
+   @Valid
+   OrderDetailsDTO orderDetails,
 
-		@NotNull
-		@Valid
-		CartDTO cart
+   @NotNull
+   @Valid
+   CartDTO cart
 ) {
 }

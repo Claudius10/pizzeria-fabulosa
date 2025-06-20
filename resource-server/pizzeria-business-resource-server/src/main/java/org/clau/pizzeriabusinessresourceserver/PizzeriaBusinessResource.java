@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 @EntityScan(basePackages = {"org.clau.pizzeriabusinessassets.model", "org.clau.apiutils.model"})
 public class PizzeriaBusinessResource {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PizzeriaBusinessResource.class, args);
-	}
+   public static void main(String[] args) {
+	  SpringApplication.run(PizzeriaBusinessResource.class, args);
+   }
 
 }

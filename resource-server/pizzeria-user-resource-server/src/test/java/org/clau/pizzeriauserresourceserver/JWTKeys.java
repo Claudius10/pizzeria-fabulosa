@@ -13,24 +13,24 @@ import java.security.interfaces.RSAPublicKey;
 @RequiredArgsConstructor
 public class JWTKeys {
 
-	private KeyPair keyPair;
+   private KeyPair keyPair;
 
-	@PostConstruct
-	private void init() {
-		try {
-			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-			keyPairGenerator.initialize(3072);
-			keyPair = keyPairGenerator.generateKeyPair();
-		} catch (Exception e) {
-			throw new IllegalStateException();
-		}
-	}
+   @PostConstruct
+   private void init() {
+	  try {
+		 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+		 keyPairGenerator.initialize(3072);
+		 keyPair = keyPairGenerator.generateKeyPair();
+	  } catch (Exception e) {
+		 throw new IllegalStateException();
+	  }
+   }
 
-	public PrivateKey getPrivateKey() {
-		return keyPair.getPrivate();
-	}
+   public PrivateKey getPrivateKey() {
+	  return keyPair.getPrivate();
+   }
 
-	public RSAPublicKey getPublicKey() {
-		return (RSAPublicKey) keyPair.getPublic();
-	}
+   public RSAPublicKey getPublicKey() {
+	  return (RSAPublicKey) keyPair.getPublic();
+   }
 }

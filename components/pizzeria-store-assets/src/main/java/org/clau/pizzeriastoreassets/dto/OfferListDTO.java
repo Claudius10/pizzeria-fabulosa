@@ -6,7 +6,7 @@ import org.clau.pizzeriastoreassets.model.Offer;
 import java.util.List;
 
 public record OfferListDTO(
-		@NotNull
-		List<Offer> offers
+   @NotNull
+   List<Offer> offers
 ) {
 }

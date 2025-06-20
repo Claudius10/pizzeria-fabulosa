@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 public class CacheConfig {
 
-	/**
-	 * Simple in-memory CacheManager.
-	 *
-	 * @return concurrent map cache manager
-	 */
-	@Bean
-	CacheManager cacheManager() {
-		return new ConcurrentMapCacheManager();
-	}
+   /**
+	* Simple in-memory CacheManager.
+	*
+	* @return concurrent map cache manager
+	*/
+   @Bean
+   CacheManager cacheManager() {
+	  return new ConcurrentMapCacheManager();
+   }
 }

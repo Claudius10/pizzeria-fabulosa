@@ -37,98 +37,98 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestConfiguration.class)
 public class SecurityTests {
 
-	private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
+   private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
 
-	@Autowired
-	private MockMvc mockMvc;
+   @Autowired
+   private MockMvc mockMvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+   @Autowired
+   private ObjectMapper objectMapper;
 
-	@Autowired
-	private TestJwtHelperService jwtHelper;
+   @Autowired
+   private TestJwtHelperService jwtHelper;
 
-	@Test
-	void givenApiCallToResource_whenValidAccessTokenAndInvalidScope_thenReturnUnauthorized() throws Exception {
+   @Test
+   void givenApiCallToResource_whenValidAccessTokenAndInvalidScope_thenReturnUnauthorized() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		// create JWT token
-		String accessToken = jwtHelper.generateAccessToken(List.of("evil"));
+	  // create JWT token
+	  String accessToken = jwtHelper.generateAccessToken(List.of("evil"));
 
-		// Act
+	  // Act
 
-		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + 1)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(""))
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn().getResponse();
+	  MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + 1)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(""))
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
-		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
-		assertThat(responseObj.getApiError().getMessage()).isEqualTo("Access Denied");
-		assertThat(responseObj.getApiError().getCause()).isEqualTo("AuthorizationDeniedException");
-		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
-	}
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+	  assertThat(responseObj.getApiError().getMessage()).isEqualTo("Access Denied");
+	  assertThat(responseObj.getApiError().getCause()).isEqualTo("AuthorizationDeniedException");
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+   }
 
-	@Test
-	void givenApiCallToResource_whenNoBearerToken_thenReturnUnauthorized() throws Exception {
+   @Test
+   void givenApiCallToResource_whenNoBearerToken_thenReturnUnauthorized() throws Exception {
 
-		// Act
+	  // Act
 
-		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + 1)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(""))
-						.with(csrf())
-				)
+	  MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + 1)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(""))
+			.with(csrf())
+		 )
 
-				.andReturn().getResponse();
+		 .andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.MISSING_TOKEN);
-		assertThat(responseObj.getApiError().getCause()).isEqualTo("InsufficientAuthenticationException");
-		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
-	}
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.MISSING_TOKEN);
+	  assertThat(responseObj.getApiError().getCause()).isEqualTo("InsufficientAuthenticationException");
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+   }
 
-	@Test
-	void givenApiCallToResource_whenBadAuthorizationHeader_thenReturnUnauthorized() throws Exception {
+   @Test
+   void givenApiCallToResource_whenBadAuthorizationHeader_thenReturnUnauthorized() throws Exception {
 
-		// Act
+	  // Act
 
-		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + 1)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(""))
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", "random-value")))
-				.andReturn().getResponse();
+	  MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + 1)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(""))
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", "random-value")))
+		 .andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-		assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.INVALID_TOKEN);
-		assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponse.INVALID_TOKEN);
-		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
-	}
+	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.INVALID_TOKEN);
+	  assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponse.INVALID_TOKEN);
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+   }
 
-	@Test
-	void givenEvilRequest_thenReturnBadRequest() throws Exception {
+   @Test
+   void givenEvilRequest_thenReturnBadRequest() throws Exception {
 
-		// Act
+	  // Act
 
-		// get api call to check security
-		MockHttpServletResponse response = mockMvc.perform(get("/;")).andReturn().getResponse();
+	  // get api call to check security
+	  MockHttpServletResponse response = mockMvc.perform(get("/;")).andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(400);
-	}
+	  assertThat(response.getStatus()).isEqualTo(400);
+   }
 }

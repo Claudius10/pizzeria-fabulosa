@@ -55,104 +55,102 @@ import static org.springframework.security.oauth2.server.authorization.config.an
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 
-	@Value("${angular-app.base-uri}")
-	private String angularBaseUri;
+   @Value("${angular-app.base-uri}")
+   private String angularBaseUri;
 
-	@Bean
-	@Order(Ordered.HIGHEST_PRECEDENCE)
-	SecurityFilterChain authorizationServerSecurityFilterChain(
-			HttpSecurity http,
-			OidcUserInfoServiceImpl userInfoService) throws Exception {
+   @Bean
+   @Order(Ordered.HIGHEST_PRECEDENCE)
+   SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http, OidcUserInfoServiceImpl userInfoService) throws Exception {
 
-		Function<OidcUserInfoAuthenticationContext, OidcUserInfo> userInfoMapper = (context) -> {
-			OidcUserInfoAuthenticationToken authentication = context.getAuthentication();
-			JwtAuthenticationToken principal = (JwtAuthenticationToken) authentication.getPrincipal();
-			OidcUserInfo oidcUserInfo = userInfoService.loadUser(principal.getName());
-			return new OidcUserInfo(oidcUserInfo.getClaims());
-		};
+	  Function<OidcUserInfoAuthenticationContext, OidcUserInfo> userInfoMapper = (context) -> {
+		 OidcUserInfoAuthenticationToken authentication = context.getAuthentication();
+		 JwtAuthenticationToken principal = (JwtAuthenticationToken) authentication.getPrincipal();
+		 OidcUserInfo oidcUserInfo = userInfoService.loadUser(principal.getName());
+		 return new OidcUserInfo(oidcUserInfo.getClaims());
+	  };
 
-		OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = authorizationServer();
+	  OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = authorizationServer();
 
-		http
-				.cors(cors ->
-						cors.configurationSource(corsConfigurationSource()))
-				.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
-				.with(authorizationServerConfigurer, (authorizationServer) ->
-						authorizationServer.oidc(oidc ->
-								oidc.userInfoEndpoint(userInfo ->
-										userInfo.userInfoMapper(userInfoMapper)))
-				)
-				.authorizeHttpRequests((authorize) ->
-						authorize.anyRequest().authenticated())
-				// Redirect to the /login page when not authenticated from the authorization endpoint
-				.exceptionHandling((exceptions) ->
-						exceptions.defaultAuthenticationEntryPointFor(
-								new LoginUrlAuthenticationEntryPoint("/login"),
-								new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-						)
-				);
+	  http
+		 .cors(cors ->
+			cors.configurationSource(corsConfigurationSource()))
+		 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+		 .with(authorizationServerConfigurer, (authorizationServer) ->
+			authorizationServer.oidc(oidc ->
+			   oidc.userInfoEndpoint(userInfo ->
+				  userInfo.userInfoMapper(userInfoMapper)))
+		 )
+		 .authorizeHttpRequests((authorize) ->
+			authorize.anyRequest().authenticated())
+		 // Redirect to the /login page when not authenticated from the authorization endpoint
+		 .exceptionHandling((exceptions) ->
+			exceptions.defaultAuthenticationEntryPointFor(
+			   new LoginUrlAuthenticationEntryPoint("/login"),
+			   new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+			)
+		 );
 
-		return http.build();
-	}
+	  return http.build();
+   }
 
-	@Bean
-	public RegisteredClientRepository registeredClientRepository(PasswordEncoder bCrypt) {
+   @Bean
+   RegisteredClientRepository registeredClientRepository(PasswordEncoder bCrypt) {
 
-		String secret = bCrypt.encode("pizzeria");
+	  String secret = bCrypt.encode("pizzeria");
 
-		RegisteredClient pizzeriaClient = RegisteredClient.withId(UUID.randomUUID().toString())
-				.clientId("pizzeria-client")
-				.clientSecret(secret)
-				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/pizzeria-client")
-				.postLogoutRedirectUri(angularBaseUri)
-				.scope(OidcScopes.OPENID)
-				.scope("user")
-				.scope("order")
-				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
-				.tokenSettings(TokenSettings.builder()
-						.authorizationCodeTimeToLive(Duration.ofMinutes(5))
-						.accessTokenTimeToLive(Duration.ofMinutes(1))
-						.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
-						.idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)
-						.x509CertificateBoundAccessTokens(false)
-						.build())
-				.build();
+	  RegisteredClient pizzeriaClient = RegisteredClient.withId(UUID.randomUUID().toString())
+		 .clientId("pizzeria-client")
+		 .clientSecret(secret)
+		 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+		 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+		 .redirectUri("http://127.0.0.1:8080/login/oauth2/code/pizzeria-client")
+		 .postLogoutRedirectUri(angularBaseUri)
+		 .scope(OidcScopes.OPENID)
+		 .scope("user")
+		 .scope("order")
+		 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
+		 .tokenSettings(TokenSettings.builder()
+			.authorizationCodeTimeToLive(Duration.ofMinutes(5))
+			.accessTokenTimeToLive(Duration.ofMinutes(1))
+			.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+			.idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)
+			.x509CertificateBoundAccessTokens(false)
+			.build())
+		 .build();
 
-		return new InMemoryRegisteredClientRepository(pizzeriaClient);
-	}
+	  return new InMemoryRegisteredClientRepository(pizzeriaClient);
+   }
 
-	@Bean
-	public OAuth2AuthorizationService authorizationService() {
-		return new InMemoryOAuth2AuthorizationService();
-	}
+   @Bean
+   OAuth2AuthorizationService authorizationService() {
+	  return new InMemoryOAuth2AuthorizationService();
+   }
 
-	@Bean
-	JWKSource<SecurityContext> jwkSource() {
-		RSAKey rsaKey = Jwks.generateRsa();
-		JWKSet jwkSet = new JWKSet(rsaKey);
-		return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
-	}
+   @Bean
+   JWKSource<SecurityContext> jwkSource() {
+	  RSAKey rsaKey = Jwks.generateRsa();
+	  JWKSet jwkSet = new JWKSet(rsaKey);
+	  return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
+   }
 
-	@Bean
-	JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
-		return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
-	}
+   @Bean
+   JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
+	  return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+   }
 
-	@Bean
-	AuthorizationServerSettings authorizationServerSettings() {
-		return AuthorizationServerSettings.builder().build();
-	}
+   @Bean
+   AuthorizationServerSettings authorizationServerSettings() {
+	  return AuthorizationServerSettings.builder().build();
+   }
 
-	private CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration config = new CorsConfiguration();
+   private CorsConfigurationSource corsConfigurationSource() {
+	  CorsConfiguration config = new CorsConfiguration();
 
-		config.setAllowedOrigins(Collections.singletonList(angularBaseUri));
-		config.setExposedHeaders(List.of(HttpHeaders.WWW_AUTHENTICATE));
+	  config.setAllowedOrigins(Collections.singletonList(angularBaseUri));
+	  config.setExposedHeaders(List.of(HttpHeaders.WWW_AUTHENTICATE));
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config);
-		return source;
-	}
+	  UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	  source.registerCorsConfiguration("/**", config);
+	  return source;
+   }
 }

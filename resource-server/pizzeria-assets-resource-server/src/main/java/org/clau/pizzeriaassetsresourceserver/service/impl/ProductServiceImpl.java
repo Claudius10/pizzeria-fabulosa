@@ -16,16 +16,16 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ProductServiceImpl implements ProductService {
 
-	private final ProductRepository productRepository;
+   private final ProductRepository productRepository;
 
-	@Override
-	@Cacheable("findAllByType")
-	public Page<Product> findAllByType(String productType, int size, int page) {
+   @Override
+   @Cacheable("findAllByType")
+   public Page<Product> findAllByType(String productType, int size, int page) {
 
-		Sort.TypedSort<Product> product = Sort.sort(Product.class);
-		Sort sort = product.by(Product::getId).descending();
-		PageRequest pageRequest = PageRequest.of(page, size, sort);
+	  Sort.TypedSort<Product> product = Sort.sort(Product.class);
+	  Sort sort = product.by(Product::getId).descending();
+	  PageRequest pageRequest = PageRequest.of(page, size, sort);
 
-		return productRepository.findAllByType(productType, pageRequest);
-	}
+	  return productRepository.findAllByType(productType, pageRequest);
+   }
 }

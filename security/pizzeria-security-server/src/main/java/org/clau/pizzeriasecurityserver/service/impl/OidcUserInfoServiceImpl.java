@@ -18,27 +18,26 @@ import java.util.Optional;
 @Transactional
 public class OidcUserInfoServiceImpl implements OidcUserService {
 
-	private final UserRepository userRepository;
+   private final UserRepository userRepository;
 
-	@Cacheable(value = "oidc-user-info", key = "#email")
-	public OidcUserInfo loadUser(String email) {
-		Optional<User> user = userRepository.findByEmail(email);
-		return user.map(this::createUserInfo).orElseThrow(() -> new UsernameNotFoundException(email));
-	}
+   @Cacheable(value = "oidc-user-info", key = "#email")
+   public OidcUserInfo loadUser(String email) {
+	  Optional<User> user = userRepository.findByEmail(email);
+	  return user.map(this::createUserInfo).orElseThrow(() -> new UsernameNotFoundException(email));
+   }
 
-	private OidcUserInfo createUserInfo(User user) {
-		return OidcUserInfo.builder()
-				.subject(user.getEmail())
-				.name(user.getName())
-				.email(user.getEmail())
-				.emailVerified(false)
-				.phoneNumber(String.valueOf(user.getContactNumber()))
-				.phoneNumberVerified(false)
-				.claim("address", user.getAddress())
-				.claim("id", user.getId())
-				.zoneinfo("Europe/Paris")
-				.locale("en-US")
-				.updatedAt("N/A")
-				.build();
-	}
+   private OidcUserInfo createUserInfo(User user) {
+	  return OidcUserInfo.builder()
+		 .subject(user.getEmail())
+		 .name(user.getName())
+		 .email(user.getEmail())
+		 .emailVerified(false)
+		 .phoneNumber(String.valueOf(user.getContactNumber()))
+		 .phoneNumberVerified(false)
+		 .claim("id", user.getId())
+		 .zoneinfo("Europe/Paris")
+		 .locale("en-US")
+		 .updatedAt("N/A")
+		 .build();
+   }
 }

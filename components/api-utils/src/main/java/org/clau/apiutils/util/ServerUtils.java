@@ -2,21 +2,21 @@ package org.clau.apiutils.util;
 
 public final class ServerUtils {
 
-	private ServerUtils() {
-	}
+   private ServerUtils() {
+   }
 
-	public static String resolvePath(String one, String two) {
-		boolean isOneInvalid = (null == one || one.isBlank());
-		boolean isTwoInvalid = (null == two || two.isBlank());
+   public static String resolvePath(String one, String two) {
+	  boolean isOneInvalid = (null == one || one.isBlank());
+	  boolean isTwoInvalid = (null == two || two.isBlank());
 
-		if (isOneInvalid && isTwoInvalid) {
-			return null;
-		}
+	  if (isOneInvalid && isTwoInvalid) {
+		 return null;
+	  }
 
-		if (isOneInvalid) {
-			return two;
-		}
+	  if (isOneInvalid) {
+		 return two;
+	  }
 
-		return one;
-	}
+	  return one;
+   }
 }

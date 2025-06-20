@@ -16,30 +16,30 @@ import java.time.LocalDateTime;
 @ToString
 public class APIError {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "error_generator")
-	@SequenceGenerator(name = "error_generator", sequenceName = "error_seq", allocationSize = 1)
-	private Long id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "error_generator")
+   @SequenceGenerator(name = "error_generator", sequenceName = "error_seq", allocationSize = 1)
+   private Long id;
 
-	@NotNull
-	private String cause;
+   @NotNull
+   private String cause;
 
-	@Column(length = 8000)
-	@NotNull
-	private String message;
+   @Column(length = 8000)
+   @NotNull
+   private String message;
 
-	@NotNull
-	private String origin;
+   @NotNull
+   private String origin;
 
-	@NotNull
-	private String path;
+   @NotNull
+   private String path;
 
-	@NotNull
-	private boolean logged;
+   @NotNull
+   private boolean logged;
 
-	@NotNull
-	private boolean fatal;
+   @NotNull
+   private boolean fatal;
 
-	@NotNull
-	private LocalDateTime createdOn;
+   @NotNull
+   private LocalDateTime createdOn;
 }

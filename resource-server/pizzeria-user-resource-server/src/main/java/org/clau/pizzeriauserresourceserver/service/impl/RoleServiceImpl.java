@@ -14,15 +14,15 @@ import java.util.Optional;
 @Transactional
 public class RoleServiceImpl implements RoleService {
 
-	private final RoleRepository roleRepository;
+   private final RoleRepository roleRepository;
 
-	@Override
-	public void createRole(Role role) {
-		this.roleRepository.save(role);
-	}
+   @Override
+   public void createRole(Role role) {
+	  this.roleRepository.save(role);
+   }
 
-	@Override
-	public Optional<Role> findByName(String roleName) {
-		return roleRepository.findByName(roleName);
-	}
+   @Override
+   public Optional<Role> findByName(String roleName) {
+	  return roleRepository.findByName(roleName);
+   }
 }

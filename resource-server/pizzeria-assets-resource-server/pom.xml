@@ -61,7 +61,7 @@
 
         <dependency>
             <groupId>org.clau</groupId>
-            <artifactId>api-utils</artifactId>
+            <artifactId>pizzeria-user-assets</artifactId>
             <version>0.0.1</version>
         </dependency>
 

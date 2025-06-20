@@ -15,21 +15,21 @@ import java.util.Objects;
 @Builder(setterPrefix = "with")
 public class Role implements GrantedAuthority {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_generator")
-	@SequenceGenerator(name = "role_generator", sequenceName = "role_seq", allocationSize = 1)
-	private Long id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_generator")
+   @SequenceGenerator(name = "role_generator", sequenceName = "role_seq", allocationSize = 1)
+   private Long id;
 
-	@Column(unique = true)
-	private String name;
+   @Column(unique = true)
+   private String name;
 
-	@Override
-	public String getAuthority() {
-		return this.name;
-	}
+   @Override
+   public String getAuthority() {
+	  return this.name;
+   }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(name);
-	}
+   @Override
+   public int hashCode() {
+	  return Objects.hash(name);
+   }
 }

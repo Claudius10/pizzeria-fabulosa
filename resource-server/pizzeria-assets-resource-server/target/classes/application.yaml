@@ -1,6 +1,14 @@
 server:
   port: 8081
 
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.hibernate: INFO
+    org.hibernate.sql: INFO
+
 spring:
   application:
     name: "pizzeria-assets-resource-server"
@@ -35,11 +43,3 @@ springdoc:
   swagger-ui:
     path: /api/v1/docs/swagger
     operations-sorter: method
-
-logging:
-  level:
-    org.hibernate: info
-    org.hibernate.sql: info
-    org.springframework.security: info
-    org.springframework.web: info
-    root: info

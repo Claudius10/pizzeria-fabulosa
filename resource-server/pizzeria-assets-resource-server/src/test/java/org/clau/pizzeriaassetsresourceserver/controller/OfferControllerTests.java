@@ -33,48 +33,48 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class OfferControllerTests {
 
-	private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.OFFER_BASE;
+   private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.OFFER_BASE;
 
-	@Autowired
-	private MockMvc mockMvc;
+   @Autowired
+   private MockMvc mockMvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+   @Autowired
+   private ObjectMapper objectMapper;
 
-	@Autowired
-	private OfferRepository offerRepository;
+   @Autowired
+   private OfferRepository offerRepository;
 
-	@BeforeAll
-	public void init() {
-		Offer offer = Offer.builder()
-				.withImage("image1")
-				.withCaveat(Map.of("en", "test1"))
-				.withDescription(Map.of("en", "test1"))
-				.withName(Map.of("en", "test1"))
-				.build();
-		offerRepository.save(offer);
-	}
+   @BeforeAll
+   public void init() {
+	  Offer offer = Offer.builder()
+		 .withImage("image1")
+		 .withCaveat(Map.of("en", "test1"))
+		 .withDescription(Map.of("en", "test1"))
+		 .withName(Map.of("en", "test1"))
+		 .build();
+	  offerRepository.save(offer);
+   }
 
-	@Test
-	void givenGetOffersApiCall_thenReturnResource() throws Exception {
+   @Test
+   void givenGetOffersApiCall_thenReturnResource() throws Exception {
 
-		// Act
+	  // Act
 
-		// get api call to find offer actual
-		MockHttpServletResponse response = mockMvc.perform(get(path)).andReturn().getResponse();
+	  // get api call to find offer actual
+	  MockHttpServletResponse response = mockMvc.perform(get(path)).andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-		OfferListDTO offerList = objectMapper.readValue(response.getContentAsString(), OfferListDTO.class);
-		List<Offer> actual = offerList.offers();
+	  OfferListDTO offerList = objectMapper.readValue(response.getContentAsString(), OfferListDTO.class);
+	  List<Offer> actual = offerList.offers();
 
-		assertThat(actual).hasSize(1);
-		assertThat(actual.getFirst().getId()).isEqualTo(1);
-		assertThat(actual.getFirst().getImage()).isEqualTo("image1");
-		assertThat(actual.getFirst().getName().get("en")).isEqualTo("test1");
-		assertThat(actual.getFirst().getDescription().get("en")).isEqualTo("test1");
-		assertThat(actual.getFirst().getCaveat().get("en")).isEqualTo("test1");
-	}
+	  assertThat(actual).hasSize(1);
+	  assertThat(actual.getFirst().getId()).isEqualTo(1);
+	  assertThat(actual.getFirst().getImage()).isEqualTo("image1");
+	  assertThat(actual.getFirst().getName().get("en")).isEqualTo("test1");
+	  assertThat(actual.getFirst().getDescription().get("en")).isEqualTo("test1");
+	  assertThat(actual.getFirst().getCaveat().get("en")).isEqualTo("test1");
+   }
 }

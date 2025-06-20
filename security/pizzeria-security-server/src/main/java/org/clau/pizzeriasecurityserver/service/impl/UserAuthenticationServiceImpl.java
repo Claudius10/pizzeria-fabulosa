@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class UserAuthenticationServiceImpl implements UserDetailsService {
 
-	private final UserRepository userRepositoryInternal;
+   private final UserRepository userRepositoryInternal;
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return userRepositoryInternal.findByEmail(username)
-				.orElseThrow(() -> new UsernameNotFoundException(username)); // this ends up as AuthenticationException
-	}
+   @Override
+   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	  return userRepositoryInternal.findByEmail(username)
+		 .orElseThrow(() -> new UsernameNotFoundException(username)); // this ends up as AuthenticationException
+   }
 }

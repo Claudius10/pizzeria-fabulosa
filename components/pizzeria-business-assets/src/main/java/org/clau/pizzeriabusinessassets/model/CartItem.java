@@ -18,47 +18,47 @@ import java.util.Map;
 @Builder(setterPrefix = "with")
 public class CartItem {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cart_item_generator")
-	@SequenceGenerator(name = "cart_item_generator", sequenceName = "cart_item_seq", allocationSize = 1)
-	private Long id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cart_item_generator")
+   @SequenceGenerator(name = "cart_item_generator", sequenceName = "cart_item_seq", allocationSize = 1)
+   private Long id;
 
-	private String type;
+   private String type;
 
-	@Type(JsonType.class)
-	@Column(columnDefinition = "json")
-	private Map<String, String> name;
+   @Type(JsonType.class)
+   @Column(columnDefinition = "json")
+   private Map<String, String> name;
 
-	@Type(JsonType.class)
-	@Column(columnDefinition = "json")
-	private Map<String, List<String>> description;
+   @Type(JsonType.class)
+   @Column(columnDefinition = "json")
+   private Map<String, List<String>> description;
 
-	@Type(JsonType.class)
-	@Column(columnDefinition = "json")
-	private Map<String, Map<String, String>> formats; // <"m", <"en": "Medium">, <"es": "Mediana">; "l", <"en": "Familiar">,
-	// <"es": "Familiar">>
+   @Type(JsonType.class)
+   @Column(columnDefinition = "json")
+   private Map<String, Map<String, String>> formats; // <"m", <"en": "Medium">, <"es": "Mediana">; "l", <"en": "Familiar">,
+   // <"es": "Familiar">>
 
-	private Double price;
+   private Double price;
 
-	private Integer quantity;
+   private Integer quantity;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonBackReference
-	private Cart cart;
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JsonBackReference
+   private Cart cart;
 
-	@Override
-	public int hashCode() {
-		return getClass().hashCode();
-	}
+   @Override
+   public int hashCode() {
+	  return getClass().hashCode();
+   }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
+   @Override
+   public boolean equals(Object obj) {
+	  if (this == obj)
+		 return true;
 
-		if (!(obj instanceof CartItem))
-			return false;
+	  if (!(obj instanceof CartItem))
+		 return false;
 
-		return id != null && id.equals(((CartItem) obj).getId());
-	}
+	  return id != null && id.equals(((CartItem) obj).getId());
+   }
 }

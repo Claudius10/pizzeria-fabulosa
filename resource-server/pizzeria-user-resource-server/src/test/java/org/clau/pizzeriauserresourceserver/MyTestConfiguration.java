@@ -11,14 +11,14 @@ import org.testcontainers.utility.DockerImageName;
 @TestConfiguration(proxyBeanMethods = false)
 public class MyTestConfiguration {
 
-	@Bean
-	@ServiceConnection
-	public MariaDBContainer mariadbContainer() {
-		return new MariaDBContainer<>(DockerImageName.parse("mariadb:latest"));
-	}
+   @Bean
+   @ServiceConnection
+   public MariaDBContainer mariadbContainer() {
+	  return new MariaDBContainer<>(DockerImageName.parse("mariadb:latest"));
+   }
 
-	@Bean
-	JwtDecoder jwtDecoder(JWTKeys keys) {
-		return NimbusJwtDecoder.withPublicKey(keys.getPublicKey()).build();
-	}
+   @Bean
+   JwtDecoder jwtDecoder(JWTKeys keys) {
+	  return NimbusJwtDecoder.withPublicKey(keys.getPublicKey()).build();
+   }
 }

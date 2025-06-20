@@ -5,7 +5,7 @@ import org.clau.pizzeriabusinessassets.dto.CartDTO;
 import org.clau.pizzeriabusinessassets.dto.OrderDetailsDTO;
 
 public record OrderValidatorInput(
-		CartDTO cart,
-		OrderDetailsDTO orderDetails
+   CartDTO cart,
+   OrderDetailsDTO orderDetails
 ) {
 }

@@ -33,49 +33,49 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class StoreControllerTests {
 
-	private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.STORE_BASE;
+   private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.STORE_BASE;
 
-	@Autowired
-	private MockMvc mockMvc;
+   @Autowired
+   private MockMvc mockMvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+   @Autowired
+   private ObjectMapper objectMapper;
 
-	@Autowired
-	private StoreRepository storeRepository;
+   @Autowired
+   private StoreRepository storeRepository;
 
-	@BeforeAll
-	public void init() {
-		Store store = Store.builder()
-				.withName("test1")
-				.withAddress("test1")
-				.withImage("test1")
-				.withPhoneNumber(1)
-				.withSchedule(Map.of("en", "test1"))
-				.build();
-		storeRepository.save(store);
-	}
+   @BeforeAll
+   public void init() {
+	  Store store = Store.builder()
+		 .withName("test1")
+		 .withAddress("test1")
+		 .withImage("test1")
+		 .withPhoneNumber(1)
+		 .withSchedule(Map.of("en", "test1"))
+		 .build();
+	  storeRepository.save(store);
+   }
 
-	@Test
-	void givenGetStoresApiCall_thenReturnResource() throws Exception {
+   @Test
+   void givenGetStoresApiCall_thenReturnResource() throws Exception {
 
-		// Act
+	  // Act
 
-		// get api call to find store actual
-		MockHttpServletResponse response = mockMvc.perform(get(path)).andReturn().getResponse();
+	  // get api call to find store actual
+	  MockHttpServletResponse response = mockMvc.perform(get(path)).andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-		StoreListDTO storeList = objectMapper.readValue(response.getContentAsString(), StoreListDTO.class);
-		List<Store> actual = storeList.stores();
+	  StoreListDTO storeList = objectMapper.readValue(response.getContentAsString(), StoreListDTO.class);
+	  List<Store> actual = storeList.stores();
 
-		assertThat(actual).hasSize(1);
-		assertThat(actual.getFirst().getId()).isEqualTo(1);
-		assertThat(actual.getFirst().getImage()).isEqualTo("test1");
-		assertThat(actual.getFirst().getName()).isEqualTo("test1");
-		assertThat(actual.getFirst().getAddress()).isEqualTo("test1");
-		assertThat(actual.getFirst().getPhoneNumber()).isEqualTo(1);
-	}
+	  assertThat(actual).hasSize(1);
+	  assertThat(actual.getFirst().getId()).isEqualTo(1);
+	  assertThat(actual.getFirst().getImage()).isEqualTo("test1");
+	  assertThat(actual.getFirst().getName()).isEqualTo("test1");
+	  assertThat(actual.getFirst().getAddress()).isEqualTo("test1");
+	  assertThat(actual.getFirst().getPhoneNumber()).isEqualTo(1);
+   }
 }

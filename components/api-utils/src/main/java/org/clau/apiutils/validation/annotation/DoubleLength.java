@@ -12,13 +12,13 @@ import java.lang.annotation.*;
 @Documented
 public @interface DoubleLength {
 
-	String message() default "Valor numérico no aceptado";
+   String message() default "Valor numérico no aceptado";
 
-	Class<?>[] groups() default {};
+   Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+   Class<? extends Payload>[] payload() default {};
 
-	double min();
+   double min();
 
-	double max();
+   double max();
 }

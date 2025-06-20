@@ -15,11 +15,11 @@ import java.util.List;
 @Transactional
 public class StoreServiceImpl implements StoreService {
 
-	private final StoreRepository storeRepository;
+   private final StoreRepository storeRepository;
 
-	@Override
-	@Cacheable("stores")
-	public List<Store> findAll() {
-		return storeRepository.findAll();
-	}
+   @Override
+   @Cacheable("stores")
+   public List<Store> findAll() {
+	  return storeRepository.findAll();
+   }
 }

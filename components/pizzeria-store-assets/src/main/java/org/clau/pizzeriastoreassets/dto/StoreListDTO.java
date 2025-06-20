@@ -6,7 +6,7 @@ import org.clau.pizzeriastoreassets.model.Store;
 import java.util.List;
 
 public record StoreListDTO(
-		@NotNull
-		List<Store> stores
+   @NotNull
+   List<Store> stores
 ) {
 }

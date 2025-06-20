@@ -13,21 +13,21 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ErrorServiceImpl implements ErrorService {
 
-	private final ErrorRepository errorRepository;
+   private final ErrorRepository errorRepository;
 
-	@Override
-	public APIError create(String cause, String message, String origin, String uriPath, boolean fatal) {
+   @Override
+   public APIError create(String cause, String message, String origin, String uriPath, boolean fatal) {
 
-		APIError error = APIError.builder()
-				.withCreatedOn(TimeUtils.getNowAccountingDST())
-				.withCause(cause)
-				.withMessage(message)
-				.withOrigin(origin)
-				.withPath(uriPath)
-				.withLogged(true)
-				.withFatal(fatal)
-				.build();
+	  APIError error = APIError.builder()
+		 .withCreatedOn(TimeUtils.getNowAccountingDST())
+		 .withCause(cause)
+		 .withMessage(message)
+		 .withOrigin(origin)
+		 .withPath(uriPath)
+		 .withLogged(true)
+		 .withFatal(fatal)
+		 .build();
 
-		return errorRepository.save(error);
-	}
+	  return errorRepository.save(error);
+   }
 }

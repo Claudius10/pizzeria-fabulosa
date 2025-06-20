@@ -13,16 +13,16 @@ import org.springframework.http.ResponseEntity;
 @Tag(name = "Store API")
 public interface StoreControllerSwagger {
 
-	@Operation(operationId = "findAll", summary = "Returns all stores")
-	@ApiResponse(
-			responseCode = Response.OK,
-			description = "Returns store list",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = StoreListDTO.class))
-	)
-	@ApiResponse(
-			responseCode = Response.INTERNAL_SERVER_ERROR,
-			description = "Unexpected exception occurred",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
-	)
-	ResponseEntity<StoreListDTO> findAll();
+   @Operation(operationId = "findAll", summary = "Returns all stores")
+   @ApiResponse(
+	  responseCode = Response.OK,
+	  description = "Returns store list",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = StoreListDTO.class))
+   )
+   @ApiResponse(
+	  responseCode = Response.INTERNAL_SERVER_ERROR,
+	  description = "Unexpected exception occurred",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
+   )
+   ResponseEntity<StoreListDTO> findAll();
 }

@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 public class TestUtils {
 
-	public static ResponseDTO getResponse(MockHttpServletResponse response, ObjectMapper mapper) throws JsonProcessingException, UnsupportedEncodingException {
-		return mapper.readValue(response.getContentAsString(StandardCharsets.UTF_8), ResponseDTO.class);
-	}
+   public static ResponseDTO getResponse(MockHttpServletResponse response, ObjectMapper mapper) throws JsonProcessingException, UnsupportedEncodingException {
+	  return mapper.readValue(response.getContentAsString(StandardCharsets.UTF_8), ResponseDTO.class);
+   }
 }

@@ -38,186 +38,206 @@ import java.util.UUID;
 @Slf4j
 public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
-	private final ErrorService errorService;
+   private final ErrorService errorService;
 
-	@Override
-	protected ResponseEntity<Object> createResponseEntity(@Nullable Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
+   @Override
+   protected ResponseEntity<Object> createResponseEntity(@Nullable Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
 
-		boolean fatal = false;
-		String cause = body != null ? body.toString() : null;
-		String message = "See cause";
+	  boolean fatal = false;
+	  String cause = body != null ? body.toString() : null;
+	  String message = "See cause";
 
-		ResponseDTO response = buildResponse(cause, message, request, fatal, statusCode.value());
+	  ResponseDTO response = buildResponse(
+		 cause,
+		 message,
+		 request,
+		 fatal,
+		 statusCode.value()
+	  );
 
-		return new ResponseEntity<>(response, headers, statusCode);
-	}
+	  return new ResponseEntity<>(response, headers, statusCode);
+   }
 
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(
-			MethodArgumentNotValidException ex,
-			HttpHeaders headers,
-			HttpStatusCode status,
-			WebRequest request
-	) {
+   @Override
+   protected ResponseEntity<Object> handleMethodArgumentNotValid(
+	  MethodArgumentNotValidException ex,
+	  HttpHeaders headers,
+	  HttpStatusCode status,
+	  WebRequest request
+   ) {
 
-		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
+	  HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+	  String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 
-		String cause = ex.getClass().getSimpleName();
-		List<String> errorMessages = new ArrayList<>();
+	  String cause = ex.getClass().getSimpleName();
+	  List<String> errorMessages = new ArrayList<>();
 
-		ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
-			errorMessages.add(String.format("Field: %s - Error: %s - Value: %s",
-					fieldError.getField(),
-					fieldError.getDefaultMessage(),
-					fieldError.getRejectedValue()));
-		});
+	  ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
+		 errorMessages.add(String.format("Field: %s - Error: %s - Value: %s",
+			fieldError.getField(),
+			fieldError.getDefaultMessage(),
+			fieldError.getRejectedValue()));
+	  });
 
-		ResponseDTO response = ResponseDTO.builder()
-				.apiError(APIError.builder()
-						.withId(UUID.randomUUID().getMostSignificantBits())
-						.withCreatedOn(TimeUtils.getNowAccountingDST())
-						.withCause(cause)
-						.withMessage(String.valueOf(errorMessages))
-						.withOrigin(Constant.APP_NAME)
-						.withPath(path)
-						.withLogged(false)
-						.withFatal(false)
-						.build())
-				.status(HttpStatus.BAD_REQUEST.value())
-				.build();
+	  ResponseDTO response = ResponseDTO.builder()
+		 .apiError(APIError.builder()
+			.withId(UUID.randomUUID().getMostSignificantBits())
+			.withCreatedOn(TimeUtils.getNowAccountingDST())
+			.withCause(cause)
+			.withMessage(String.valueOf(errorMessages))
+			.withOrigin(Constant.APP_NAME)
+			.withPath(path)
+			.withLogged(false)
+			.withFatal(false)
+			.build())
+		 .status(HttpStatus.BAD_REQUEST.value())
+		 .build();
 
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-	}
+	  ExceptionLogger.log(ex, log, response);
+	  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+   }
 
-	@ExceptionHandler(PersistenceException.class)
-	protected ResponseEntity<ResponseDTO> handlePersistenceException(PersistenceException ex, WebRequest request) {
+   @ExceptionHandler(PersistenceException.class)
+   protected ResponseEntity<ResponseDTO> handlePersistenceException(PersistenceException ex, WebRequest request) {
 
-		boolean fatal = true;
-		String cause = ex.getClass().getSimpleName();
-		String message = ex.getMessage();
+	  boolean fatal = true;
+	  String cause = ex.getClass().getSimpleName();
+	  String message = ex.getMessage();
 
-		ResponseDTO response = buildResponse(cause, message, request, fatal, HttpStatus.INTERNAL_SERVER_ERROR.value());
-		ExceptionLogger.log(ex, log, response);
+	  ResponseDTO response = buildResponse(
+		 cause,
+		 message,
+		 request,
+		 fatal,
+		 HttpStatus.INTERNAL_SERVER_ERROR.value()
+	  );
 
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	}
+	  ExceptionLogger.log(ex, log, response);
 
-	@ExceptionHandler(AuthenticationException.class)
-	protected ResponseEntity<ResponseDTO> authenticationException(AuthenticationException ex, WebRequest request) {
-		// AuthenticationException example -> missing or invalid token value
+	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+   }
 
-		ResponseDTO response = handleAuthenticationException(ex, request);
+   @ExceptionHandler(AuthenticationException.class)
+   protected ResponseEntity<ResponseDTO> authenticationException(AuthenticationException ex, WebRequest request) {
+	  // AuthenticationException example -> missing or invalid token value
 
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-	}
+	  ResponseDTO response = handleAuthenticationException(ex, request);
 
-	@ExceptionHandler(AccessDeniedException.class)
-	protected ResponseEntity<ResponseDTO> accessDeniedException(AccessDeniedException ex, WebRequest request) {
-		// AccessDeniedException example -> when the scope claim does not contain the required authority
+	  ExceptionLogger.log(ex, log, response);
+	  return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+   }
 
-		ResponseDTO response = handleAccessDenied(ex, request);
+   @ExceptionHandler(AccessDeniedException.class)
+   protected ResponseEntity<ResponseDTO> accessDeniedException(AccessDeniedException ex, WebRequest request) {
+	  // AccessDeniedException example -> when the scope claim does not contain the required authority
 
-		ExceptionLogger.log(ex, log, response);
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-	}
+	  ResponseDTO response = handleAccessDenied(ex, request);
 
-	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<ResponseDTO> handleUnknownException(Exception ex, WebRequest request) {
+	  ExceptionLogger.log(ex, log, response);
+	  return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+   }
 
-		boolean fatal = true;
-		String cause = ex.getClass().getSimpleName();
-		String message = ex.getMessage();
+   @ExceptionHandler(Exception.class)
+   protected ResponseEntity<ResponseDTO> handleUnknownException(Exception ex, WebRequest request) {
 
-		ResponseDTO response = buildResponse(cause, message, request, fatal, HttpStatus.INTERNAL_SERVER_ERROR.value());
-		ExceptionLogger.log(ex, log, response);
+	  boolean fatal = true;
+	  String cause = ex.getClass().getSimpleName();
+	  String message = ex.getMessage();
 
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	}
+	  ResponseDTO response = buildResponse(
+		 cause,
+		 message,
+		 request,
+		 fatal,
+		 HttpStatus.INTERNAL_SERVER_ERROR.value()
+	  );
 
-	private ResponseDTO handleAuthenticationException(AuthenticationException ex, WebRequest request) {
+	  ExceptionLogger.log(ex, log, response);
 
-		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
+	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+   }
 
-		APIError error;
-		String cause = ex.getClass().getSimpleName();
-		String message;
-		boolean fatal = false;
-		boolean logged = false;
+   private ResponseDTO handleAuthenticationException(AuthenticationException ex, WebRequest request) {
 
-		switch (ex) {
-			case InsufficientAuthenticationException ignored -> message = SecurityResponse.MISSING_TOKEN;
-			case InvalidBearerTokenException ignored -> message = SecurityResponse.INVALID_TOKEN;
-			case BadCredentialsException ignored -> message = SecurityResponse.BAD_CREDENTIALS;
-			default -> {
-				fatal = true;
-				logged = true;
-				message = ex.getMessage();
-			}
-		}
+	  HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+	  String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 
-		if (logged) {
-			error = errorService.create(cause, message, Constant.APP_NAME, path, fatal);
-		} else {
-			error = APIError.builder()
-					.withId(UUID.randomUUID().getMostSignificantBits())
-					.withCreatedOn(TimeUtils.getNowAccountingDST())
-					.withCause(cause)
-					.withMessage(message)
-					.withOrigin(Constant.APP_NAME)
-					.withPath(path)
-					.withLogged(logged)
-					.withFatal(fatal)
-					.build();
-		}
+	  APIError error;
+	  String cause = ex.getClass().getSimpleName();
+	  String message;
+	  boolean fatal = false;
+	  boolean logged = false;
 
-		return ResponseDTO.builder()
-				.apiError(error)
-				.status(HttpStatus.UNAUTHORIZED.value())
-				.build();
-	}
+	  switch (ex) {
+		 case InsufficientAuthenticationException ignored -> message = SecurityResponse.MISSING_TOKEN;
+		 case InvalidBearerTokenException ignored -> message = SecurityResponse.INVALID_TOKEN;
+		 case BadCredentialsException ignored -> message = SecurityResponse.BAD_CREDENTIALS;
+		 default -> {
+			fatal = true;
+			logged = true;
+			message = ex.getMessage();
+		 }
+	  }
 
-	private ResponseDTO handleAccessDenied(AccessDeniedException ex, WebRequest request) {
+	  if (logged) {
+		 error = errorService.create(cause, message, Constant.APP_NAME, path, fatal);
+	  } else {
+		 error = APIError.builder()
+			.withId(UUID.randomUUID().getMostSignificantBits())
+			.withCreatedOn(TimeUtils.getNowAccountingDST())
+			.withCause(cause)
+			.withMessage(message)
+			.withOrigin(Constant.APP_NAME)
+			.withPath(path)
+			.withLogged(logged)
+			.withFatal(fatal)
+			.build();
+	  }
 
-		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
+	  return ResponseDTO.builder()
+		 .apiError(error)
+		 .status(HttpStatus.UNAUTHORIZED.value())
+		 .build();
+   }
 
-		APIError error = APIError.builder()
-				.withId(UUID.randomUUID().getMostSignificantBits())
-				.withCreatedOn(TimeUtils.getNowAccountingDST())
-				.withCause(ex.getClass().getSimpleName())
-				.withMessage(ex.getMessage())
-				.withOrigin(Constant.APP_NAME)
-				.withPath(path)
-				.withLogged(false)
-				.withFatal(true)
-				.build();
+   private ResponseDTO handleAccessDenied(AccessDeniedException ex, WebRequest request) {
 
-		return ResponseDTO.builder()
-				.apiError(error)
-				.status(HttpStatus.FORBIDDEN.value())
-				.build();
-	}
+	  HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+	  String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 
-	private ResponseDTO buildResponse(String cause, String message, WebRequest request, boolean fatal, int status) {
+	  APIError error = APIError.builder()
+		 .withId(UUID.randomUUID().getMostSignificantBits())
+		 .withCreatedOn(TimeUtils.getNowAccountingDST())
+		 .withCause(ex.getClass().getSimpleName())
+		 .withMessage(ex.getMessage())
+		 .withOrigin(Constant.APP_NAME)
+		 .withPath(path)
+		 .withLogged(false)
+		 .withFatal(true)
+		 .build();
 
-		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
+	  return ResponseDTO.builder()
+		 .apiError(error)
+		 .status(HttpStatus.FORBIDDEN.value())
+		 .build();
+   }
 
-		APIError error = errorService.create(
-				cause,
-				message,
-				Constant.APP_NAME,
-				path,
-				fatal
-		);
+   private ResponseDTO buildResponse(String cause, String message, WebRequest request, boolean fatal, int status) {
 
-		return ResponseDTO.builder()
-				.apiError(error)
-				.status(status)
-				.build();
-	}
+	  HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+	  String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
+
+	  APIError error = errorService.create(
+		 cause,
+		 message,
+		 Constant.APP_NAME,
+		 path,
+		 fatal
+	  );
+
+	  return ResponseDTO.builder()
+		 .apiError(error)
+		 .status(status)
+		 .build();
+   }
 }

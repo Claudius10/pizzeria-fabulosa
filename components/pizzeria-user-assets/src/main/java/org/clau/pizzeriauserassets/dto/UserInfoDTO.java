@@ -5,37 +5,34 @@ import jakarta.validation.constraints.NotNull;
 
 public record UserInfoDTO(
 
-		@NotBlank
-		String id,
+   @NotBlank
+   String id,
 
-		@NotBlank
-		String sub,
+   @NotBlank
+   String sub,
 
-		@NotBlank
-		String name,
+   @NotBlank
+   String name,
 
-		@NotBlank
-		String email,
+   @NotBlank
+   String email,
 
-		@NotNull
-		Boolean email_verified,
+   @NotNull
+   Boolean email_verified,
 
-		@NotBlank
-		String phone_number,
+   @NotBlank
+   String phone_number,
 
-		@NotNull
-		Boolean phone_number_verified,
+   @NotNull
+   Boolean phone_number_verified,
 
-		@NotBlank
-		String address,
+   @NotBlank
+   String locale,
 
-		@NotBlank
-		String locale,
+   @NotBlank
+   String zoneinfo,
 
-		@NotBlank
-		String zoneinfo,
-
-		@NotBlank
-		String updated_at
+   @NotBlank
+   String updated_at
 ) {
 }

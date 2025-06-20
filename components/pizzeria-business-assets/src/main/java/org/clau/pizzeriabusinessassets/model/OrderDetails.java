@@ -13,23 +13,23 @@ import lombok.*;
 @Builder(setterPrefix = "with")
 public class OrderDetails {
 
-	@Id
-	private Long id;
+   @Id
+   private Long id;
 
-	private String deliveryTime;
+   private String deliveryTime;
 
-	private String paymentMethod;
+   private String paymentMethod;
 
-	private Double billToChange;
+   private Double billToChange;
 
-	private Double changeToGive;
+   private Double changeToGive;
 
-	private String comment;
+   private String comment;
 
-	private Boolean storePickUp;
+   private Boolean storePickUp;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@MapsId
-	@JsonBackReference
-	private Order order;
+   @OneToOne(fetch = FetchType.LAZY)
+   @MapsId
+   @JsonBackReference
+   private Order order;
 }

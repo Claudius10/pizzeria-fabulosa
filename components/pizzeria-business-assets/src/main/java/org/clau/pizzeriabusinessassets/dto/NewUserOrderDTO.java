@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotNull;
 
 public record NewUserOrderDTO(
 
-		@NotNull
-		String address,
+   @NotNull
+   String address,
 
-		@NotNull
-		@Valid
-		OrderDetailsDTO orderDetails,
+   @NotNull
+   @Valid
+   OrderDetailsDTO orderDetails,
 
-		@NotNull
-		@Valid
-		CartDTO cart) {
+   @NotNull
+   @Valid
+   CartDTO cart) {
 }

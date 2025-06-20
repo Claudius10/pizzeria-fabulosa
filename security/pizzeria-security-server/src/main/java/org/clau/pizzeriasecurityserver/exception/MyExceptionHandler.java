@@ -25,49 +25,62 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
-	private final ErrorService errorService;
+   private final ErrorService errorService;
 
-	@Override
-	protected ResponseEntity<Object> createResponseEntity(@Nullable Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
+   @Override
+   protected ResponseEntity<Object> createResponseEntity(@Nullable Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
 
-		boolean fatal = false;
-		String cause = body != null ? body.toString() : null;
-		String message = "See cause";
+	  boolean fatal = false;
+	  String cause = body != null ? body.toString() : null;
+	  String message = "See cause";
 
-		ResponseDTO response = buildResponse(cause, message, request, fatal, statusCode.value());
+	  ResponseDTO response = buildResponse(
+		 cause,
+		 message,
+		 request,
+		 fatal,
+		 statusCode.value()
+	  );
 
-		return new ResponseEntity<>(response, headers, statusCode);
-	}
+	  return new ResponseEntity<>(response, headers, statusCode);
+   }
 
-	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<ResponseDTO> handleUnknownException(Exception ex, WebRequest request) {
+   @ExceptionHandler(Exception.class)
+   protected ResponseEntity<ResponseDTO> handleUnknownException(Exception ex, WebRequest request) {
 
-		boolean fatal = true;
-		String cause = ex.getClass().getSimpleName();
-		String message = ex.getMessage();
+	  boolean fatal = true;
+	  String cause = ex.getClass().getSimpleName();
+	  String message = ex.getMessage();
 
-		ResponseDTO response = buildResponse(cause, message, request, fatal, HttpStatus.INTERNAL_SERVER_ERROR.value());
-		ExceptionLogger.log(ex, log, response);
+	  ResponseDTO response = buildResponse(
+		 cause,
+		 message,
+		 request,
+		 fatal,
+		 HttpStatus.INTERNAL_SERVER_ERROR.value()
+	  );
 
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-	}
+	  ExceptionLogger.log(ex, log, response);
 
-	private ResponseDTO buildResponse(String cause, String message, WebRequest request, boolean fatal, int status) {
+	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+   }
 
-		HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
-		String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
+   private ResponseDTO buildResponse(String cause, String message, WebRequest request, boolean fatal, int status) {
 
-		APIError error = errorService.create(
-				cause,
-				message,
-				Constant.APP_NAME,
-				path,
-				fatal
-		);
+	  HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
+	  String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
 
-		return ResponseDTO.builder()
-				.apiError(error)
-				.status(status)
-				.build();
-	}
+	  APIError error = errorService.create(
+		 cause,
+		 message,
+		 Constant.APP_NAME,
+		 path,
+		 fatal
+	  );
+
+	  return ResponseDTO.builder()
+		 .apiError(error)
+		 .status(status)
+		 .build();
+   }
 }

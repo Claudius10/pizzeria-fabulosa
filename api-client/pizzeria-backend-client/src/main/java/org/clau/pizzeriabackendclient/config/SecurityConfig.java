@@ -36,80 +36,80 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@Value("${angular-app.base-uri}")
-	private String angularBaseUri;
+   @Value("${angular-app.base-uri}")
+   private String angularBaseUri;
 
-	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
-		CookieCsrfTokenRepository cookieCsrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-		CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+   @Bean
+   SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+	  CookieCsrfTokenRepository cookieCsrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+	  CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
 		/*
 		IMPORTANT:
 		Set the csrfRequestAttributeName to null, to opt-out of deferred tokens, resulting in the CsrfToken to be loaded on every request.
 		If it does not exist, the CookieCsrfTokenRepository will automatically generate a new one and add the Cookie to the response.
 		See the reference: https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html#deferred-csrf-token
 		 */
-		csrfTokenRequestAttributeHandler.setCsrfRequestAttributeName(null);
+	  csrfTokenRequestAttributeHandler.setCsrfRequestAttributeName(null);
 
-		http
-				.authorizeHttpRequests(authorize ->
-						authorize
-								.requestMatchers("/api/v1/docs.yaml").permitAll()
-								.requestMatchers("/api/v1/docs/**").permitAll()
-								.requestMatchers("/api/v1/resource/**").permitAll()
-								.requestMatchers("/api/v1/anon/**").permitAll()
-								.anyRequest().authenticated()
-				)
-				.csrf(csrf ->
-						csrf
-								.csrfTokenRepository(cookieCsrfTokenRepository)
-								.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
-				)
-				.oauth2Client(withDefaults())
-				.oauth2Login(oauth2Login ->
-						oauth2Login
-								.successHandler(new SimpleUrlAuthenticationSuccessHandler("/logged-in")))
-				.logout(logout ->
-						logout
-								.addLogoutHandler(logoutHandler(cookieCsrfTokenRepository))
-								.logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
-				)
-				.exceptionHandling(exceptionHandling ->
-						exceptionHandling
-								.authenticationEntryPoint(authenticationEntryPoint())
-				);
+	  http
+		 .authorizeHttpRequests(authorize ->
+			authorize
+			   .requestMatchers("/api/v1/docs.yaml").permitAll()
+			   .requestMatchers("/api/v1/docs/**").permitAll()
+			   .requestMatchers("/api/v1/resource/**").permitAll()
+			   .requestMatchers("/api/v1/anon/**").permitAll()
+			   .anyRequest().authenticated()
+		 )
+		 .csrf(csrf ->
+			csrf
+			   .csrfTokenRepository(cookieCsrfTokenRepository)
+			   .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
+		 )
+		 .oauth2Client(withDefaults())
+		 .oauth2Login(oauth2Login ->
+			oauth2Login
+			   .successHandler(new SimpleUrlAuthenticationSuccessHandler("/logged-in")))
+		 .logout(logout ->
+			logout
+			   .addLogoutHandler(logoutHandler(cookieCsrfTokenRepository))
+			   .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
+		 )
+		 .exceptionHandling(exceptionHandling ->
+			exceptionHandling
+			   .authenticationEntryPoint(authenticationEntryPoint())
+		 );
 
-		return http.build();
-	}
+	  return http.build();
+   }
 
-	private LogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
-		OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
-				new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-		oidcLogoutSuccessHandler.setPostLogoutRedirectUri(angularBaseUri);
+   private LogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
+	  OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
+		 new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+	  oidcLogoutSuccessHandler.setPostLogoutRedirectUri(angularBaseUri);
 
-		return oidcLogoutSuccessHandler;
-	}
+	  return oidcLogoutSuccessHandler;
+   }
 
-	private AuthenticationEntryPoint authenticationEntryPoint() {
-		AuthenticationEntryPoint authenticationEntryPoint =
-				new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/pizzeria-client");
+   private AuthenticationEntryPoint authenticationEntryPoint() {
+	  AuthenticationEntryPoint authenticationEntryPoint =
+		 new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/pizzeria-client");
 
-		MediaTypeRequestMatcher textHtmlMatcher =
-				new MediaTypeRequestMatcher(MediaType.TEXT_HTML);
-		textHtmlMatcher.setUseEquals(true);
+	  MediaTypeRequestMatcher textHtmlMatcher =
+		 new MediaTypeRequestMatcher(MediaType.TEXT_HTML);
+	  textHtmlMatcher.setUseEquals(true);
 
-		LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
-		entryPoints.put(textHtmlMatcher, authenticationEntryPoint);
+	  LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
+	  entryPoints.put(textHtmlMatcher, authenticationEntryPoint);
 
-		DelegatingAuthenticationEntryPoint delegatingAuthenticationEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
-		delegatingAuthenticationEntryPoint.setDefaultEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-		return delegatingAuthenticationEntryPoint;
-	}
+	  DelegatingAuthenticationEntryPoint delegatingAuthenticationEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
+	  delegatingAuthenticationEntryPoint.setDefaultEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+	  return delegatingAuthenticationEntryPoint;
+   }
 
-	private LogoutHandler logoutHandler(CsrfTokenRepository csrfTokenRepository) {
-		return new CompositeLogoutHandler(
-				new SecurityContextLogoutHandler(),
-				new CsrfLogoutHandler(csrfTokenRepository)
-		);
-	}
+   private LogoutHandler logoutHandler(CsrfTokenRepository csrfTokenRepository) {
+	  return new CompositeLogoutHandler(
+		 new SecurityContextLogoutHandler(),
+		 new CsrfLogoutHandler(csrfTokenRepository)
+	  );
+   }
 }

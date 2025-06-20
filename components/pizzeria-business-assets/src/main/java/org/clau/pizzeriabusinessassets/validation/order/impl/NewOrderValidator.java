@@ -16,24 +16,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class NewOrderValidator implements CompositeValidator<OrderValidatorInput>, InitializingBean {
 
-	private List<Validator<OrderValidatorInput>> validators;
+   private List<Validator<OrderValidatorInput>> validators;
 
-	@Override
-	public Optional<ValidationResult> validate(OrderValidatorInput order) {
+   @Override
+   public Optional<ValidationResult> validate(OrderValidatorInput order) {
 
-		for (Validator<OrderValidatorInput> validator : validators) {
-			ValidationResult result = validator.validate(order);
+	  for (Validator<OrderValidatorInput> validator : validators) {
+		 ValidationResult result = validator.validate(order);
 
-			if (!result.valid()) {
-				return Optional.of(result);
-			}
-		}
+		 if (!result.valid()) {
+			return Optional.of(result);
+		 }
+	  }
 
-		return Optional.empty();
-	}
+	  return Optional.empty();
+   }
 
-	@Override
-	public void afterPropertiesSet() {
-		Assert.notNull(validators, "validators is required");
-	}
+   @Override
+   public void afterPropertiesSet() {
+	  Assert.notNull(validators, "validators is required");
+   }
 }

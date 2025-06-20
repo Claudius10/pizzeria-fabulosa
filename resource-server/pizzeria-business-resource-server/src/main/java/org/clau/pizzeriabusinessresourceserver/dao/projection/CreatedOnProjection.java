@@ -4,5 +4,5 @@ import java.time.LocalDateTime;
 
 public interface CreatedOnProjection {
 
-	LocalDateTime getCreatedOn();
+   LocalDateTime getCreatedOn();
 }

@@ -18,25 +18,25 @@ import java.util.Map;
 @EqualsAndHashCode
 public class Store {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "store_generator")
-	@SequenceGenerator(name = "store_generator", sequenceName = "store_seq", allocationSize = 1)
-	private Long id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "store_generator")
+   @SequenceGenerator(name = "store_generator", sequenceName = "store_seq", allocationSize = 1)
+   private Long id;
 
-	@NotNull
-	private String image;
+   @NotNull
+   private String image;
 
-	@NotNull
-	private String name;
+   @NotNull
+   private String name;
 
-	@NotNull
-	private Integer phoneNumber;
+   @NotNull
+   private Integer phoneNumber;
 
-	@Type(JsonType.class)
-	@Column(columnDefinition = "json")
-	@NotNull
-	private Map<String, String> schedule;
+   @Type(JsonType.class)
+   @Column(columnDefinition = "json")
+   @NotNull
+   private Map<String, String> schedule;
 
-	@NotNull
-	private String address;
+   @NotNull
+   private String address;
 }

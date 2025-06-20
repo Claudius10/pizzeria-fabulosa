@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity(name = "User")
 @Table(name = "user",
-		uniqueConstraints = @UniqueConstraint(name = "USER_EMAIL", columnNames = "email")
+   uniqueConstraints = @UniqueConstraint(name = "USER_EMAIL", columnNames = "email")
 )
 @Getter
 @Setter
@@ -19,52 +19,50 @@ import java.util.Set;
 @Builder(setterPrefix = "with")
 public class User implements UserDetails {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
-	@SequenceGenerator(name = "user_generator", sequenceName = "user_seq", allocationSize = 1)
-	private Long id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
+   @SequenceGenerator(name = "user_generator", sequenceName = "user_seq", allocationSize = 1)
+   private Long id;
 
-	private String name;
+   private String name;
 
-	private String email;
+   private String email;
 
-	private Integer contactNumber;
+   private Integer contactNumber;
 
-	private String password;
+   private String password;
 
-	private String address;
+   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
+   @JoinTable(name = "users_roles",
+	  joinColumns = @JoinColumn(name = "user_id"),
+	  inverseJoinColumns = @JoinColumn(name = "role_id"))
+   private Set<Role> roles;
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
-	@JoinTable(name = "users_roles",
-			joinColumns = @JoinColumn(name = "user_id"),
-			inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles;
+   @Override
+   public String getUsername() {
+	  return this.email;
+   }
 
-	@Override
-	public String getUsername() {
-		return this.email;
-	}
+   @Override
+   public String getPassword() {
+	  return this.password;
+   }
 
-	@Override
-	public String getPassword() {
-		return this.password;
-	}
+   @Override
+   public Collection<? extends GrantedAuthority> getAuthorities() {
+	  return this.roles;
+   }
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.roles;
-	}
+   @Override
+   public boolean equals(Object obj) {
+	  if (obj instanceof User) {
+		 return this.email.equals(((User) obj).email);
+	  }
+	  return false;
+   }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof User) {
-			return this.email.equals(((User) obj).email);
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return this.email.hashCode();
-	}
+   @Override
+   public int hashCode() {
+	  return this.email.hashCode();
+   }
 }

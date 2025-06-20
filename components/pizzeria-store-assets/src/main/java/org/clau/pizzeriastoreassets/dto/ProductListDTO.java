@@ -6,19 +6,19 @@ import org.clau.pizzeriastoreassets.model.Product;
 import java.util.List;
 
 public record ProductListDTO(
-		@NotNull
-		List<Product> content,
+   @NotNull
+   List<Product> content,
 
-		@NotNull
-		int number,
+   @NotNull
+   int number,
 
-		@NotNull
-		int size,
+   @NotNull
+   int size,
 
-		@NotNull
-		long totalElements,
+   @NotNull
+   long totalElements,
 
-		@NotNull
-		boolean last
+   @NotNull
+   boolean last
 ) {
 }

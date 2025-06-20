@@ -14,29 +14,29 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
-	@Bean
-	SecurityFilterChain securityFilterChain(
-			HttpSecurity http,
-			AuthenticationHandler authenticationHandler,
-			AccessDeniedHandler accessDeniedHandler
-	) throws Exception {
+   @Bean
+   SecurityFilterChain securityFilterChain(
+	  HttpSecurity http,
+	  AuthenticationHandler authenticationHandler,
+	  AccessDeniedHandler accessDeniedHandler
+   ) throws Exception {
 
-		http.securityMatcher(Route.API + Route.V1 + Route.USER_BASE + Route.ALL)
-				.authorizeHttpRequests(authorize ->
-						authorize.requestMatchers(Route.API + Route.V1 + Route.USER_BASE + Route.ALL).hasAuthority("SCOPE_user")
-				);
+	  http.securityMatcher(Route.API + Route.V1 + Route.USER_BASE + Route.ALL)
+		 .authorizeHttpRequests(authorize ->
+			authorize.requestMatchers(Route.API + Route.V1 + Route.USER_BASE + Route.ALL).hasAuthority("SCOPE_user")
+		 );
 
-		http.oauth2ResourceServer(oauth2ResourceServer -> {
-			oauth2ResourceServer.jwt(Customizer.withDefaults());
-			oauth2ResourceServer.accessDeniedHandler(accessDeniedHandler); // handle access denied
-			oauth2ResourceServer.authenticationEntryPoint(authenticationHandler); // handle auth failure
-		});
+	  http.oauth2ResourceServer(oauth2ResourceServer -> {
+		 oauth2ResourceServer.jwt(Customizer.withDefaults());
+		 oauth2ResourceServer.accessDeniedHandler(accessDeniedHandler); // handle access denied
+		 oauth2ResourceServer.authenticationEntryPoint(authenticationHandler); // handle auth failure
+	  });
 
-		return http.build();
-	}
+	  return http.build();
+   }
 
-	@Bean
-	PasswordEncoder bCrypt() {
-		return new BCryptPasswordEncoder(6);
-	}
+   @Bean
+   PasswordEncoder bCrypt() {
+	  return new BCryptPasswordEncoder(6);
+   }
 }

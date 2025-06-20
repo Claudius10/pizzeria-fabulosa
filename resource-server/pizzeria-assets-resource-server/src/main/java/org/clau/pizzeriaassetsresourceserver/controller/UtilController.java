@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @RequestMapping(Route.API + Route.V1 + Route.RESOURCE + Route.UTIL_BASE)
 public class UtilController implements UtilControllerSwagger {
 
-	@GetMapping(Route.LOCAL_DATE_TIME_NOW)
-	public ResponseEntity<LocalDateTime> getNowAccountingDST() {
-		return ResponseEntity.ok(TimeUtils.getNowAccountingDST());
-	}
+   @GetMapping(Route.LOCAL_DATE_TIME_NOW)
+   public ResponseEntity<LocalDateTime> getNowAccountingDST() {
+	  return ResponseEntity.ok(TimeUtils.getNowAccountingDST());
+   }
 }

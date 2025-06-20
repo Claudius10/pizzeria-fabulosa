@@ -28,24 +28,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class UtilControllerTests {
 
-	private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.UTIL_BASE + Route.LOCAL_DATE_TIME_NOW;
+   private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.UTIL_BASE + Route.LOCAL_DATE_TIME_NOW;
 
-	@Autowired
-	private MockMvc mockMvc;
+   @Autowired
+   private MockMvc mockMvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+   @Autowired
+   private ObjectMapper objectMapper;
 
-	@Test
-	void givenGetNow_thenReturnResource() throws Exception {
-		// Act
+   @Test
+   void givenGetNow_thenReturnResource() throws Exception {
+	  // Act
 
-		MockHttpServletResponse response = mockMvc.perform(get(path)).andReturn().getResponse();
+	  MockHttpServletResponse response = mockMvc.perform(get(path)).andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		LocalDateTime date = objectMapper.readValue(response.getContentAsString(), LocalDateTime.class);
-		assertThat(date).isNotNull();
-	}
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  LocalDateTime date = objectMapper.readValue(response.getContentAsString(), LocalDateTime.class);
+	  assertThat(date).isNotNull();
+   }
 }

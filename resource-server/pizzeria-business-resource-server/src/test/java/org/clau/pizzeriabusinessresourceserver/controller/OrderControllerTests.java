@@ -44,408 +44,408 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 public class OrderControllerTests {
 
-	private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
+   private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
 
-	@Autowired
-	private MockMvc mockMvc;
+   @Autowired
+   private MockMvc mockMvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+   @Autowired
+   private ObjectMapper objectMapper;
 
-	@Autowired
-	private TestHelperService testHelperService;
+   @Autowired
+   private TestHelperService testHelperService;
 
-	@Autowired
-	private TestJwtHelperService testJwtHelperService;
+   @Autowired
+   private TestJwtHelperService testJwtHelperService;
 
-	@Test
-	void givenPostApiCallToCreateOrder_thenReturnCreatedOrder() throws Exception {
+   @Test
+   void givenPostApiCallToCreateOrder_thenReturnCreatedOrder() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		long userId = 1L;
+	  long userId = 1L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		boolean emptyCart = false;
-		NewUserOrderDTO expected = userOrderStub(emptyCart);
+	  boolean emptyCart = false;
+	  NewUserOrderDTO expected = userOrderStub(emptyCart);
 
-		// Act
+	  // Act
 
-		// post api call to create user order
-		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + userId)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(expected))
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken))
-				)
-				.andReturn().getResponse();
+	  // post api call to create user order
+	  MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + userId)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(expected))
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken))
+		 )
+		 .andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-		CreatedOrderDTO actual = objectMapper.readValue(response.getContentAsString(), CreatedOrderDTO.class);
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+	  CreatedOrderDTO actual = objectMapper.readValue(response.getContentAsString(), CreatedOrderDTO.class);
 
-		assertThat(actual.id()).isNotZero();
+	  assertThat(actual.id()).isNotZero();
 
-		assertThat(actual.formattedCreatedOn()).isNotNull();
+	  assertThat(actual.formattedCreatedOn()).isNotNull();
 
-		assertThat(actual.customer()).isNull();
+	  assertThat(actual.customer()).isNull();
 
-		assertThat(actual.address()).isEqualTo(expected.address());
+	  assertThat(actual.address()).isEqualTo(expected.address());
 
-		assertThat(actual.orderDetails().paymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
-		assertThat(actual.orderDetails().deliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
-		assertThat(actual.orderDetails().comment()).isEqualTo(expected.orderDetails().comment());
-		assertThat(actual.orderDetails().billToChange()).isEqualTo(expected.orderDetails().billToChange());
-		assertThat(actual.orderDetails().storePickUp()).isEqualTo(expected.orderDetails().storePickUp());
-		assertThat(actual.orderDetails().changeToGive()).isNotZero();
+	  assertThat(actual.orderDetails().paymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
+	  assertThat(actual.orderDetails().deliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
+	  assertThat(actual.orderDetails().comment()).isEqualTo(expected.orderDetails().comment());
+	  assertThat(actual.orderDetails().billToChange()).isEqualTo(expected.orderDetails().billToChange());
+	  assertThat(actual.orderDetails().storePickUp()).isEqualTo(expected.orderDetails().storePickUp());
+	  assertThat(actual.orderDetails().changeToGive()).isNotZero();
 
-		assertThat(actual.cart().totalCost()).isEqualTo(expected.cart().totalCost());
-		assertThat(actual.cart().totalQuantity()).isEqualTo(expected.cart().totalQuantity());
-		assertThat(actual.cart().totalCostOffers()).isEqualTo(expected.cart().totalCostOffers());
+	  assertThat(actual.cart().totalCost()).isEqualTo(expected.cart().totalCost());
+	  assertThat(actual.cart().totalQuantity()).isEqualTo(expected.cart().totalQuantity());
+	  assertThat(actual.cart().totalCostOffers()).isEqualTo(expected.cart().totalCostOffers());
 
-		assertThat(actual.cart().cartItems().size()).isEqualTo(expected.cart().cartItems().size());
+	  assertThat(actual.cart().cartItems().size()).isEqualTo(expected.cart().cartItems().size());
 
-		CartItemDTO actualItem = new CartItemDTO(
-				null,
-				actual.cart().cartItems().getFirst().type(),
-				actual.cart().cartItems().getFirst().price(),
-				actual.cart().cartItems().getFirst().quantity(),
-				actual.cart().cartItems().getFirst().name(),
-				actual.cart().cartItems().getFirst().description(),
-				actual.cart().cartItems().getFirst().formats()
-		);
+	  CartItemDTO actualItem = new CartItemDTO(
+		 null,
+		 actual.cart().cartItems().getFirst().type(),
+		 actual.cart().cartItems().getFirst().price(),
+		 actual.cart().cartItems().getFirst().quantity(),
+		 actual.cart().cartItems().getFirst().name(),
+		 actual.cart().cartItems().getFirst().description(),
+		 actual.cart().cartItems().getFirst().formats()
+	  );
 
-		CartItemDTO expectedItem = expected.cart().cartItems().getFirst();
+	  CartItemDTO expectedItem = expected.cart().cartItems().getFirst();
 
-		assertThat(actualItem).isEqualTo(expectedItem);
-	}
+	  assertThat(actualItem).isEqualTo(expectedItem);
+   }
 
-	@Test
-	void givenPostApiCallToCreateOrder_whenCartIsEmpty_thenReturnBadRequestWithMessage() throws Exception {
+   @Test
+   void givenPostApiCallToCreateOrder_whenCartIsEmpty_thenReturnBadRequestWithMessage() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		long userId = 1L;
+	  long userId = 1L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		boolean emptyCart = true;
-		NewUserOrderDTO expected = userOrderStub(emptyCart);
+	  boolean emptyCart = true;
+	  NewUserOrderDTO expected = userOrderStub(emptyCart);
 
-		// Act
+	  // Act
 
-		// post api call to create user order
-		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + userId)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(expected))
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn().getResponse();
+	  // post api call to create user order
+	  MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + userId)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(expected))
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-		assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
-		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
-		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
-	}
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
+	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+   }
 
-	@Test
-	void givenGetApiCallToFindOrder_thenReturnOrder() throws Exception {
+   @Test
+   void givenGetApiCallToFindOrder_thenReturnOrder() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		long userId = 1L;
+	  long userId = 1L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		boolean emptyCart = false;
-		NewUserOrderDTO expected = userOrderStub(emptyCart);
+	  boolean emptyCart = false;
+	  NewUserOrderDTO expected = userOrderStub(emptyCart);
 
-		// post api call to create user order
-		MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + userId)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(expected))
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn().getResponse();
+	  // post api call to create user order
+	  MockHttpServletResponse response = mockMvc.perform(post(path + "?userId=" + userId)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(expected))
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 
-		Long orderId = objectMapper.readValue(response.getContentAsString(), Order.class).getId();
+	  Long orderId = objectMapper.readValue(response.getContentAsString(), Order.class).getId();
 
-		// Act
+	  // Act
 
-		// get api call to find user order
-		MockHttpServletResponse getResponse = mockMvc.perform(get(path + Route.ORDER_ID, orderId)
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn().getResponse();
+	  // get api call to find user order
+	  MockHttpServletResponse getResponse = mockMvc.perform(get(path + Route.ORDER_ID, orderId)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(getResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  assertThat(getResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-		OrderDTO actual = objectMapper.readValue(getResponse.getContentAsString(), OrderDTO.class);
+	  OrderDTO actual = objectMapper.readValue(getResponse.getContentAsString(), OrderDTO.class);
 
-		assertThat(actual.id()).isNotZero();
-		assertThat(actual.formattedCreatedOn()).isNotNull();
-		assertThat(actual.address()).isEqualTo(expected.address());
+	  assertThat(actual.id()).isNotZero();
+	  assertThat(actual.formattedCreatedOn()).isNotNull();
+	  assertThat(actual.address()).isEqualTo(expected.address());
 
-		assertThat(actual.orderDetails().paymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
-		assertThat(actual.orderDetails().deliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
-		assertThat(actual.orderDetails().comment()).isEqualTo(expected.orderDetails().comment());
-		assertThat(actual.orderDetails().billToChange()).isEqualTo(expected.orderDetails().billToChange());
-		assertThat(actual.orderDetails().storePickUp()).isEqualTo(expected.orderDetails().storePickUp());
-		assertThat(actual.orderDetails().changeToGive()).isNotZero();
+	  assertThat(actual.orderDetails().paymentMethod()).isEqualTo(expected.orderDetails().paymentMethod());
+	  assertThat(actual.orderDetails().deliveryTime()).isEqualTo(expected.orderDetails().deliveryTime());
+	  assertThat(actual.orderDetails().comment()).isEqualTo(expected.orderDetails().comment());
+	  assertThat(actual.orderDetails().billToChange()).isEqualTo(expected.orderDetails().billToChange());
+	  assertThat(actual.orderDetails().storePickUp()).isEqualTo(expected.orderDetails().storePickUp());
+	  assertThat(actual.orderDetails().changeToGive()).isNotZero();
 
-		assertThat(actual.cart().totalCost()).isEqualTo(expected.cart().totalCost());
-		assertThat(actual.cart().totalQuantity()).isEqualTo(expected.cart().totalQuantity());
-		assertThat(actual.cart().totalCostOffers()).isEqualTo(expected.cart().totalCostOffers());
+	  assertThat(actual.cart().totalCost()).isEqualTo(expected.cart().totalCost());
+	  assertThat(actual.cart().totalQuantity()).isEqualTo(expected.cart().totalQuantity());
+	  assertThat(actual.cart().totalCostOffers()).isEqualTo(expected.cart().totalCostOffers());
 
-		CartItemDTO actualItem = new CartItemDTO(
-				null,
-				actual.cart().cartItems().getFirst().type(),
-				actual.cart().cartItems().getFirst().price(),
-				actual.cart().cartItems().getFirst().quantity(),
-				actual.cart().cartItems().getFirst().name(),
-				actual.cart().cartItems().getFirst().description(),
-				actual.cart().cartItems().getFirst().formats()
-		);
+	  CartItemDTO actualItem = new CartItemDTO(
+		 null,
+		 actual.cart().cartItems().getFirst().type(),
+		 actual.cart().cartItems().getFirst().price(),
+		 actual.cart().cartItems().getFirst().quantity(),
+		 actual.cart().cartItems().getFirst().name(),
+		 actual.cart().cartItems().getFirst().description(),
+		 actual.cart().cartItems().getFirst().formats()
+	  );
 
-		CartItemDTO expectedItem = expected.cart().cartItems().getFirst();
+	  CartItemDTO expectedItem = expected.cart().cartItems().getFirst();
 
-		assertThat(actualItem).isEqualTo(expectedItem);
-	}
+	  assertThat(actualItem).isEqualTo(expectedItem);
+   }
 
-	@Test
-	void givenGetApiCallToFindOrder_whenOrderNotFound_thenReturnNoContent() throws Exception {
+   @Test
+   void givenGetApiCallToFindOrder_whenOrderNotFound_thenReturnNoContent() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		Long orderId = 45678L;
+	  Long orderId = 45678L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		// Act
+	  // Act
 
-		// get api call to find user order
-		MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_ID, orderId)
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn().getResponse();
+	  // get api call to find user order
+	  MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_ID, orderId)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
-	}
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
+   }
 
-	@Test
-	void givenOrderDelete_whenWithinTimeLimit_thenReturnDeletedOrderId() throws Exception {
+   @Test
+   void givenOrderDelete_whenWithinTimeLimit_thenReturnDeletedOrderId() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		Long userId = 1L;
+	  Long userId = 1L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		// create user order
-		int minutesInThePast = 0;
-		Order order = testHelperService.createOrder(userId, minutesInThePast);
+	  // create user order
+	  int minutesInThePast = 0;
+	  Order order = testHelperService.createOrder(userId, minutesInThePast);
 
-		// Act
+	  // Act
 
-		// delete api call to delete order
-		MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, order.getId())
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn()
-				.getResponse();
+	  // delete api call to delete order
+	  MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, order.getId())
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn()
+		 .getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		Long id = objectMapper.readValue(response.getContentAsString(), Long.class);
-		assertThat(id).isEqualTo(order.getId());
-	}
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  Long id = objectMapper.readValue(response.getContentAsString(), Long.class);
+	  assertThat(id).isEqualTo(order.getId());
+   }
 
-	@Test
-	void givenOrderDelete_whenTimeLimitPassed_thenReturnBadRequestWithMessage() throws Exception {
+   @Test
+   void givenOrderDelete_whenTimeLimitPassed_thenReturnBadRequestWithMessage() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		Long userId = 1L;
+	  Long userId = 1L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		// create user order
-		int minutesInThePast = 21;
-		Order order = testHelperService.createOrder(userId, minutesInThePast);
+	  // create user order
+	  int minutesInThePast = 21;
+	  Order order = testHelperService.createOrder(userId, minutesInThePast);
 
-		// Act
+	  // Act
 
-		// delete api call to delete order
-		MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, order.getId())
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn()
-				.getResponse();
+	  // delete api call to delete order
+	  MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, order.getId())
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn()
+		 .getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-		ResponseDTO responseObj = getResponse(response, objectMapper);
-		assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-		assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
-		assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
-		assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
-	}
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
+	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+   }
 
-	@Test
-	void givenOrderDelete_whenOrderNotFound_thenReturnNoContent() throws Exception {
+   @Test
+   void givenOrderDelete_whenOrderNotFound_thenReturnNoContent() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		Long orderId = 5437L;
+	  Long orderId = 5437L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		// Act
+	  // Act
 
-		// delete api call to delete order
-		MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, orderId)
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn()
-				.getResponse();
+	  // delete api call to delete order
+	  MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, orderId)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn()
+		 .getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
-	}
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
+   }
 
-	@Test
-	void givenGetUserOrderSummary_thenReturnUserOrderSummary() throws Exception {
+   @Test
+   void givenGetUserOrderSummary_thenReturnUserOrderSummary() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		Long userId = 1L;
+	  Long userId = 1L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		// create user order
-		int minutesInThePast = 0;
-		Order expectedOrder = testHelperService.createOrder(userId, minutesInThePast);
+	  // create user order
+	  int minutesInThePast = 0;
+	  Order expectedOrder = testHelperService.createOrder(userId, minutesInThePast);
 
-		int pageSize = 5;
-		int pageNumber = 0;
+	  int pageSize = 5;
+	  int pageNumber = 0;
 
-		// Act
+	  // Act
 
-		// get api call to get OrderSummary
-		MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn()
-				.getResponse();
+	  // get api call to get OrderSummary
+	  MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn()
+		 .getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-		OrderSummaryListDTO actual = objectMapper.readValue(response.getContentAsString(), OrderSummaryListDTO.class);
+	  OrderSummaryListDTO actual = objectMapper.readValue(response.getContentAsString(), OrderSummaryListDTO.class);
 
-		assertThat(actual.size()).isEqualTo(pageSize);
-		assertThat(actual.number()).isEqualTo(pageNumber);
-		assertThat(actual.totalElements()).isEqualTo(1);
-		assertThat(actual.last()).isTrue();
+	  assertThat(actual.size()).isEqualTo(pageSize);
+	  assertThat(actual.number()).isEqualTo(pageNumber);
+	  assertThat(actual.totalElements()).isEqualTo(1);
+	  assertThat(actual.last()).isTrue();
 
-		OrderSummaryDTO actualOrder = actual.content().getFirst();
+	  OrderSummaryDTO actualOrder = actual.content().getFirst();
 
-		assertThat(actualOrder.id()).isEqualTo(expectedOrder.getId());
-		assertThat(actualOrder.formattedCreatedOn()).isEqualTo(expectedOrder.getFormattedCreatedOn());
-		assertThat(actualOrder.paymentMethod()).isEqualTo(expectedOrder.getOrderDetails().getPaymentMethod());
-		assertThat(actualOrder.quantity()).isEqualTo(expectedOrder.getCart().getTotalQuantity());
-		assertThat(actualOrder.cost()).isEqualTo(expectedOrder.getCart().getTotalCost());
-		assertThat(actualOrder.costAfterOffers()).isEqualTo(expectedOrder.getCart().getTotalCostOffers());
-	}
+	  assertThat(actualOrder.id()).isEqualTo(expectedOrder.getId());
+	  assertThat(actualOrder.formattedCreatedOn()).isEqualTo(expectedOrder.getFormattedCreatedOn());
+	  assertThat(actualOrder.paymentMethod()).isEqualTo(expectedOrder.getOrderDetails().getPaymentMethod());
+	  assertThat(actualOrder.quantity()).isEqualTo(expectedOrder.getCart().getTotalQuantity());
+	  assertThat(actualOrder.cost()).isEqualTo(expectedOrder.getCart().getTotalCost());
+	  assertThat(actualOrder.costAfterOffers()).isEqualTo(expectedOrder.getCart().getTotalCostOffers());
+   }
 
-	@Test
-	void givenGetUserOrderSummary_whenNoOrders_thenReturnEmptySummary() throws Exception {
+   @Test
+   void givenGetUserOrderSummary_whenNoOrders_thenReturnEmptySummary() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		Long userId = 1L;
+	  Long userId = 1L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		int pageSize = 1;
-		int pageNumber = 0;
+	  int pageSize = 1;
+	  int pageNumber = 0;
 
-		// Act
+	  // Act
 
-		// get api call to get OrderSummary
-		MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn()
-				.getResponse();
+	  // get api call to get OrderSummary
+	  MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn()
+		 .getResponse();
 
-		// Assert
+	  // Assert
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-		OrderSummaryListDTO actual = objectMapper.readValue(response.getContentAsString(), OrderSummaryListDTO.class);
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  OrderSummaryListDTO actual = objectMapper.readValue(response.getContentAsString(), OrderSummaryListDTO.class);
 
-		assertThat(actual.size()).isEqualTo(pageSize);
-		assertThat(actual.number()).isEqualTo(pageNumber);
-		assertThat(actual.totalElements()).isZero();
-		assertThat(actual.last()).isTrue();
-		assertThat(actual.content()).isEmpty();
-	}
+	  assertThat(actual.size()).isEqualTo(pageSize);
+	  assertThat(actual.number()).isEqualTo(pageNumber);
+	  assertThat(actual.totalElements()).isZero();
+	  assertThat(actual.last()).isTrue();
+	  assertThat(actual.content()).isEmpty();
+   }
 
-	@Test
-	void givenGetUserOrderSummary_whenUserNotFound_thenReturnEmptySummary() throws Exception {
+   @Test
+   void givenGetUserOrderSummary_whenUserNotFound_thenReturnEmptySummary() throws Exception {
 
-		// Arrange
+	  // Arrange
 
-		Long userId = 985643L;
+	  Long userId = 985643L;
 
-		// create JWT token
-		String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
 
-		int pageSize = 3;
-		int pageNumber = 0;
+	  int pageSize = 3;
+	  int pageNumber = 0;
 
-		// Act
+	  // Act
 
-		// get api call to get OrderSummary
-		MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
-						.with(csrf())
-						.header("Authorization", format("Bearer %s", accessToken)))
-				.andReturn()
-				.getResponse();
+	  // get api call to get OrderSummary
+	  MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn()
+		 .getResponse();
 
-		// Assert
+	  // Assert
 
-		OrderSummaryListDTO actual = objectMapper.readValue(response.getContentAsString(), OrderSummaryListDTO.class);
+	  OrderSummaryListDTO actual = objectMapper.readValue(response.getContentAsString(), OrderSummaryListDTO.class);
 
-		assertThat(actual.size()).isEqualTo(pageSize);
-		assertThat(actual.number()).isEqualTo(pageNumber);
-		assertThat(actual.totalElements()).isZero();
-		assertThat(actual.last()).isTrue();
-		assertThat(actual.content()).isEmpty();
-	}
+	  assertThat(actual.size()).isEqualTo(pageSize);
+	  assertThat(actual.number()).isEqualTo(pageNumber);
+	  assertThat(actual.totalElements()).isZero();
+	  assertThat(actual.last()).isTrue();
+	  assertThat(actual.content()).isEmpty();
+   }
 }

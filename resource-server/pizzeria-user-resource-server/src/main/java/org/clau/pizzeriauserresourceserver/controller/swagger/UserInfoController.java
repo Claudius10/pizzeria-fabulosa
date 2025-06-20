@@ -15,29 +15,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserInfoController {
 
-	@Operation(operationId = "getUserInfo", summary = "Find user account info")
-	@ApiResponse(
-			responseCode = Response.OK,
-			description = "The user info",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = UserInfoDTO.class))
-	)
-	@ApiResponse(
-			responseCode = Response.BAD_REQUEST,
-			description = "Validation failed or invalid request",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
-	)
-	@ApiResponse(
-			responseCode = Response.UNAUTHORIZED,
-			description = "User authentification failed",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
-	)
-	@ApiResponse(
-			responseCode = Response.INTERNAL_SERVER_ERROR,
-			description = "Unexpected exception occurred or attempted to delete dummy account",
-			content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
-	)
-	@GetMapping("/userinfo")
-	void getUserInfo() {
-		// API definition only
-	}
+   @Operation(operationId = "getUserInfo", summary = "Find user account info")
+   @ApiResponse(
+	  responseCode = Response.OK,
+	  description = "The user info",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = UserInfoDTO.class))
+   )
+   @ApiResponse(
+	  responseCode = Response.BAD_REQUEST,
+	  description = "Validation failed or invalid request",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
+   )
+   @ApiResponse(
+	  responseCode = Response.UNAUTHORIZED,
+	  description = "User authentification failed",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
+   )
+   @ApiResponse(
+	  responseCode = Response.INTERNAL_SERVER_ERROR,
+	  description = "Unexpected exception occurred or attempted to delete dummy account",
+	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
+   )
+   @GetMapping("/userinfo")
+   void getUserInfo() {
+	  // API definition only
+   }
 }
