@@ -1,6 +1,15 @@
 server:
   port: 8083
 
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.hibernate: INFO
+    org.hibernate.sql: INFO
+
 spring:
 
   application:
@@ -43,12 +52,3 @@ springdoc:
   swagger-ui:
     path: /api/v1/docs/swagger
     operations-sorter: method
-
-logging:
-  level:
-    root: INFO
-    org.springframework.web: INFO
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
-    org.hibernate: INFO
-    org.hibernate.sql: INFO
