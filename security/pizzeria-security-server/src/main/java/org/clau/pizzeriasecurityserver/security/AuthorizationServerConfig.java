@@ -111,7 +111,7 @@ public class AuthorizationServerConfig {
 		 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
 		 .tokenSettings(TokenSettings.builder()
 			.authorizationCodeTimeToLive(Duration.ofMinutes(5))
-			.accessTokenTimeToLive(Duration.ofMinutes(1))
+			.accessTokenTimeToLive(Duration.ofDays(1))
 			.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
 			.idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)
 			.x509CertificateBoundAccessTokens(false)
