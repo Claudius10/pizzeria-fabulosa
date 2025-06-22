@@ -45,6 +45,14 @@
             <artifactId>spring-cloud-starter-gateway-server-webmvc</artifactId>
         </dependency>
 
+        <!-- Own -->
+
+        <dependency>
+            <groupId>org.clau</groupId>
+            <artifactId>api-utils</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
         <!-- Util -->
 
         <dependency>

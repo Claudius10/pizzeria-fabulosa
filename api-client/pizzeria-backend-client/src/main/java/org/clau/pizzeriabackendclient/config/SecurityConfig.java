@@ -3,6 +3,7 @@ package org.clau.pizzeriabackendclient.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,7 +26,11 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -40,8 +45,18 @@ public class SecurityConfig {
    private String angularBaseUri;
 
    @Bean
-   SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+   SecurityFilterChain securityFilterChain(
+	  HttpSecurity http,
+	  ClientRegistrationRepository clientRegistrationRepository,
+	  AccessDeniedHandler accessDeniedHandler) throws Exception {
+
 	  CookieCsrfTokenRepository cookieCsrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+	  cookieCsrfTokenRepository.setCookieCustomizer(csrfCookie ->
+		 csrfCookie
+			.domain(angularBaseUri)
+			.secure(true)
+	  );
+
 	  CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
 		/*
 		IMPORTANT:
@@ -51,7 +66,15 @@ public class SecurityConfig {
 		 */
 	  csrfTokenRequestAttributeHandler.setCsrfRequestAttributeName(null);
 
+
 	  http
+		 .csrf(csrf ->
+			csrf
+			   .csrfTokenRepository(cookieCsrfTokenRepository)
+			   .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
+		 )
+		 .cors(cors ->
+			cors.configurationSource(corsConfigurationSource()))
 		 .authorizeHttpRequests(authorize ->
 			authorize
 			   .requestMatchers("/api/v1/docs.yaml").permitAll()
@@ -59,11 +82,6 @@ public class SecurityConfig {
 			   .requestMatchers("/api/v1/resource/**").permitAll()
 			   .requestMatchers("/api/v1/anon/**").permitAll()
 			   .anyRequest().authenticated()
-		 )
-		 .csrf(csrf ->
-			csrf
-			   .csrfTokenRepository(cookieCsrfTokenRepository)
-			   .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
 		 )
 		 .oauth2Client(withDefaults())
 		 .oauth2Login(oauth2Login ->
@@ -77,6 +95,7 @@ public class SecurityConfig {
 		 .exceptionHandling(exceptionHandling ->
 			exceptionHandling
 			   .authenticationEntryPoint(authenticationEntryPoint())
+			   .accessDeniedHandler(accessDeniedHandler)
 		 );
 
 	  return http.build();
@@ -94,8 +113,7 @@ public class SecurityConfig {
 	  AuthenticationEntryPoint authenticationEntryPoint =
 		 new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/pizzeria-client");
 
-	  MediaTypeRequestMatcher textHtmlMatcher =
-		 new MediaTypeRequestMatcher(MediaType.TEXT_HTML);
+	  MediaTypeRequestMatcher textHtmlMatcher = new MediaTypeRequestMatcher(MediaType.TEXT_HTML);
 	  textHtmlMatcher.setUseEquals(true);
 
 	  LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
@@ -111,5 +129,17 @@ public class SecurityConfig {
 		 new SecurityContextLogoutHandler(),
 		 new CsrfLogoutHandler(csrfTokenRepository)
 	  );
+   }
+
+   private CorsConfigurationSource corsConfigurationSource() {
+	  CorsConfiguration config = new CorsConfiguration();
+	  config.addAllowedHeader("X-XSRF-TOKEN");
+	  config.addAllowedHeader(HttpHeaders.CONTENT_TYPE);
+	  config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"));
+	  config.setAllowedOrigins(Arrays.asList("https://www.pizzeriafabulosa.com", "https://pizzeriafabulosa.com", "http://127.0.0.1:4200"));
+	  config.setAllowCredentials(true);
+	  UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	  source.registerCorsConfiguration("/**", config);
+	  return source;
    }
 }

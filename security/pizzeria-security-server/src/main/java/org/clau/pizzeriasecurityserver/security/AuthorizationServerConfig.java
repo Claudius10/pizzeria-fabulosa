@@ -103,7 +103,7 @@ public class AuthorizationServerConfig {
 		 .clientSecret(secret)
 		 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 		 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-		 .redirectUri("http://127.0.0.1:8080/login/oauth2/code/pizzeria-client")
+		 .redirectUri("https://api.pizzeriafabulosa.com/login/oauth2/code/pizzeria-client")
 		 .postLogoutRedirectUri(angularBaseUri)
 		 .scope(OidcScopes.OPENID)
 		 .scope("user")
