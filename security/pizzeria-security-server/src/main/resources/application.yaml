@@ -36,5 +36,8 @@ spring:
     hibernate:
       ddl-auto: update
 
-angular-app:
-  base-uri: http://127.0.0.1:4200
+uri:
+  angular-base: http://127.0.0.1:4200
+  angular-domain: 127.0.0.1
+  pizzeria-api-base: http://127.0.0.1:8080
+  allowed-origins: [ 'http://127.0.0.1:4200' ]

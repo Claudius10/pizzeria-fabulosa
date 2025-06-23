@@ -4,14 +4,14 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import lombok.RequiredArgsConstructor;
+import org.clau.pizzeriasecurityserver.property.MyURI;
 import org.clau.pizzeriasecurityserver.security.jose.Jwks;
 import org.clau.pizzeriasecurityserver.service.impl.OidcUserInfoServiceImpl;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,13 +38,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -52,15 +48,18 @@ import static org.springframework.security.oauth2.server.authorization.config.an
 
 // https://github.com/spring-projects/spring-authorization-server/tree/main/samples
 
+@RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 
-   @Value("${angular-app.base-uri}")
-   private String angularBaseUri;
+   private final MyURI uri;
 
    @Bean
    @Order(Ordered.HIGHEST_PRECEDENCE)
-   SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http, OidcUserInfoServiceImpl userInfoService) throws Exception {
+   SecurityFilterChain authorizationServerSecurityFilterChain(
+	  HttpSecurity http,
+	  OidcUserInfoServiceImpl userInfoService,
+	  CorsConfigurationSource corsConfigurationSource) throws Exception {
 
 	  Function<OidcUserInfoAuthenticationContext, OidcUserInfo> userInfoMapper = (context) -> {
 		 OidcUserInfoAuthenticationToken authentication = context.getAuthentication();
@@ -73,7 +72,7 @@ public class AuthorizationServerConfig {
 
 	  http
 		 .cors(cors ->
-			cors.configurationSource(corsConfigurationSource()))
+			cors.configurationSource(corsConfigurationSource))
 		 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
 		 .with(authorizationServerConfigurer, (authorizationServer) ->
 			authorizationServer.oidc(oidc ->
@@ -103,8 +102,8 @@ public class AuthorizationServerConfig {
 		 .clientSecret(secret)
 		 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 		 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-		 .redirectUri("https://api.pizzeriafabulosa.com/login/oauth2/code/pizzeria-client")
-		 .postLogoutRedirectUri(angularBaseUri)
+		 .redirectUri(uri.getPizzeriaApiBase() + "/login/oauth2/code/pizzeria-client")
+		 .postLogoutRedirectUri(uri.getAngularBase())
 		 .scope(OidcScopes.OPENID)
 		 .scope("user")
 		 .scope("order")
@@ -141,16 +140,5 @@ public class AuthorizationServerConfig {
    @Bean
    AuthorizationServerSettings authorizationServerSettings() {
 	  return AuthorizationServerSettings.builder().build();
-   }
-
-   private CorsConfigurationSource corsConfigurationSource() {
-	  CorsConfiguration config = new CorsConfiguration();
-
-	  config.setAllowedOrigins(Collections.singletonList(angularBaseUri));
-	  config.setExposedHeaders(List.of(HttpHeaders.WWW_AUTHENTICATE));
-
-	  UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	  source.registerCorsConfiguration("/**", config);
-	  return source;
    }
 }

@@ -57,5 +57,7 @@ spring:
             filters:
               - TokenRelay=
 
-angular-app:
-  base-uri: http://127.0.0.1:4200
+uri:
+  angular-base: http://127.0.0.1:4200
+  angular-domain: 127.0.0.1
+  allowed-origins: { 'http://127.0.0.1:4200' }

@@ -1,6 +1,7 @@
 package org.clau.pizzeriabackendclient.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.clau.pizzeriabackendclient.property.MyURI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -37,12 +38,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 // https://github.com/spring-projects/spring-authorization-server/tree/main/samples
 
+@RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
 public class SecurityConfig {
 
-   @Value("${angular-app.base-uri}")
-   private String angularBaseUri;
+   private final MyURI uri;
 
    @Bean
    SecurityFilterChain securityFilterChain(
@@ -53,7 +54,7 @@ public class SecurityConfig {
 	  CookieCsrfTokenRepository cookieCsrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
 	  cookieCsrfTokenRepository.setCookieCustomizer(csrfCookie ->
 		 csrfCookie
-			.domain(angularBaseUri)
+			.domain(uri.getAngularDomain())
 			.secure(true)
 	  );
 
@@ -68,13 +69,13 @@ public class SecurityConfig {
 
 
 	  http
+		 .cors(cors ->
+			cors.configurationSource(corsConfigurationSource()))
 		 .csrf(csrf ->
 			csrf
 			   .csrfTokenRepository(cookieCsrfTokenRepository)
 			   .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
 		 )
-		 .cors(cors ->
-			cors.configurationSource(corsConfigurationSource()))
 		 .authorizeHttpRequests(authorize ->
 			authorize
 			   .requestMatchers("/api/v1/docs.yaml").permitAll()
@@ -104,7 +105,7 @@ public class SecurityConfig {
    private LogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
 	  OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
 		 new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-	  oidcLogoutSuccessHandler.setPostLogoutRedirectUri(angularBaseUri);
+	  oidcLogoutSuccessHandler.setPostLogoutRedirectUri(uri.getAngularBase());
 
 	  return oidcLogoutSuccessHandler;
    }
@@ -133,11 +134,13 @@ public class SecurityConfig {
 
    private CorsConfigurationSource corsConfigurationSource() {
 	  CorsConfiguration config = new CorsConfiguration();
+
+	  config.setAllowedOrigins(uri.getAllowedOrigins());
 	  config.addAllowedHeader("X-XSRF-TOKEN");
 	  config.addAllowedHeader(HttpHeaders.CONTENT_TYPE);
 	  config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"));
-	  config.setAllowedOrigins(Arrays.asList("https://www.pizzeriafabulosa.com", "https://pizzeriafabulosa.com", "http://127.0.0.1:4200"));
 	  config.setAllowCredentials(true);
+
 	  UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 	  source.registerCorsConfiguration("/**", config);
 	  return source;

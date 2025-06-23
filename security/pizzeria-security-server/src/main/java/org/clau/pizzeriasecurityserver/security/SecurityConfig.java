@@ -1,9 +1,7 @@
 package org.clau.pizzeriasecurityserver.security;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -16,12 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 // https://github.com/spring-projects/spring-authorization-server/tree/main/samples
 
@@ -29,15 +22,12 @@ import java.util.Collections;
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
-   @Value("${angular-app.base-uri}")
-   private String angularBaseUri;
-
    @Bean
-   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
 
 	  http
 		 .cors(cors ->
-			cors.configurationSource(corsConfigurationSource()))
+			cors.configurationSource(corsConfigurationSource))
 		 .authorizeHttpRequests(authorize ->
 			authorize
 			   .requestMatchers("/assets/**", "/login").permitAll()
@@ -72,20 +62,5 @@ public class SecurityConfig {
 	  // HttpSessionEventPublisher is responsible for notifying SessionRegistryImpl of session lifecycle events,
 	  // for example, SessionDestroyedEvent, to provide the ability to remove the SessionInformation instance.
 	  return new HttpSessionEventPublisher();
-   }
-
-   private CorsConfigurationSource corsConfigurationSource() {
-	  CorsConfiguration config = new CorsConfiguration();
-	  config.setAllowedOrigins(Collections.singletonList(angularBaseUri));
-
-	  config.addAllowedHeader("X-XSRF-TOKEN");
-	  config.addAllowedHeader(HttpHeaders.CONTENT_TYPE);
-
-	  config.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"));
-	  config.setAllowCredentials(true);
-
-	  UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	  source.registerCorsConfiguration("/**", config);
-	  return source;
    }
 }
