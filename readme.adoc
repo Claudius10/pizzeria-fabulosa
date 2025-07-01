@@ -1,3 +1,1 @@
-Pizzeria Fabulosa
-
 image::diagram.png[]
