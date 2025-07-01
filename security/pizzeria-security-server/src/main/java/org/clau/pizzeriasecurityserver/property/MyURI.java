@@ -25,7 +25,7 @@ public class MyURI implements InitializingBean {
 
    @Override
    public void afterPropertiesSet() {
-	  Assert.hasText(angularBase, "angularBas is required");
+	  Assert.hasText(angularBase, "angularBase is required");
 	  Assert.hasText(angularDomain, "angularDomain is required");
 	  Assert.notEmpty(allowedOrigins, "allowedOrigins is required");
 	  Assert.hasText(pizzeriaApiBase, "pizzeriaApiBase is required");

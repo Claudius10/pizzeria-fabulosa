@@ -1,6 +1,15 @@
 server:
   port: 8083
 
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.hibernate: INFO
+    org.hibernate.sql: INFO
+
 spring:
 
   application:
@@ -13,7 +22,7 @@ spring:
           jwk-set-uri: http://localhost:9000/oauth2/jwks
 
   datasource:
-    url: jdbc:mariadb://localhost:3306/pizzeria
+    url: jdbc:mariadb://localhost:3306/pizzeria-business
     username: root
     password: root
     #    url: jdbc:mariadb://db:3306/pizzeria
@@ -43,12 +52,3 @@ springdoc:
   swagger-ui:
     path: /api/v1/docs/swagger
     operations-sorter: method
-
-logging:
-  level:
-    root: INFO
-    org.springframework.web: INFO
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
-    org.hibernate: INFO
-    org.hibernate.sql: INFO

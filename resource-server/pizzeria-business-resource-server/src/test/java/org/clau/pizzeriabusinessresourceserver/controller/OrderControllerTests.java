@@ -46,6 +46,8 @@ public class OrderControllerTests {
 
    private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
 
+   private final String userRole = "USER";
+
    @Autowired
    private MockMvc mockMvc;
 
@@ -66,7 +68,7 @@ public class OrderControllerTests {
 	  long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  boolean emptyCart = false;
 	  NewUserOrderDTO expected = userOrderStub(emptyCart);
@@ -131,7 +133,7 @@ public class OrderControllerTests {
 	  long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  boolean emptyCart = true;
 	  NewUserOrderDTO expected = userOrderStub(emptyCart);
@@ -164,7 +166,7 @@ public class OrderControllerTests {
 	  long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  boolean emptyCart = false;
 	  NewUserOrderDTO expected = userOrderStub(emptyCart);
@@ -233,7 +235,7 @@ public class OrderControllerTests {
 	  Long orderId = 45678L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  // Act
 
@@ -256,7 +258,7 @@ public class OrderControllerTests {
 	  Long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  // create user order
 	  int minutesInThePast = 0;
@@ -286,7 +288,7 @@ public class OrderControllerTests {
 	  Long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  // create user order
 	  int minutesInThePast = 21;
@@ -319,7 +321,7 @@ public class OrderControllerTests {
 	  Long orderId = 5437L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  // Act
 
@@ -343,7 +345,7 @@ public class OrderControllerTests {
 	  Long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  // create user order
 	  int minutesInThePast = 0;
@@ -390,7 +392,7 @@ public class OrderControllerTests {
 	  Long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  int pageSize = 1;
 	  int pageNumber = 0;
@@ -424,7 +426,7 @@ public class OrderControllerTests {
 	  Long userId = 985643L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of("order"));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
 
 	  int pageSize = 3;
 	  int pageNumber = 0;

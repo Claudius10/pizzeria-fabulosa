@@ -33,12 +33,12 @@ public class TestJwtHelperService {
 	  jwtEncoder = new NimbusJwtEncoder(jwks);
    }
 
-   public String generateAccessToken(List<String> scopes) {
+   public String generateAccessToken(List<String> roles) {
 	  JwtClaimsSet claims = JwtClaimsSet.builder()
 		 .issuedAt(Instant.now())
-		 .issuer("http://192.168.1.128:9000")
+		 .issuer("http://127.0.0.1:9000")
 		 .expiresAt(Instant.now().plus(1, ChronoUnit.MINUTES))
-		 .claim("scope", String.join(" ", scopes))
+		 .claim("roles", String.join(" ", roles))
 		 .build();
 	  return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
    }

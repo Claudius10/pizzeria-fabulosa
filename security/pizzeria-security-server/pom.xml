@@ -26,17 +26,7 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
@@ -44,13 +34,7 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- Own -->
-
-        <dependency>
-            <groupId>org.clau</groupId>
-            <artifactId>api-utils</artifactId>
-            <version>0.0.1</version>
-        </dependency>
+        <!-- Pizzeria -->
 
         <dependency>
             <groupId>org.clau</groupId>

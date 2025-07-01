@@ -213,7 +213,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .withOrigin(Constant.APP_NAME)
 		 .withPath(path)
 		 .withLogged(false)
-		 .withFatal(true)
+		 .withFatal(false)
 		 .build();
 
 	  return ResponseDTO.builder()

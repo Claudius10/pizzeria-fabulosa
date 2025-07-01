@@ -14,6 +14,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -23,6 +26,7 @@ import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -34,6 +38,8 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -41,6 +47,8 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.time.Duration;
+import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -93,6 +101,18 @@ public class AuthorizationServerConfig {
    }
 
    @Bean
+   OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
+	  return (context) -> {
+		 if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
+			Authentication principal = context.getPrincipal();
+			Collection<? extends GrantedAuthority> authorities = principal.getAuthorities();
+			Set<String> roles = AuthorityUtils.authorityListToSet(authorities);
+			context.getClaims().claims((claims) -> claims.put("roles", roles));
+		 }
+	  };
+   }
+
+   @Bean
    RegisteredClientRepository registeredClientRepository(PasswordEncoder bCrypt) {
 
 	  String secret = bCrypt.encode("pizzeria");
@@ -105,8 +125,6 @@ public class AuthorizationServerConfig {
 		 .redirectUri(uri.getPizzeriaApiBase() + "/login/oauth2/code/pizzeria-client")
 		 .postLogoutRedirectUri(uri.getAngularBase())
 		 .scope(OidcScopes.OPENID)
-		 .scope("user")
-		 .scope("order")
 		 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
 		 .tokenSettings(TokenSettings.builder()
 			.authorizationCodeTimeToLive(Duration.ofMinutes(5))

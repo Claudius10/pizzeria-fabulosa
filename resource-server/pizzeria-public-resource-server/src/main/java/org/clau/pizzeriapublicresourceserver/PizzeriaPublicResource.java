@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
    {
 	  "org.clau.pizzeriapublicassets.model",
 	  "org.clau.pizzeriabusinessassets.model",
-	  "org.clau.pizzeriauserassets.model",
 	  "org.clau.apiutils.model"
    }
 )

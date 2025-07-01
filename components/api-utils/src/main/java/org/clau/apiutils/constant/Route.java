@@ -4,16 +4,13 @@ public final class Route {
 
    public static final String API = "/api";
 
-   // API
    public static final String V1 = "/v1";
    public static final String ALL = "/**";
    public static final String ANON_BASE = "/anon";
-
-   // ANON
-   public static final String ANON_REGISTER = "/register";
+   public static final String PUBLIC = "/public";
+   public static final String REGISTER = "/register";
    public static final String RESOURCE = "/resource";
 
-   // RESOURCE
    public static final String PRODUCT_BASE = "/product";
    public static final String PRODUCT_TYPE = "type";
    public static final String STORE_BASE = "/store";
@@ -22,16 +19,13 @@ public final class Route {
    public static final String LOCAL_DATE_TIME_NOW = "/now";
    public static final String USER_BASE = "/user";
 
-   // USER
    public static final String USER_ID = "/{userId}";
    public static final String ORDER_BASE = "/order";
 
-   // ORDER
    public static final String ORDER_ID = "/{orderId}";
    public static final String ORDER_SUMMARY = "/summary";
    public static final String PAGE_NUMBER = "pageNumber";
 
-   // MISC
    public static final String PAGE_SIZE = "pageSize";
    public static final String USER_ID_PARAM = "userId";
 

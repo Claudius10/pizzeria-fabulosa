@@ -1,6 +1,5 @@
 package org.clau.pizzeriasecurityserver.service.impl;
 
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriasecurityserver.dao.UserRepository;

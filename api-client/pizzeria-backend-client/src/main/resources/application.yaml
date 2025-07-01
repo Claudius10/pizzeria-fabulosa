@@ -22,42 +22,43 @@ spring:
             client-name: pizzeria-client
             authorization-grant-type: authorization_code
             redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
-            scope: openid, user, order
+            scope: openid
         provider:
           spring:
             issuer-uri: http://localhost:9000
   cloud:
     gateway:
-      mvc:
-        routes:
-          - id: userinfo
-            uri: http://localhost:9000
-            predicates:
-              - Path=/userinfo
-            filters:
-              - TokenRelay=
-          - id: resource
-            uri: http://localhost:8081
-            predicates:
-              - Path=/api/v1/resource/**
-          - id: anon
-            uri: http://localhost:8081
-            predicates:
-              - Path=/api/v1/anon/**
-          - id: user-account-api
-            uri: http://localhost:8082
-            predicates:
-              - Path=/api/v1/user/**
-            filters:
-              - TokenRelay=
-          - id: user-order-api
-            uri: http://localhost:8083
-            predicates:
-              - Path=/api/v1/order/**
-            filters:
-              - TokenRelay=
+      server:
+        webmvc:
+          routes:
+            - id: userinfo
+              uri: http://localhost:9000
+              predicates:
+                - Path=/userinfo
+              filters:
+                - TokenRelay=
+            - id: resource
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/v1/resource/**
+            - id: anon
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/v1/anon/**
+            - id: user-account-api
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/v1/user/**
+              filters:
+                - TokenRelay=
+            - id: user-order-api
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api/v1/order/**
+              filters:
+                - TokenRelay=
 
 uri:
   angular-base: http://127.0.0.1:4200
   angular-domain: 127.0.0.1
-  allowed-origins: { 'http://127.0.0.1:4200' }
+  allowed-origins: [ 'http://127.0.0.1:4200' ]
