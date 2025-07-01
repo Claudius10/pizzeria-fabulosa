@@ -23,8 +23,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
-   // TODO -> createUser relevant DB schemas instead of having one monolith schema for everything
    // TODO -> DB implementation of SessionRegistry
+   // TODO -> DB implementation of OAuth2 Components
    // TODO -> investigate the userDetailsService warning
 
    @Bean
