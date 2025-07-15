@@ -2,7 +2,7 @@ package org.clau.pizzeriasecurityserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriasecurityserver.dao.UserRepository;
+import org.clau.pizzeriadata.dao.user.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class UserAuthenticationServiceImpl implements UserDetailsService {
 
-   private final UserRepository userRepositoryInternal;
+   private final UserRepository userRepository;
 
    @Override
    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-	  return userRepositoryInternal.findByEmail(username)
+	  return userRepository.findByEmail(username)
 		 .orElseThrow(() -> new UsernameNotFoundException(username)); // this ends up as AuthenticationException
    }
 }

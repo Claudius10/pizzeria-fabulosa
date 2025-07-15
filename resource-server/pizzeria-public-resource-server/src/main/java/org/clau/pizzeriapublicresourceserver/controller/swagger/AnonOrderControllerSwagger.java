@@ -8,10 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.clau.apiutils.constant.Response;
-import org.clau.apiutils.dto.ResponseDTO;
-import org.clau.pizzeriabusinessassets.dto.CreatedOrderDTO;
-import org.clau.pizzeriabusinessassets.dto.NewAnonOrderDTO;
+import org.clau.pizzeriautils.constant.common.Response;
+import org.clau.pizzeriautils.dto.business.CreatedOrderDTO;
+import org.clau.pizzeriautils.dto.business.NewAnonOrderDTO;
+import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "Anonymous Orders API")

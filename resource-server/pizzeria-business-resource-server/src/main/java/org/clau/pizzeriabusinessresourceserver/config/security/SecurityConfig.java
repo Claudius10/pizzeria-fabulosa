@@ -1,6 +1,7 @@
 package org.clau.pizzeriabusinessresourceserver.config.security;
 
-import org.clau.apiutils.constant.Route;
+import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.constant.user.RoleEnum;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,7 +23,7 @@ public class SecurityConfig {
 
 	  http.securityMatcher(Route.API + Route.V1 + Route.ORDER_BASE + Route.ALL)
 		 .authorizeHttpRequests(authorize ->
-			authorize.requestMatchers(Route.API + Route.V1 + Route.ORDER_BASE + Route.ALL).hasRole("USER")
+			authorize.requestMatchers(Route.API + Route.V1 + Route.ORDER_BASE + Route.ALL).hasAnyRole(RoleEnum.USER.value(), RoleEnum.ADMIN.value())
 		 );
 
 	  http.oauth2ResourceServer(oauth2ResourceServer -> {

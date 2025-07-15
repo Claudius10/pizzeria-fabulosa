@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.clau.apiutils.constant.Response;
-import org.clau.apiutils.dto.ResponseDTO;
+import org.clau.pizzeriautils.constant.common.Response;
+import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;

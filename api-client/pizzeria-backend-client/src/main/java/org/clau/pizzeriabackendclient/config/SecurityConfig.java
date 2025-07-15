@@ -82,6 +82,7 @@ public class SecurityConfig {
 			   .requestMatchers("/api/v1/docs/**").permitAll()
 			   .requestMatchers("/api/v1/resource/**").permitAll()
 			   .requestMatchers("/api/v1/anon/**").permitAll()
+			   .requestMatchers("/api/v1/register/**").permitAll()
 			   .anyRequest().authenticated()
 		 )
 		 .oauth2Client(withDefaults())

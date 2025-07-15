@@ -2,16 +2,16 @@ package org.clau.pizzeriabusinessresourceserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.apiutils.util.TimeUtils;
-import org.clau.pizzeriabusinessassets.dto.NewUserOrderDTO;
-import org.clau.pizzeriabusinessassets.model.Cart;
-import org.clau.pizzeriabusinessassets.model.CartItem;
-import org.clau.pizzeriabusinessassets.model.Order;
-import org.clau.pizzeriabusinessassets.model.OrderDetails;
-import org.clau.pizzeriabusinessassets.util.OrderUtils;
-import org.clau.pizzeriabusinessresourceserver.dao.OrderRepository;
-import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
 import org.clau.pizzeriabusinessresourceserver.service.OrderService;
+import org.clau.pizzeriadata.dao.business.OrderRepository;
+import org.clau.pizzeriadata.dao.business.projection.CreatedOnProjection;
+import org.clau.pizzeriadata.model.business.Cart;
+import org.clau.pizzeriadata.model.business.CartItem;
+import org.clau.pizzeriadata.model.business.Order;
+import org.clau.pizzeriadata.model.business.OrderDetails;
+import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
+import org.clau.pizzeriautils.util.business.OrderUtils;
+import org.clau.pizzeriautils.util.common.TimeUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -60,13 +60,15 @@ public class OrderServiceImpl implements OrderService {
 		 .withAddress(newUserOrder.address())
 		 .build();
 
-	  order.setOrderDetails(OrderDetails.builder()
-		 .withDeliveryTime(newUserOrder.orderDetails().deliveryTime())
-		 .withPaymentMethod(newUserOrder.orderDetails().paymentMethod())
-		 .withBillToChange(newUserOrder.orderDetails().billToChange())
-		 .withStorePickUp(newUserOrder.orderDetails().storePickUp())
-		 .withComment(newUserOrder.orderDetails().comment())
-		 .build());
+	  order.setOrderDetails(
+		 OrderDetails.builder()
+			.withDeliveryTime(newUserOrder.orderDetails().deliveryTime())
+			.withPaymentMethod(newUserOrder.orderDetails().paymentMethod())
+			.withBillToChange(newUserOrder.orderDetails().billToChange())
+			.withStorePickUp(newUserOrder.orderDetails().storePickUp())
+			.withComment(newUserOrder.orderDetails().comment())
+			.build()
+	  );
 
 	  order.setCart(cart);
 

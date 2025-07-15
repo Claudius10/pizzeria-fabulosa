@@ -39,7 +39,7 @@
 
         <dependency>
             <groupId>org.clau</groupId>
-            <artifactId>api-utils</artifactId>
+            <artifactId>pizzeria-utils</artifactId>
             <version>0.0.1</version>
         </dependency>
 

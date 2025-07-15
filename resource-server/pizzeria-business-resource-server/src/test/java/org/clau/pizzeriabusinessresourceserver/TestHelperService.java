@@ -2,11 +2,11 @@ package org.clau.pizzeriabusinessresourceserver;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriabusinessassets.model.Cart;
-import org.clau.pizzeriabusinessassets.model.CartItem;
-import org.clau.pizzeriabusinessassets.model.Order;
-import org.clau.pizzeriabusinessassets.model.OrderDetails;
-import org.clau.pizzeriabusinessresourceserver.dao.OrderRepository;
+import org.clau.pizzeriadata.dao.business.OrderRepository;
+import org.clau.pizzeriadata.model.business.Cart;
+import org.clau.pizzeriadata.model.business.CartItem;
+import org.clau.pizzeriadata.model.business.Order;
+import org.clau.pizzeriadata.model.business.OrderDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

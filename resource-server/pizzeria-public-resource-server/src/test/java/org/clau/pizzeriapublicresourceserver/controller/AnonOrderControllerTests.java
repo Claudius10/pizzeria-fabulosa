@@ -1,14 +1,14 @@
 package org.clau.pizzeriapublicresourceserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.clau.apiutils.constant.Route;
-import org.clau.apiutils.constant.ValidationResponses;
-import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.pizzeriapublicresourceserver.MyTestcontainersConfiguration;
 import org.clau.pizzeriapublicresourceserver.util.Constant;
-import org.clau.pizzeriabusinessassets.dto.CartItemDTO;
-import org.clau.pizzeriabusinessassets.dto.CreatedOrderDTO;
-import org.clau.pizzeriabusinessassets.dto.NewAnonOrderDTO;
+import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.constant.common.ValidationResponses;
+import org.clau.pizzeriautils.dto.business.CartItemDTO;
+import org.clau.pizzeriautils.dto.business.CreatedOrderDTO;
+import org.clau.pizzeriautils.dto.business.NewAnonOrderDTO;
+import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,12 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.pizzeriapublicresourceserver.TestUtils.getResponse;
-import static org.clau.pizzeriabusinessassets.util.TestUtils.anonOrderStub;
+import static org.clau.pizzeriautils.util.business.TestUtils.anonOrderStub;
+import static org.clau.pizzeriautils.util.common.TestUtils.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -343,7 +344,7 @@ public class AnonOrderControllerTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.ORDER_DETAILS_BILL);
    }
 
@@ -407,7 +408,7 @@ public class AnonOrderControllerTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);

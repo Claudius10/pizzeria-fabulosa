@@ -1,6 +1,6 @@
 package org.clau.pizzeriapublicresourceserver.service;
 
-import org.clau.pizzeriapublicassets.model.Store;
+import org.clau.pizzeriadata.model.assets.Store;
 
 import java.util.List;
 

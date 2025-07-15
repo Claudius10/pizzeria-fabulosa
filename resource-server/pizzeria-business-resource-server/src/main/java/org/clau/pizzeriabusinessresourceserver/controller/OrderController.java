@@ -3,21 +3,21 @@ package org.clau.pizzeriabusinessresourceserver.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.clau.apiutils.constant.Route;
-import org.clau.apiutils.constant.ValidationResponses;
-import org.clau.apiutils.dto.ResponseDTO;
-import org.clau.apiutils.model.APIError;
-import org.clau.apiutils.util.TimeUtils;
-import org.clau.pizzeriabusinessassets.dto.*;
-import org.clau.pizzeriabusinessassets.model.Order;
-import org.clau.pizzeriabusinessassets.validation.order.CompositeValidator;
-import org.clau.pizzeriabusinessassets.validation.order.OrderValidatorInput;
-import org.clau.pizzeriabusinessassets.validation.order.ValidationResult;
-import org.clau.pizzeriabusinessassets.validation.order.Validator;
 import org.clau.pizzeriabusinessresourceserver.controller.swagger.OrderControllerSwagger;
-import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
 import org.clau.pizzeriabusinessresourceserver.service.OrderService;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
+import org.clau.pizzeriadata.dao.business.projection.CreatedOnProjection;
+import org.clau.pizzeriadata.model.business.Order;
+import org.clau.pizzeriadata.model.common.APIError;
+import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.constant.common.ValidationResponses;
+import org.clau.pizzeriautils.dto.business.*;
+import org.clau.pizzeriautils.dto.common.ResponseDTO;
+import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.validation.business.order.CompositeValidator;
+import org.clau.pizzeriautils.validation.business.order.NewOrder;
+import org.clau.pizzeriautils.validation.business.order.ValidationResult;
+import org.clau.pizzeriautils.validation.business.order.Validator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,7 @@ public class OrderController implements OrderControllerSwagger {
 
    private final OrderService orderService;
 
-   private final CompositeValidator<OrderValidatorInput> newOrderValidator;
+   private final CompositeValidator<NewOrder> newOrderValidator;
 
    private final Validator<LocalDateTime> deleteOrderValidator;
 
@@ -44,7 +44,7 @@ public class OrderController implements OrderControllerSwagger {
 	  @RequestParam(name = Route.USER_ID_PARAM) Long userId,
 	  HttpServletRequest request) {
 
-	  Optional<ValidationResult> validate = newOrderValidator.validate(new OrderValidatorInput(order.cart(), order.orderDetails()));
+	  Optional<ValidationResult> validate = newOrderValidator.validate(new NewOrder(order.cart(), order.orderDetails()));
 
 	  if (validate.isPresent()) {
 		 return ResponseEntity.badRequest().body(ResponseDTO.builder()

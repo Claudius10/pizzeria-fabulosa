@@ -1,15 +1,15 @@
 package org.clau.pizzeriabusinessresourceserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.clau.apiutils.constant.Route;
-import org.clau.apiutils.constant.ValidationResponses;
-import org.clau.apiutils.dto.ResponseDTO;
-import org.clau.pizzeriabusinessassets.dto.*;
-import org.clau.pizzeriabusinessassets.model.Order;
 import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.TestHelperService;
 import org.clau.pizzeriabusinessresourceserver.TestJwtHelperService;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
+import org.clau.pizzeriadata.model.business.Order;
+import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.constant.common.ValidationResponses;
+import org.clau.pizzeriautils.dto.business.*;
+import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +25,13 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.pizzeriabusinessassets.util.TestUtils.userOrderStub;
-import static org.clau.pizzeriabusinessresourceserver.TestUtils.getResponse;
+import static org.clau.pizzeriautils.util.business.TestUtils.userOrderStub;
+import static org.clau.pizzeriautils.util.common.TestUtils.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -151,7 +152,7 @@ public class OrderControllerTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
@@ -306,7 +307,7 @@ public class OrderControllerTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);

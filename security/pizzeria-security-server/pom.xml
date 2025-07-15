@@ -38,7 +38,7 @@
 
         <dependency>
             <groupId>org.clau</groupId>
-            <artifactId>pizzeria-user-assets</artifactId>
+            <artifactId>pizzeria-utils</artifactId>
             <version>0.0.1</version>
         </dependency>
 

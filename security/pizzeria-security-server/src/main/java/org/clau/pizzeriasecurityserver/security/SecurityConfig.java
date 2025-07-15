@@ -1,6 +1,5 @@
 package org.clau.pizzeriasecurityserver.security;
 
-import org.clau.apiutils.constant.Route;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,10 +22,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
-   // TODO -> DB implementation of SessionRegistry
-   // TODO -> DB implementation of OAuth2 Components
-   // TODO -> investigate the userDetailsService warning
-
    @Bean
    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
 
@@ -35,11 +30,7 @@ public class SecurityConfig {
 			cors.configurationSource(corsConfigurationSource))
 		 .authorizeHttpRequests(authorize ->
 			authorize
-			   .requestMatchers(
-				  "/assets/**",
-				  "/login",
-				  Route.API + Route.V1 + Route.PUBLIC + Route.USER_BASE + Route.ALL
-			   ).permitAll()
+			   .requestMatchers("/assets/**", "/login").permitAll()
 			   .anyRequest().authenticated())
 		 .formLogin(login ->
 			login.loginPage("/login"));

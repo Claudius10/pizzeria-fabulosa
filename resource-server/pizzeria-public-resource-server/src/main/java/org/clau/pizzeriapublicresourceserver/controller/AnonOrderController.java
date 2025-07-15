@@ -3,19 +3,19 @@ package org.clau.pizzeriapublicresourceserver.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.clau.apiutils.constant.Route;
-import org.clau.apiutils.constant.ValidationResponses;
-import org.clau.apiutils.dto.ResponseDTO;
-import org.clau.apiutils.model.APIError;
-import org.clau.apiutils.util.TimeUtils;
+import org.clau.pizzeriadata.model.business.Order;
+import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriapublicresourceserver.controller.swagger.AnonOrderControllerSwagger;
 import org.clau.pizzeriapublicresourceserver.service.AnonOrderService;
 import org.clau.pizzeriapublicresourceserver.util.Constant;
-import org.clau.pizzeriabusinessassets.dto.*;
-import org.clau.pizzeriabusinessassets.model.Order;
-import org.clau.pizzeriabusinessassets.validation.order.CompositeValidator;
-import org.clau.pizzeriabusinessassets.validation.order.OrderValidatorInput;
-import org.clau.pizzeriabusinessassets.validation.order.ValidationResult;
+import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.constant.common.ValidationResponses;
+import org.clau.pizzeriautils.dto.business.*;
+import org.clau.pizzeriautils.dto.common.ResponseDTO;
+import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.validation.business.order.CompositeValidator;
+import org.clau.pizzeriautils.validation.business.order.NewOrder;
+import org.clau.pizzeriautils.validation.business.order.ValidationResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +33,7 @@ public class AnonOrderController implements AnonOrderControllerSwagger {
 
    private final AnonOrderService orderService;
 
-   private final CompositeValidator<OrderValidatorInput> newOrderValidator;
+   private final CompositeValidator<NewOrder> newOrderValidator;
 
    @PostMapping
    public ResponseEntity<?> createAnonOrder(
@@ -41,7 +41,7 @@ public class AnonOrderController implements AnonOrderControllerSwagger {
 	  HttpServletRequest request) {
 
 	  Optional<ValidationResult> validate = newOrderValidator.validate(
-		 new OrderValidatorInput(newAnonOrder.cart(), newAnonOrder.orderDetails()));
+		 new NewOrder(newAnonOrder.cart(), newAnonOrder.orderDetails()));
 
 	  if (validate.isPresent()) {
 		 return ResponseEntity.badRequest().body(ResponseDTO.builder()

@@ -26,24 +26,12 @@
 
         <dependency>
             <groupId>org.clau</groupId>
-            <artifactId>pizzeria-public-assets</artifactId>
+            <artifactId>pizzeria-utils</artifactId>
             <version>0.0.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-security</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.clau</groupId>
-            <artifactId>pizzeria-business-assets</artifactId>
-            <version>0.0.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.clau</groupId>
-                    <artifactId>api-utils</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

@@ -1,12 +1,12 @@
 package org.clau.pizzeriabusinessresourceserver.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.clau.apiutils.constant.Route;
-import org.clau.apiutils.constant.SecurityResponse;
-import org.clau.apiutils.dto.ResponseDTO;
 import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.TestJwtHelperService;
 import org.clau.pizzeriabusinessresourceserver.util.Constant;
+import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.constant.common.SecurityResponse;
+import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.pizzeriabusinessresourceserver.TestUtils.getResponse;
+import static org.clau.pizzeriautils.util.common.TestUtils.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -68,7 +69,7 @@ public class SecurityTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
-	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo("Access Denied");
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo("AuthorizationDeniedException");
@@ -91,7 +92,7 @@ public class SecurityTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.MISSING_TOKEN);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo("InsufficientAuthenticationException");
@@ -112,7 +113,7 @@ public class SecurityTests {
 
 	  // Assert
 
-	  ResponseDTO responseObj = getResponse(response, objectMapper);
+	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.INVALID_TOKEN);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponse.INVALID_TOKEN);

@@ -1,8 +1,8 @@
 package org.clau.pizzeriapublicresourceserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.clau.apiutils.constant.Route;
 import org.clau.pizzeriapublicresourceserver.MyTestcontainersConfiguration;
+import org.clau.pizzeriautils.constant.common.Route;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;

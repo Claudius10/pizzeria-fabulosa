@@ -1,13 +1,12 @@
 package org.clau.pizzeriabusinessresourceserver.config;
 
-
-import org.clau.pizzeriabusinessassets.validation.order.CompositeValidator;
-import org.clau.pizzeriabusinessassets.validation.order.OrderValidatorInput;
-import org.clau.pizzeriabusinessassets.validation.order.Validator;
-import org.clau.pizzeriabusinessassets.validation.order.impl.CartValidator;
-import org.clau.pizzeriabusinessassets.validation.order.impl.DeleteTimeLimitValidator;
-import org.clau.pizzeriabusinessassets.validation.order.impl.NewOrderValidator;
-import org.clau.pizzeriabusinessassets.validation.order.impl.OrderDetailsValidator;
+import org.clau.pizzeriautils.validation.business.order.CompositeValidator;
+import org.clau.pizzeriautils.validation.business.order.NewOrder;
+import org.clau.pizzeriautils.validation.business.order.Validator;
+import org.clau.pizzeriautils.validation.business.order.impl.CartValidator;
+import org.clau.pizzeriautils.validation.business.order.impl.DeleteTimeLimitValidator;
+import org.clau.pizzeriautils.validation.business.order.impl.NewOrderValidator;
+import org.clau.pizzeriautils.validation.business.order.impl.OrderDetailsValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,7 +17,7 @@ import java.util.List;
 public class ValidatorConfig {
 
    @Bean
-   CompositeValidator<OrderValidatorInput> newOrderValidator() {
+   CompositeValidator<NewOrder> newOrderValidator() {
 	  NewOrderValidator newOrderValidator = new NewOrderValidator();
 	  newOrderValidator.setValidators(List.of(new CartValidator(), new OrderDetailsValidator()));
 	  return newOrderValidator;

@@ -1,11 +1,11 @@
 package org.clau.pizzeriapublicresourceserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.clau.apiutils.constant.Route;
+import org.clau.pizzeriadata.dao.assets.StoreRepository;
+import org.clau.pizzeriadata.model.assets.Store;
 import org.clau.pizzeriapublicresourceserver.MyTestcontainersConfiguration;
-import org.clau.pizzeriapublicresourceserver.dao.StoreRepository;
-import org.clau.pizzeriapublicassets.dto.StoreListDTO;
-import org.clau.pizzeriapublicassets.model.Store;
+import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.dto.assets.StoreListDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

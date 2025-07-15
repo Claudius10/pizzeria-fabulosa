@@ -1,6 +1,6 @@
 package org.clau.pizzeriapublicresourceserver.service;
 
-import org.clau.pizzeriapublicassets.model.Product;
+import org.clau.pizzeriadata.model.assets.Product;
 import org.springframework.data.domain.Page;
 
 public interface ProductService {
