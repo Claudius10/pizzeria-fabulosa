@@ -5,6 +5,6 @@ import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@OpenAPIDefinition(info = @Info(title = "Pizzeria Assets API", version = "v1"))
+@OpenAPIDefinition(info = @Info(title = "Pizzeria Public API", version = "v1"))
 public class SpringDocsConfig {
 }
