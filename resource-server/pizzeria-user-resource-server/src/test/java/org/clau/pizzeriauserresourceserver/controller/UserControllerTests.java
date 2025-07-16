@@ -132,9 +132,9 @@ public class UserControllerTests {
 
 	  // Assert
 
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
-	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(Response.DUMMY_ACCOUNT_ERROR);
    }
 }
