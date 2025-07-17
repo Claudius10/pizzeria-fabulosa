@@ -7,6 +7,7 @@ import org.clau.pizzeriauserresourceserver.TestJwtHelperService;
 import org.clau.pizzeriauserresourceserver.util.Constant;
 import org.clau.pizzeriautils.constant.common.Response;
 import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.constant.user.RoleEnum;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -25,7 +26,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.pizzeriautils.util.common.TestUtils.getResponse;
+import static org.clau.pizzeriautils.util.common.test.TestUtils.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
@@ -38,8 +39,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class UserControllerTests {
 
    private final String path = Route.API + Route.V1 + Route.USER_BASE;
-
-   private final String userRole = "USER";
 
    @Autowired
    private MockMvc mockMvc;
@@ -63,7 +62,7 @@ public class UserControllerTests {
 	  assertThat(testHelperService.findUserByEmail(email)).isNotNull();
 
 	  // create JWT token
-	  String accessToken = jwtHelper.generateAccessToken(List.of(userRole));
+	  String accessToken = jwtHelper.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  // Act
 
@@ -90,7 +89,7 @@ public class UserControllerTests {
 	  assertThat(testHelperService.findUserByEmail(email)).isNotNull();
 
 	  // create JWT token
-	  String accessToken = jwtHelper.generateAccessToken(List.of(userRole));
+	  String accessToken = jwtHelper.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  // Act
 
@@ -119,7 +118,7 @@ public class UserControllerTests {
 	  assertThat(testHelperService.findUserByEmail(email)).isNotNull();
 
 	  // create JWT token
-	  String accessToken = jwtHelper.generateAccessToken(List.of(userRole));
+	  String accessToken = jwtHelper.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  // Act
 

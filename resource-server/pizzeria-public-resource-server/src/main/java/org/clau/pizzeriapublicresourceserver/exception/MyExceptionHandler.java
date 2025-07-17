@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriadata.service.common.ErrorService;
-import org.clau.pizzeriapublicresourceserver.util.Constant;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.clau.pizzeriautils.util.common.ExceptionLogger;
 import org.clau.pizzeriautils.util.common.ServerUtils;
 import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -79,7 +79,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 			.withCreatedOn(TimeUtils.getNowAccountingDST())
 			.withCause(cause)
 			.withMessage(String.valueOf(errorMessages))
-			.withOrigin(Constant.APP_NAME)
+			.withOrigin(MyApps.RESOURCE_SERVER_PUBLIC)
 			.withPath(path)
 			.withLogged(false)
 			.withFatal(false)
@@ -139,7 +139,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  APIError error = errorService.create(
 		 cause,
 		 message,
-		 Constant.APP_NAME,
+		 MyApps.RESOURCE_SERVER_PUBLIC,
 		 path,
 		 fatal
 	  );

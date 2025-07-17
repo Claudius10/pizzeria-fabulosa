@@ -29,6 +29,9 @@ public final class Route {
    public static final String PAGE_SIZE = "pageSize";
    public static final String USER_ID_PARAM = "userId";
 
+   public static final String ADMIN_BASE = "/admin";
+   public static final String ERROR_BASE = "/error";
+
    private Route() {
 	  // no init
    }

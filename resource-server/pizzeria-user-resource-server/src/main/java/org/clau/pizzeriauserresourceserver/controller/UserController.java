@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriauserresourceserver.controller.swagger.UserControllerSwagger;
 import org.clau.pizzeriauserresourceserver.service.UserService;
-import org.clau.pizzeriauserresourceserver.util.Constant;
 import org.clau.pizzeriautils.constant.common.Response;
 import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ public class UserController implements UserControllerSwagger {
 				  .withId(UUID.randomUUID().getMostSignificantBits())
 				  .withCreatedOn(TimeUtils.getNowAccountingDST())
 				  .withCause(IllegalArgumentException.class.getSimpleName())
-				  .withOrigin(Constant.APP_NAME)
+				  .withOrigin(MyApps.RESOURCE_SERVER_USER)
 				  .withPath(Route.API + Route.V1 + Route.USER_BASE + "/" + userId)
 				  .withMessage(Response.DUMMY_ACCOUNT_ERROR)
 				  .withLogged(false)

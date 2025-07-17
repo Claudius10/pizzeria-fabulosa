@@ -4,12 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.TestHelperService;
 import org.clau.pizzeriabusinessresourceserver.TestJwtHelperService;
-import org.clau.pizzeriabusinessresourceserver.util.Constant;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.constant.common.ValidationResponses;
+import org.clau.pizzeriautils.constant.user.RoleEnum;
 import org.clau.pizzeriautils.dto.business.*;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
+import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.clau.pizzeriautils.util.business.TestUtils.userOrderStub;
-import static org.clau.pizzeriautils.util.common.TestUtils.getResponse;
+import static org.clau.pizzeriautils.util.common.test.TestUtils.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -46,8 +47,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class OrderControllerTests {
 
    private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
-
-   private final String userRole = "USER";
 
    @Autowired
    private MockMvc mockMvc;
@@ -69,7 +68,7 @@ public class OrderControllerTests {
 	  long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  boolean emptyCart = false;
 	  NewUserOrderDTO expected = userOrderStub(emptyCart);
@@ -134,7 +133,7 @@ public class OrderControllerTests {
 	  long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  boolean emptyCart = true;
 	  NewUserOrderDTO expected = userOrderStub(emptyCart);
@@ -156,7 +155,7 @@ public class OrderControllerTests {
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
-	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(MyApps.RESOURCE_SERVER_BUSINESS);
    }
 
    @Test
@@ -167,7 +166,7 @@ public class OrderControllerTests {
 	  long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  boolean emptyCart = false;
 	  NewUserOrderDTO expected = userOrderStub(emptyCart);
@@ -236,7 +235,7 @@ public class OrderControllerTests {
 	  Long orderId = 45678L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  // Act
 
@@ -259,7 +258,7 @@ public class OrderControllerTests {
 	  Long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  // create user order
 	  int minutesInThePast = 0;
@@ -289,7 +288,7 @@ public class OrderControllerTests {
 	  Long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  // create user order
 	  int minutesInThePast = 21;
@@ -311,7 +310,7 @@ public class OrderControllerTests {
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
-	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(MyApps.RESOURCE_SERVER_BUSINESS);
    }
 
    @Test
@@ -322,7 +321,7 @@ public class OrderControllerTests {
 	  Long orderId = 5437L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  // Act
 
@@ -346,7 +345,7 @@ public class OrderControllerTests {
 	  Long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  // create user order
 	  int minutesInThePast = 0;
@@ -393,7 +392,7 @@ public class OrderControllerTests {
 	  Long userId = 1L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  int pageSize = 1;
 	  int pageNumber = 0;
@@ -427,7 +426,7 @@ public class OrderControllerTests {
 	  Long userId = 985643L;
 
 	  // create JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(userRole));
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.USER.value()));
 
 	  int pageSize = 3;
 	  int pageNumber = 0;

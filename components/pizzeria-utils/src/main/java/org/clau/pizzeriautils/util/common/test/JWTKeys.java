@@ -1,15 +1,13 @@
-package org.clau.pizzeriabusinessresourceserver;
+package org.clau.pizzeriautils.util.common.test;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-@Component
 @RequiredArgsConstructor
 public class JWTKeys {
 

@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriadata.service.common.ErrorService;
-import org.clau.pizzeriauserresourceserver.util.Constant;
 import org.clau.pizzeriautils.constant.common.SecurityResponse;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.clau.pizzeriautils.util.common.ExceptionLogger;
 import org.clau.pizzeriautils.util.common.ServerUtils;
 import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -85,7 +85,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 			.withCreatedOn(TimeUtils.getNowAccountingDST())
 			.withCause(cause)
 			.withMessage(String.valueOf(errorMessages))
-			.withOrigin(Constant.APP_NAME)
+			.withOrigin(MyApps.RESOURCE_SERVER_USER)
 			.withPath(path)
 			.withLogged(false)
 			.withFatal(false)
@@ -173,14 +173,14 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  }
 
 	  if (logged) {
-		 error = errorService.create(cause, message, Constant.APP_NAME, path, fatal);
+		 error = errorService.create(cause, message, MyApps.RESOURCE_SERVER_USER, path, fatal);
 	  } else {
 		 error = APIError.builder()
 			.withId(UUID.randomUUID().getMostSignificantBits())
 			.withCreatedOn(TimeUtils.getNowAccountingDST())
 			.withCause(cause)
 			.withMessage(message)
-			.withOrigin(Constant.APP_NAME)
+			.withOrigin(MyApps.RESOURCE_SERVER_USER)
 			.withPath(path)
 			.withLogged(logged)
 			.withFatal(fatal)
@@ -203,7 +203,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .withCreatedOn(TimeUtils.getNowAccountingDST())
 		 .withCause(ex.getClass().getSimpleName())
 		 .withMessage(ex.getMessage())
-		 .withOrigin(Constant.APP_NAME)
+		 .withOrigin(MyApps.RESOURCE_SERVER_USER)
 		 .withPath(path)
 		 .withLogged(false)
 		 .withFatal(false)
@@ -223,7 +223,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  APIError error = errorService.create(
 		 cause,
 		 message,
-		 Constant.APP_NAME,
+		 MyApps.RESOURCE_SERVER_USER,
 		 path,
 		 fatal
 	  );

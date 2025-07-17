@@ -1,4 +1,4 @@
-package org.clau.pizzeriautils.util.common;
+package org.clau.pizzeriautils.util.common.test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

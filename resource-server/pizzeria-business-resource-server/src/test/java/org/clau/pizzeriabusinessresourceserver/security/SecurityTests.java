@@ -3,10 +3,10 @@ package org.clau.pizzeriabusinessresourceserver.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.TestJwtHelperService;
-import org.clau.pizzeriabusinessresourceserver.util.Constant;
 import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.constant.common.SecurityResponse;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
+import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.pizzeriautils.util.common.TestUtils.getResponse;
+import static org.clau.pizzeriautils.util.common.test.TestUtils.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -73,7 +73,7 @@ public class SecurityTests {
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo("Access Denied");
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo("AuthorizationDeniedException");
-	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(MyApps.RESOURCE_SERVER_BUSINESS);
    }
 
    @Test
@@ -96,7 +96,7 @@ public class SecurityTests {
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.MISSING_TOKEN);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo("InsufficientAuthenticationException");
-	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(MyApps.RESOURCE_SERVER_BUSINESS);
    }
 
    @Test
@@ -117,7 +117,7 @@ public class SecurityTests {
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.INVALID_TOKEN);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponse.INVALID_TOKEN);
-	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(MyApps.RESOURCE_SERVER_BUSINESS);
    }
 
    @Test

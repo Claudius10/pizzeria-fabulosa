@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriauserresourceserver.controller.swagger.RegisterControllerSwagger;
 import org.clau.pizzeriauserresourceserver.service.AnonUserService;
-import org.clau.pizzeriauserresourceserver.util.Constant;
 import org.clau.pizzeriautils.constant.common.Response;
 import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.clau.pizzeriautils.dto.user.RegisterDTO;
 import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +39,7 @@ public class RegisterController implements RegisterControllerSwagger {
 			   .withId(UUID.randomUUID().getMostSignificantBits())
 			   .withCreatedOn(TimeUtils.getNowAccountingDST())
 			   .withCause(ex.getClass().getSimpleName())
-			   .withOrigin(Constant.APP_NAME)
+			   .withOrigin(MyApps.RESOURCE_SERVER_USER)
 			   .withPath(request.getPathInfo())
 			   .withMessage(Response.USER_EMAIL_ALREADY_EXISTS)
 			   .withLogged(false)

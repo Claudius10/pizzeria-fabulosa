@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriabusinessresourceserver.controller.swagger.OrderControllerSwagger;
 import org.clau.pizzeriabusinessresourceserver.service.OrderService;
-import org.clau.pizzeriabusinessresourceserver.util.Constant;
 import org.clau.pizzeriadata.dao.business.projection.CreatedOnProjection;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriadata.model.common.APIError;
@@ -14,6 +13,7 @@ import org.clau.pizzeriautils.constant.common.ValidationResponses;
 import org.clau.pizzeriautils.dto.business.*;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.clau.pizzeriautils.validation.business.order.CompositeValidator;
 import org.clau.pizzeriautils.validation.business.order.NewOrder;
 import org.clau.pizzeriautils.validation.business.order.ValidationResult;
@@ -52,7 +52,7 @@ public class OrderController implements OrderControllerSwagger {
 			   .withId(UUID.randomUUID().getMostSignificantBits())
 			   .withCreatedOn(TimeUtils.getNowAccountingDST())
 			   .withCause(ValidationResponses.ORDER_VALIDATION_FAILED)
-			   .withOrigin(Constant.APP_NAME)
+			   .withOrigin(MyApps.RESOURCE_SERVER_BUSINESS)
 			   .withPath(request.getPathInfo())
 			   .withMessage(validate.get().message())
 			   .withLogged(false)
@@ -148,7 +148,7 @@ public class OrderController implements OrderControllerSwagger {
 				  .withId(UUID.randomUUID().getMostSignificantBits())
 				  .withCreatedOn(TimeUtils.getNowAccountingDST())
 				  .withCause(ValidationResponses.ORDER_VALIDATION_FAILED)
-				  .withOrigin(Constant.APP_NAME)
+				  .withOrigin(MyApps.RESOURCE_SERVER_BUSINESS)
 				  .withPath(request.getPathInfo())
 				  .withMessage(validate.message())
 				  .withLogged(false)

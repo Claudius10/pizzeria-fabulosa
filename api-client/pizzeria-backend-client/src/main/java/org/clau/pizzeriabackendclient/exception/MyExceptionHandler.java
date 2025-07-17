@@ -3,11 +3,11 @@ package org.clau.pizzeriabackendclient.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.clau.pizzeriabackendclient.util.Constant;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.clau.pizzeriautils.util.common.ExceptionLogger;
 import org.clau.pizzeriautils.util.common.ServerUtils;
+import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -98,7 +98,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .withCause(cause)
 		 .withFatal(fatal)
 		 .withLogged(false)
-		 .withOrigin(Constant.APP_NAME)
+		 .withOrigin(MyApps.CLIENT_BACKEND)
 		 .build();
 
 	  return ResponseDTO.builder()

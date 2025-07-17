@@ -1,29 +1,25 @@
 server:
-  port: 8443
-  ssl:
-    bundle: business-resource-ssl
-    client-auth: need
+  port: 8083
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.hibernate: INFO
+    org.hibernate.sql: INFO
 
 spring:
 
   application:
     name: "pizzeria-business-resource-server"
 
-  ssl:
-    bundle:
-      jks:
-        business-resource-ssl:
-          key:
-            alias: pizzeria-business-resource-server
-            password: password
-          keystore:
-            location: classpath:keystore.p12
-            password: password
-            type: PKCS12
-          truststore:
-            location: classpath:keystore.p12
-            password: password
-            type: PKCS12
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
 
   datasource:
     url: jdbc:mariadb://localhost:3306/pizzeria
@@ -50,11 +46,9 @@ spring:
     hibernate:
       ddl-auto: update
 
-logging:
-  level:
-    org.hibernate: info
-    org.hibernate.sql: info
-    org.springframework.security: trace
-    org.springframework.security.oauth2: trace
-    org.springframework.web: info
-    root: info
+springdoc:
+  api-docs:
+    path: /api/v1/docs
+  swagger-ui:
+    path: /api/v1/docs/swagger
+    operations-sorter: method

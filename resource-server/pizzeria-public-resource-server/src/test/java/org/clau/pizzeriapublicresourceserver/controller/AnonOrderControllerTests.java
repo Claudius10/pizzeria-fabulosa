@@ -2,13 +2,13 @@ package org.clau.pizzeriapublicresourceserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.pizzeriapublicresourceserver.MyTestcontainersConfiguration;
-import org.clau.pizzeriapublicresourceserver.util.Constant;
 import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.constant.common.ValidationResponses;
 import org.clau.pizzeriautils.dto.business.CartItemDTO;
 import org.clau.pizzeriautils.dto.business.CreatedOrderDTO;
 import org.clau.pizzeriautils.dto.business.NewAnonOrderDTO;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
+import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.clau.pizzeriautils.util.business.TestUtils.anonOrderStub;
-import static org.clau.pizzeriautils.util.common.TestUtils.getResponse;
+import static org.clau.pizzeriautils.util.common.test.TestUtils.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -412,6 +412,6 @@ public class AnonOrderControllerTests {
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.CART_IS_EMPTY);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
-	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(Constant.APP_NAME);
+	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(MyApps.RESOURCE_SERVER_PUBLIC);
    }
 }
