@@ -32,6 +32,8 @@ public final class Route {
    public static final String ADMIN_BASE = "/admin";
    public static final String ERROR_BASE = "/error";
 
+   public static final String CHECK = "/check";
+
    private Route() {
 	  // no init
    }

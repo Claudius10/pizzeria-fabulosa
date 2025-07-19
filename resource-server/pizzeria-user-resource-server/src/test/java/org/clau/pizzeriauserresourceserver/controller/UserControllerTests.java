@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -28,7 +30,9 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.clau.pizzeriautils.util.common.test.TestUtils.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -36,6 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @DirtiesContext
 @AutoConfigureMockMvc
 @Import(MyTestConfiguration.class)
+@Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 public class UserControllerTests {
 
    private final String path = Route.API + Route.V1 + Route.USER_BASE;
@@ -57,7 +62,7 @@ public class UserControllerTests {
 
 	  // Arrange
 
-	  String email = "Tester3@gmail.com";
+	  String email = "Tester@example.com";
 	  Long userId = testHelperService.createUser(email);
 	  assertThat(testHelperService.findUserByEmail(email)).isNotNull();
 
@@ -84,7 +89,7 @@ public class UserControllerTests {
 
 	  // Arrange
 
-	  String email = "Tester3@gmail.com";
+	  String email = "Tester@example.com";
 	  Long userId = testHelperService.createUser(email);
 	  assertThat(testHelperService.findUserByEmail(email)).isNotNull();
 
@@ -135,5 +140,60 @@ public class UserControllerTests {
 	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(Response.DUMMY_ACCOUNT_ERROR);
+   }
+
+   @Test
+   void givenCheckPasswordMatch_whenMatch_thenReturnOk() throws Exception {
+
+	  // Arrange
+
+	  String email = "Tester@example.com";
+	  Long userId = testHelperService.createUser(email);
+	  assertThat(testHelperService.findUserByEmail(email)).isNotNull();
+
+	  // create JWT token
+	  String accessToken = jwtHelper.generateAccessToken(List.of(RoleEnum.USER.value()));
+
+	  // Act
+
+	  MockHttpServletResponse response = mockMvc.perform(post(path + Route.USER_ID + Route.CHECK + "/password?password=password", userId)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken))
+		 )
+		 .andReturn().getResponse();
+
+
+	  // Assert
+
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+   }
+
+   @Test
+   void givenCheckPasswordMatch_whenNotMatch_thenReturnUnauthorized() throws Exception {
+
+	  // Arrange
+
+	  String email = "Tester@example.com";
+	  Long userId = testHelperService.createUser(email);
+	  assertThat(testHelperService.findUserByEmail(email)).isNotNull();
+
+	  // create JWT token
+	  String accessToken = jwtHelper.generateAccessToken(List.of(RoleEnum.USER.value()));
+
+	  // Act
+
+	  MockHttpServletResponse response = mockMvc.perform(post(path + Route.USER_ID + Route.CHECK + "/password?password=passworsadad", userId)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken))
+		 )
+		 .andReturn().getResponse();
+
+
+	  // Assert
+
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
+	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(Response.BAD_CREDENTIALS);
    }
 }

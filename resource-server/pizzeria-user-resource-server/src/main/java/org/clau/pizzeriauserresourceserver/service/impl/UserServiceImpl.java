@@ -25,23 +25,33 @@ public class UserServiceImpl implements UserService {
 
    @Override
    public void deleteById(Long userId, String password) {
-
-	  Optional<User> userById = userRepository.findById(userId);
-	  if (userById.isEmpty()) {
-		 throw new EntityNotFoundException(Response.USER_NOT_FOUND);
-	  }
-
-	  User user = userById.get();
+	  User user = findUserById(userId);
+	  checkPasswordMatch(password, user.getPassword());
 
 	  if (user.getEmail().matches(Constant.DUMMY_ACCOUNT_EMAIL)) {
 		 throw new IllegalArgumentException(Response.DUMMY_ACCOUNT_ERROR);
 	  }
 
-	  boolean match = bCrypt.matches(password, user.getPassword());
-	  if (!match) {
+	  userRepository.delete(user);
+   }
+
+   @Override
+   public void passwordMatches(Long userId, String password) {
+	  User user = findUserById(userId);
+	  checkPasswordMatch(password, user.getPassword());
+   }
+
+   private User findUserById(Long userId) {
+	  Optional<User> userById = userRepository.findById(userId);
+	  if (userById.isEmpty()) {
+		 throw new EntityNotFoundException(Response.USER_NOT_FOUND);
+	  }
+	  return userById.get();
+   }
+
+   private void checkPasswordMatch(String rawPassword, String encodedPassword) {
+	  if (!bCrypt.matches(rawPassword, encodedPassword)) {
 		 throw new BadCredentialsException(Response.BAD_CREDENTIALS);
 	  }
-
-	  userRepository.delete(user);
    }
 }

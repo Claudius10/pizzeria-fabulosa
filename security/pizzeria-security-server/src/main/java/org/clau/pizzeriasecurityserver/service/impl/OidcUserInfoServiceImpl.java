@@ -3,6 +3,7 @@ package org.clau.pizzeriasecurityserver.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriadata.dao.user.UserRepository;
+import org.clau.pizzeriadata.model.user.Role;
 import org.clau.pizzeriadata.model.user.User;
 import org.clau.pizzeriasecurityserver.service.OidcUserService;
 import org.springframework.cache.annotation.Cacheable;
@@ -34,6 +35,7 @@ public class OidcUserInfoServiceImpl implements OidcUserService {
 		 .phoneNumber(String.valueOf(user.getContactNumber()))
 		 .phoneNumberVerified(false)
 		 .claim("id", user.getId())
+		 .claim("roles", user.getRoles().stream().map(Role::getName).toList())
 		 .zoneinfo("Europe/Paris")
 		 .locale("en-US")
 		 .updatedAt("N/A")

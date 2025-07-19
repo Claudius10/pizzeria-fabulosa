@@ -48,4 +48,10 @@ public class UserController implements UserControllerSwagger {
 
 	  return ResponseEntity.ok().build();
    }
+
+   @PostMapping(Route.USER_ID + Route.CHECK + "/password")
+   public ResponseEntity<?> passwordMatches(@PathVariable Long userId, @RequestParam String password) {
+	  userService.passwordMatches(userId, password);
+	  return ResponseEntity.ok().build();
+   }
 }
