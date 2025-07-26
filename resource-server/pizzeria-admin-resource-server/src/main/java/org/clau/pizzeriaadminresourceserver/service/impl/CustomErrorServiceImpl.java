@@ -40,7 +40,7 @@ public class CustomErrorServiceImpl implements CustomErrorService {
    public Page<APIError> findAllByOrigin(String origin, int page, int size) {
 
 	  Sort.TypedSort<APIError> error = Sort.sort(APIError.class);
-	  Sort sort = error.by(APIError::getCreatedOn).descending();
+	  Sort sort = error.by(APIError::getId).descending();
 	  PageRequest pageRequest = PageRequest.of(page, size, sort);
 
 	  return errorRepository.findAllByOrigin(origin, pageRequest);

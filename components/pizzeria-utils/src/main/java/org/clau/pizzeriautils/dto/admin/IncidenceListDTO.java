@@ -5,7 +5,7 @@ import org.clau.pizzeriadata.model.common.APIError;
 
 import java.util.List;
 
-public record ErrorListDTO(
+public record IncidenceListDTO(
    @NotNull
    List<APIError> content,
 

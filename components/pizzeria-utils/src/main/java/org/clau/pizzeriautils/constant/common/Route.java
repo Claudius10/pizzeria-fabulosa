@@ -30,7 +30,7 @@ public final class Route {
    public static final String USER_ID_PARAM = "userId";
 
    public static final String ADMIN_BASE = "/admin";
-   public static final String ERROR_BASE = "/error";
+   public static final String INCIDENTS_BASE = "/incidents";
 
    public static final String CHECK = "/check";
 

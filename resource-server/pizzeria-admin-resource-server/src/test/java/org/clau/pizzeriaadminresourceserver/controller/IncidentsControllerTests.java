@@ -6,7 +6,7 @@ import org.clau.pizzeriaadminresourceserver.TestHelperService;
 import org.clau.pizzeriaadminresourceserver.TestJwtHelperService;
 import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.constant.user.RoleEnum;
-import org.clau.pizzeriautils.dto.admin.ErrorListDTO;
+import org.clau.pizzeriautils.dto.admin.IncidenceListDTO;
 import org.clau.pizzeriautils.util.common.constant.MyApps;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -38,9 +38,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 @Import(MyTestConfiguration.class)
 @Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
-public class ErrorControllerTests {
+public class IncidentsControllerTests {
 
-   private final String path = Route.API + Route.V1 + Route.ADMIN_BASE + Route.ERROR_BASE;
+   private final String path = Route.API + Route.V1 + Route.ADMIN_BASE + Route.INCIDENTS_BASE;
 
    @Autowired
    private MockMvc mockMvc;
@@ -76,7 +76,7 @@ public class ErrorControllerTests {
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-	  ErrorListDTO actual = objectMapper.readValue(response.getContentAsString(), ErrorListDTO.class);
+	  IncidenceListDTO actual = objectMapper.readValue(response.getContentAsString(), IncidenceListDTO.class);
 
 	  assertThat(actual.size()).isEqualTo(5);
 	  assertThat(actual.number()).isEqualTo(0);
