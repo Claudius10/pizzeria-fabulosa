@@ -15,10 +15,10 @@ public class TestHelperService {
 
    private final CustomErrorRepository errorRepository;
 
-   public APIError create(String cause, String message, String origin, String uriPath, boolean fatal) {
+   public APIError create(String cause, String message, String origin, String uriPath, boolean fatal, LocalDateTime createdOn) {
 
 	  APIError error = APIError.builder()
-		 .withCreatedOn(LocalDateTime.now())
+		 .withCreatedOn(createdOn)
 		 .withCause(cause)
 		 .withMessage(message)
 		 .withOrigin(origin)

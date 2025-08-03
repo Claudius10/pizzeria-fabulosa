@@ -6,12 +6,13 @@ import org.clau.pizzeriaadminresourceserver.service.CustomErrorService;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.dto.admin.IncidenceListDTO;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,22 +22,14 @@ public class IncidentsController implements IncidentsControllerSwagger {
    private final CustomErrorService errorService;
 
    @GetMapping
-   public ResponseEntity<IncidenceListDTO> findAllByOrigin(
-	  @RequestParam(name = "origin") String origin,
-	  @RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
-	  @RequestParam(name = Route.PAGE_SIZE) Integer pageSize
+   public ResponseEntity<IncidenceListDTO> findAllByOriginBetweenDates(
+	  @RequestParam String origin,
+	  @RequestParam String startDate,
+	  @RequestParam String endDate
    ) {
 
-	  Page<APIError> allByOrigin = errorService.findAllByOrigin(origin, pageNumber, pageSize);
+	  List<APIError> incidents = errorService.findAllByOriginBetweenDates(origin, startDate, endDate);
 
-	  IncidenceListDTO incidenceListDTO = new IncidenceListDTO(
-		 allByOrigin.getContent(),
-		 allByOrigin.getNumber(),
-		 allByOrigin.getSize(),
-		 allByOrigin.getTotalElements(),
-		 allByOrigin.isLast()
-	  );
-
-	  return ResponseEntity.ok(incidenceListDTO);
+	  return ResponseEntity.ok(new IncidenceListDTO(incidents));
    }
 }

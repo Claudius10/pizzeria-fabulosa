@@ -7,18 +7,6 @@ import java.util.List;
 
 public record IncidenceListDTO(
    @NotNull
-   List<APIError> content,
-
-   @NotNull
-   int number,
-
-   @NotNull
-   int size,
-
-   @NotNull
-   long totalElements,
-
-   @NotNull
-   boolean last
+   List<APIError> content
 ) {
 }

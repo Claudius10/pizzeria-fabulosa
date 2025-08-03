@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.clau.pizzeriautils.constant.common.Response;
-import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.dto.admin.IncidenceListDTO;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Tag(name = "Incidents API")
 public interface IncidentsControllerSwagger {
 
-   @Operation(operationId = "findAllByOrigin", summary = "Returns all incidents by origin")
+   @Operation(operationId = "findAllByOriginBetweenDates", summary = "Returns all incidents by origin")
    @ApiResponse(
 	  responseCode = Response.OK,
 	  description = "Returns incidents list",
@@ -27,9 +26,9 @@ public interface IncidentsControllerSwagger {
 	  description = "Unexpected exception occurred",
 	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
    )
-   ResponseEntity<IncidenceListDTO> findAllByOrigin(
+   ResponseEntity<IncidenceListDTO> findAllByOriginBetweenDates(
 	  @Parameter(required = true, description = "Origin of incidents") @RequestParam String origin,
-	  @Parameter(required = true, description = "Page number starting at 0") @RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
-	  @Parameter(required = true, description = "Page size") @RequestParam(name = Route.PAGE_SIZE) Integer pageSize
+	  @Parameter(description = "Start date") @RequestParam String startDate,
+	  @Parameter(description = "End date") @RequestParam String endDate
    );
 }

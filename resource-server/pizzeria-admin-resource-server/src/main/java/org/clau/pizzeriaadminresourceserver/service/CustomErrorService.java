@@ -2,9 +2,10 @@ package org.clau.pizzeriaadminresourceserver.service;
 
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriadata.service.common.ErrorService;
-import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface CustomErrorService extends ErrorService {
 
-   Page<APIError> findAllByOrigin(String origin, int page, int size);
+   List<APIError> findAllByOriginBetweenDates(String origin, String startDate, String endDate);
 }

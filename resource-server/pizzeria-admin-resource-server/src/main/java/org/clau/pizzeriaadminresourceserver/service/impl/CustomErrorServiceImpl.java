@@ -6,12 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriaadminresourceserver.service.CustomErrorService;
 import org.clau.pizzeriadata.dao.admin.CustomErrorRepository;
 import org.clau.pizzeriadata.model.common.APIError;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,12 +36,31 @@ public class CustomErrorServiceImpl implements CustomErrorService {
    }
 
    @Override
-   public Page<APIError> findAllByOrigin(String origin, int page, int size) {
+   public List<APIError> findAllByOriginBetweenDates(String origin, String startDate, String endDate) {
+	  LocalDateTime startDateTime = parseDate(startDate);
+	  LocalDateTime endDateTime = parseDate(endDate);
 
-	  Sort.TypedSort<APIError> error = Sort.sort(APIError.class);
-	  Sort sort = error.by(APIError::getId).descending();
-	  PageRequest pageRequest = PageRequest.of(page, size, sort);
+	  if (startDateTime == null && endDateTime == null) {
+		 return List.of();
+	  }
 
-	  return errorRepository.findAllByOrigin(origin, pageRequest);
+	  if (startDateTime == null) {
+		 return errorRepository.findAllByOriginAndCreatedOn(origin, endDateTime);
+	  }
+
+	  if (endDateTime == null) {
+		 return errorRepository.findAllByOriginAndCreatedOn(origin, startDateTime);
+	  }
+
+	  return errorRepository.findAllByOriginAndCreatedOnBetweenOrderByIdDesc(origin, startDateTime, endDateTime);
+   }
+
+   private LocalDateTime parseDate(String date) {
+	  if (date == null || date.isBlank()) {
+		 return null;
+	  }
+
+	  String cleanDate = date.substring(0, date.indexOf('T')) + "T00:00:00";
+	  return LocalDateTime.parse(cleanDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
    }
 }

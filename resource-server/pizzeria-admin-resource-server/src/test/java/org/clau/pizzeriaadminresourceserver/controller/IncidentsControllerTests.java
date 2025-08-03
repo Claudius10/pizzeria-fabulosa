@@ -23,6 +23,8 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -55,18 +57,21 @@ public class IncidentsControllerTests {
    private TestHelperService testHelperService;
 
    @Test
-   void givenGetAllErrorsByOrigin_thenReturnErrorList() throws Exception {
+   void givenGetAllErrorsByOrigin_whenStarDate_thenReturnErrorList() throws Exception {
 
 	  // Arrange
 
-	  testHelperService.create("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true);
+	  String startDate = "2025-08-02T09:37:01.924Z";
+	  String cleanDateTwo = startDate.substring(0, startDate.indexOf('T')) + "T00:00:00";
+	  LocalDateTime nowTwo = LocalDateTime.parse(cleanDateTwo, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	  testHelperService.create("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, nowTwo);
 
 	  // create JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act
 
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?origin=" + MyApps.RESOURCE_SERVER_ADMIN + "&pageNumber=0&pageSize=5")
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?origin=" + MyApps.RESOURCE_SERVER_ADMIN + "&startDate=" + startDate + "&endDate=")
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -78,10 +83,74 @@ public class IncidentsControllerTests {
 
 	  IncidenceListDTO actual = objectMapper.readValue(response.getContentAsString(), IncidenceListDTO.class);
 
-	  assertThat(actual.size()).isEqualTo(5);
-	  assertThat(actual.number()).isEqualTo(0);
-	  assertThat(actual.totalElements()).isEqualTo(1);
-	  assertThat(actual.last()).isTrue();
+	  assertThat(actual.content().size()).isEqualTo(1);
    }
 
+   @Test
+   void givenGetAllErrorsByOrigin_whenStarDateAndEndDate_thenReturnErrorList() throws Exception {
+
+	  // Arrange
+
+	  // create error 1
+	  String startDate = "2025-08-02T09:37:01.924Z";
+	  String cleanDateTwo = startDate.substring(0, startDate.indexOf('T')) + "T00:00:00";
+	  LocalDateTime nowTwo = LocalDateTime.parse(cleanDateTwo, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	  testHelperService.create("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, nowTwo);
+
+	  // create error 2
+	  String endDate = "2025-08-03T09:37:01.924Z";
+	  String cleanDate = endDate.substring(0, endDate.indexOf('T')) + "T00:00:00";
+	  LocalDateTime now = LocalDateTime.parse(cleanDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	  testHelperService.create("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, now);
+
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?origin=" + MyApps.RESOURCE_SERVER_ADMIN + "&startDate=" + startDate + "&endDate=" + endDate)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+
+	  IncidenceListDTO actual = objectMapper.readValue(response.getContentAsString(), IncidenceListDTO.class);
+
+	  assertThat(actual.content().size()).isEqualTo(2);
+   }
+
+   @Test
+   void givenGetAllErrorsByOrigin_whenEndDate_thenReturnErrorList() throws Exception {
+
+	  // Arrange
+
+	  // create error
+	  String endDate = "2025-08-03T09:37:01.924Z";
+	  String cleanDate = endDate.substring(0, endDate.indexOf('T')) + "T00:00:00";
+	  LocalDateTime now = LocalDateTime.parse(cleanDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	  testHelperService.create("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, now);
+
+	  // create JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?origin=" + MyApps.RESOURCE_SERVER_ADMIN + "&startDate=" + "&endDate=" + endDate)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+
+	  IncidenceListDTO actual = objectMapper.readValue(response.getContentAsString(), IncidenceListDTO.class);
+
+	  assertThat(actual.content().size()).isEqualTo(1);
+   }
 }
