@@ -22,7 +22,7 @@ spring:
           jwk-set-uri: http://localhost:9000/oauth2/jwks
 
   datasource:
-    url: jdbc:mariadb://localhost:3306/security
+    url: jdbc:mariadb://localhost:3306/pizzeria
     username: root
     password: root
     #    url: jdbc:mariadb://db:3306/pizzeria

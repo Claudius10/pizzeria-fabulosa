@@ -16,6 +16,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -64,6 +65,24 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 	  ExceptionLogger.log(ex, log, response);
 	  return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+   }
+
+   @ExceptionHandler(ResourceAccessException.class)
+   protected ResponseEntity<ResponseDTO> handleUnavailableResource(ResourceAccessException ex, WebRequest request) {
+
+	  boolean fatal = false;
+	  String cause = ex.getClass().getSimpleName();
+	  String message = ex.getMessage();
+
+	  ResponseDTO response = buildResponse(
+		 cause,
+		 message,
+		 request,
+		 fatal,
+		 HttpStatus.INTERNAL_SERVER_ERROR.value()
+	  );
+
+	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
    }
 
    @ExceptionHandler(Exception.class)
