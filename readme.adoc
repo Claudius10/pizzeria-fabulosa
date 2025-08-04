@@ -1,1 +1,3 @@
+The Architecture
+
 image::diagram.png[]
