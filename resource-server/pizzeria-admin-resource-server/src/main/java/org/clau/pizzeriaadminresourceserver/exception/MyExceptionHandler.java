@@ -4,7 +4,7 @@ import jakarta.persistence.PersistenceException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.clau.pizzeriaadminresourceserver.service.CustomErrorService;
+import org.clau.pizzeriaadminresourceserver.service.AdminErrorService;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriautils.constant.common.SecurityResponse;
 import org.clau.pizzeriautils.dto.common.ResponseDTO;
@@ -38,7 +38,7 @@ import java.util.UUID;
 @Slf4j
 public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
-   private final CustomErrorService errorService;
+   private final AdminErrorService errorService;
 
    @Override
    protected ResponseEntity<Object> createResponseEntity(@Nullable Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {

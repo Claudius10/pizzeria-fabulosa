@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EntityScan(basePackages = {
-   "org.clau.pizzeriadata.model.common",
+   "org.clau.pizzeriadata.model",
 })
 @EnableJpaRepositories(basePackages = {
    "org.clau.pizzeriadata.dao.admin",

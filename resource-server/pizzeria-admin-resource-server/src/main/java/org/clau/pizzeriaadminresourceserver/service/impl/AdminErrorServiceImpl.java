@@ -3,8 +3,8 @@ package org.clau.pizzeriaadminresourceserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriaadminresourceserver.service.CustomErrorService;
-import org.clau.pizzeriadata.dao.admin.CustomErrorRepository;
+import org.clau.pizzeriaadminresourceserver.service.AdminErrorService;
+import org.clau.pizzeriadata.dao.admin.AdminErrorRepository;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +15,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CustomErrorServiceImpl implements CustomErrorService {
+public class AdminErrorServiceImpl implements AdminErrorService {
 
-   private final CustomErrorRepository errorRepository;
+   private final AdminErrorRepository errorRepository;
 
    @Override
    public APIError create(String cause, String message, String origin, String uriPath, boolean fatal) {

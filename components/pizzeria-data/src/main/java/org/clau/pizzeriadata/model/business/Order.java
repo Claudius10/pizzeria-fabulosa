@@ -34,6 +34,8 @@ public class Order {
 
    private String address;
 
+   // TODO - new field "state" -> "COMPLETED", "CANCELLED", "PENDING"
+
    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, optional = false)
    @JsonManagedReference
    private OrderDetails orderDetails;

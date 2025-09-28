@@ -53,7 +53,7 @@ public class SecurityTests {
 
 	  // Arrange
 
-	  // create JWT token
+	  // createApiError JWT token
 	  String accessToken = jwtHelper.generateAccessToken(List.of("evil"));
 
 	  // Act

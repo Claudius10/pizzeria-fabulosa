@@ -64,9 +64,9 @@ public class IncidentsControllerTests {
 	  String startDate = "2025-08-02T09:37:01.924Z";
 	  String cleanDateTwo = startDate.substring(0, startDate.indexOf('T')) + "T00:00:00";
 	  LocalDateTime nowTwo = LocalDateTime.parse(cleanDateTwo, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-	  testHelperService.create("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, nowTwo);
+	  testHelperService.createApiError("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, nowTwo);
 
-	  // create JWT token
+	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act
@@ -91,19 +91,19 @@ public class IncidentsControllerTests {
 
 	  // Arrange
 
-	  // create error 1
+	  // createApiError error 1
 	  String startDate = "2025-08-02T09:37:01.924Z";
 	  String cleanDateTwo = startDate.substring(0, startDate.indexOf('T')) + "T00:00:00";
 	  LocalDateTime nowTwo = LocalDateTime.parse(cleanDateTwo, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-	  testHelperService.create("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, nowTwo);
+	  testHelperService.createApiError("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, nowTwo);
 
-	  // create error 2
+	  // createApiError error 2
 	  String endDate = "2025-08-03T09:37:01.924Z";
 	  String cleanDate = endDate.substring(0, endDate.indexOf('T')) + "T00:00:00";
 	  LocalDateTime now = LocalDateTime.parse(cleanDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-	  testHelperService.create("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, now);
+	  testHelperService.createApiError("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, now);
 
-	  // create JWT token
+	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act
@@ -128,13 +128,13 @@ public class IncidentsControllerTests {
 
 	  // Arrange
 
-	  // create error
+	  // createApiError error
 	  String endDate = "2025-08-03T09:37:01.924Z";
 	  String cleanDate = endDate.substring(0, endDate.indexOf('T')) + "T00:00:00";
 	  LocalDateTime now = LocalDateTime.parse(cleanDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-	  testHelperService.create("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, now);
+	  testHelperService.createApiError("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, now);
 
-	  // create JWT token
+	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act

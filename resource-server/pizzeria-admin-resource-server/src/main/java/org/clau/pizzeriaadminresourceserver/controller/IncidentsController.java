@@ -2,7 +2,7 @@ package org.clau.pizzeriaadminresourceserver.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriaadminresourceserver.controller.swagger.IncidentsControllerSwagger;
-import org.clau.pizzeriaadminresourceserver.service.CustomErrorService;
+import org.clau.pizzeriaadminresourceserver.service.AdminErrorService;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.dto.admin.IncidenceListDTO;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping(Route.API + Route.V1 + Route.ADMIN_BASE + Route.INCIDENTS_BASE)
 public class IncidentsController implements IncidentsControllerSwagger {
 
-   private final CustomErrorService errorService;
+   private final AdminErrorService errorService;
 
    @GetMapping
    public ResponseEntity<IncidenceListDTO> findAllByOriginBetweenDates(

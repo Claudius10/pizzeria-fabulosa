@@ -21,6 +21,7 @@ public final class Route {
 
    public static final String USER_ID = "/{userId}";
    public static final String ORDER_BASE = "/order";
+   public static final String COUNT = "/count";
 
    public static final String ORDER_ID = "/{orderId}";
    public static final String ORDER_SUMMARY = "/summary";

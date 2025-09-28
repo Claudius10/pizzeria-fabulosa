@@ -1,0 +1,271 @@
+package org.clau.pizzeriaadminresourceserver.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.clau.pizzeriaadminresourceserver.MyTestConfiguration;
+import org.clau.pizzeriaadminresourceserver.TestHelperService;
+import org.clau.pizzeriaadminresourceserver.TestJwtHelperService;
+import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.constant.user.RoleEnum;
+import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
+import org.clau.pizzeriautils.util.business.TestUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Random;
+
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+@Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@DirtiesContext
+@AutoConfigureMockMvc
+@Import(MyTestConfiguration.class)
+@Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
+public class OrderControllerTests {
+
+   private final String path = Route.API + Route.V1 + Route.ADMIN_BASE + Route.ORDER_BASE + Route.COUNT;
+
+   private final NewUserOrderDTO newUserOrderDTO = TestUtils.userOrderStub(false);
+
+   private final LocalDateTime today = LocalDateTime.now();
+
+   @Autowired
+   private MockMvc mockMvc;
+
+   @Autowired
+   private ObjectMapper objectMapper;
+
+   @Autowired
+   private TestJwtHelperService testJwtHelperService;
+
+   @Autowired
+   private TestHelperService testHelperService;
+
+   @Test
+   void givenHourlyRequest_thenReturnHourOrderCount() throws Exception {
+
+	  // Arrange
+	  createHourlyOrders(today, newUserOrderDTO);
+	  String timeline = "hourly";
+
+	  // createApiError JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  List<Integer> counts = objectMapper.readValue(response.getContentAsString(), List.class);
+	  assertThat(counts.size()).isEqualTo(12);
+
+	  assertThat(counts.get(0)).isEqualTo(1); // 12:00
+	  assertThat(counts.get(1)).isEqualTo(2); // 13:00
+	  assertThat(counts.get(2)).isEqualTo(3); // 14:00
+	  assertThat(counts.get(3)).isEqualTo(4); // 15:00
+	  assertThat(counts.get(4)).isEqualTo(5); // 16:00
+	  assertThat(counts.get(5)).isEqualTo(6); // 17:00
+	  assertThat(counts.get(6)).isEqualTo(7); // 18:00
+	  assertThat(counts.get(7)).isEqualTo(8); // 19:00
+	  assertThat(counts.get(8)).isEqualTo(9); // 20:00
+	  assertThat(counts.get(9)).isEqualTo(10); // 21:00
+	  assertThat(counts.get(10)).isEqualTo(11); // 22:00
+	  assertThat(counts.get(11)).isEqualTo(12); // 23:00
+   }
+
+   @Test
+   void givenDailyRequest_thenReturnHourOrderCount() throws Exception {
+
+	  // Arrange
+
+	  createDailyOrders(today, newUserOrderDTO);
+	  String timeline = "daily";
+
+	  // createApiError JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  List<Integer> counts = objectMapper.readValue(response.getContentAsString(), List.class);
+	  assertThat(counts.size()).isEqualTo(7);
+
+	  assertThat(counts.get(0)).isEqualTo(1); // monday
+	  assertThat(counts.get(1)).isEqualTo(2); // tuesday
+	  assertThat(counts.get(2)).isEqualTo(3); // wednesday
+	  assertThat(counts.get(3)).isEqualTo(4); // thursday
+	  assertThat(counts.get(4)).isEqualTo(5); // friday
+	  assertThat(counts.get(5)).isEqualTo(6); // saturday
+	  assertThat(counts.get(6)).isEqualTo(7); // sunday
+   }
+
+   @Test
+   void givenMonthlyRequest_thenReturnHourOrderCount() throws Exception {
+
+	  // Arrange
+
+	  createMonthlyOrders(today, newUserOrderDTO);
+	  String timeline = "monthly";
+
+	  // createApiError JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  List<Integer> counts = objectMapper.readValue(response.getContentAsString(), List.class);
+	  assertThat(counts.size()).isEqualTo(12);
+
+	  assertThat(counts.getFirst()).isEqualTo(1); // january
+	  assertThat(counts.get(1)).isEqualTo(2); // february
+	  assertThat(counts.get(2)).isEqualTo(3); // march
+	  assertThat(counts.get(3)).isEqualTo(4); // april
+	  assertThat(counts.get(4)).isEqualTo(5); // may
+	  assertThat(counts.get(5)).isEqualTo(6); // june
+	  assertThat(counts.get(6)).isEqualTo(7); // july
+	  assertThat(counts.get(7)).isEqualTo(8); // august
+	  assertThat(counts.get(8)).isEqualTo(9); // september
+	  assertThat(counts.get(9)).isEqualTo(10); // october
+	  assertThat(counts.get(10)).isEqualTo(11); // november
+	  assertThat(counts.get(11)).isEqualTo(12); // december
+   }
+
+   @Test
+   void givenYearlyRequest_whenCurrentYearIs2025_thenReturnHourOrderCount() throws Exception {
+
+	  // Arrange
+
+	  createYearlyOrders(newUserOrderDTO);
+	  String timeline = "yearly";
+
+	  // createApiError JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  List<Integer> counts = objectMapper.readValue(response.getContentAsString(), List.class);
+	  assertThat(counts.size()).isEqualTo(3);
+
+	  assertThat(counts.get(0)).isEqualTo(1); // 2023
+	  assertThat(counts.get(1)).isEqualTo(2); // 2024
+	  assertThat(counts.get(2)).isEqualTo(3); // 2025
+   }
+
+   private void createHourlyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {
+	  int[] counts = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+	  for (int i = 0; i < counts.length; i++) {
+		 int hour = 12 + i; // 12..23
+		 int count = counts[i];
+		 LocalDateTime base = today.withHour(hour).withMinute(0).withSecond(0).withNano(0);
+		 for (int j = 0; j < count; j++) {
+			int minute = getRandomMinute();
+			LocalDateTime createdOn = base.withMinute(minute);
+			this.testHelperService.createOrder(1L, newUserOrderDTO, createdOn);
+		 }
+	  }
+   }
+
+   private void createDailyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {
+	  int[] counts = new int[]{1, 2, 3, 4, 5, 6, 7};
+	  for (int i = 0; i < counts.length; i++) {
+		 int daysAgo = 6 - i; // oldest first
+		 int count = counts[i];
+		 LocalDateTime base = today.minusDays(daysAgo).withHour(12).withMinute(0).withSecond(0).withNano(0);
+		 for (int j = 0; j < count; j++) {
+			int hour = 9 + (j % 12);
+			int minute = getRandomMinute();
+			LocalDateTime createdOn = base.withHour(hour).withMinute(minute);
+			this.testHelperService.createOrder(1L, newUserOrderDTO, createdOn);
+		 }
+	  }
+   }
+
+   private void createMonthlyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {
+	  int[] counts = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+	  YearMonth current = YearMonth.of(today.getYear(), today.getMonth());
+	  for (int i = 0; i < counts.length; i++) {
+		 YearMonth ym = current.minusMonths(11 - i); // oldest first
+		 int count = counts[i];
+		 for (int j = 0; j < count; j++) {
+			int day = Math.min(1 + (j % ym.lengthOfMonth()), ym.lengthOfMonth());
+			int hour = 10 + (j % 12); // spread during the day
+			int minute = getRandomMinute();
+			LocalDateTime createdOn = LocalDateTime.of(ym.getYear(), ym.getMonth(), day, hour, minute, 0);
+			this.testHelperService.createOrder(1L, newUserOrderDTO, createdOn);
+		 }
+	  }
+   }
+
+   private void createYearlyOrders(NewUserOrderDTO newUserOrderDTO) {
+	  int[] counts = new int[]{1, 2, 3}; // for 2023, 2024, 2025
+	  int startYear = 2023;
+	  for (int i = 0; i < counts.length; i++) {
+		 int year = startYear + i;
+		 int count = counts[i];
+		 for (int j = 0; j < count; j++) {
+			int month = 1 + (j % 12); // spread across all months
+			int day = Math.min(15 + (j % 10), YearMonth.of(year, month).lengthOfMonth());
+			int hour = 12 + (j % 8); // 12..19
+			int minute = getRandomMinute();
+			LocalDateTime createdOn = LocalDateTime.of(year, month, day, hour, minute, 0);
+			this.testHelperService.createOrder(1L, newUserOrderDTO, createdOn);
+		 }
+	  }
+   }
+
+   private int getRandomMinute() {
+	  Random random = new Random();
+	  return random.nextInt(59);
+   }
+}
