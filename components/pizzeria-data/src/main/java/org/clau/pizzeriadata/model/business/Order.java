@@ -26,6 +26,8 @@ public class Order {
 
    private String formattedCreatedOn;
 
+   private String state;
+
    private String anonCustomerName;
 
    private Integer anonCustomerContactNumber;
@@ -33,8 +35,6 @@ public class Order {
    private String anonCustomerEmail;
 
    private String address;
-
-   // TODO - new field "state" -> "COMPLETED", "CANCELLED", "PENDING"
 
    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, optional = false)
    @JsonManagedReference

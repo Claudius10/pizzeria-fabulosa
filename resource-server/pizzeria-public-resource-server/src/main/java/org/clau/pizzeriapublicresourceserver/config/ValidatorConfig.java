@@ -4,7 +4,7 @@ import org.clau.pizzeriautils.validation.business.order.CompositeValidator;
 import org.clau.pizzeriautils.validation.business.order.NewOrder;
 import org.clau.pizzeriautils.validation.business.order.Validator;
 import org.clau.pizzeriautils.validation.business.order.impl.CartValidator;
-import org.clau.pizzeriautils.validation.business.order.impl.DeleteTimeLimitValidator;
+import org.clau.pizzeriautils.validation.business.order.impl.CancelTimeLimitValidator;
 import org.clau.pizzeriautils.validation.business.order.impl.NewOrderValidator;
 import org.clau.pizzeriautils.validation.business.order.impl.OrderDetailsValidator;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +24,7 @@ public class ValidatorConfig {
    }
 
    @Bean
-   Validator<LocalDateTime> deleteOrderValidator() {
-	  return new DeleteTimeLimitValidator();
+   Validator<LocalDateTime> cancelOrderValidator() {
+	  return new CancelTimeLimitValidator();
    }
 }

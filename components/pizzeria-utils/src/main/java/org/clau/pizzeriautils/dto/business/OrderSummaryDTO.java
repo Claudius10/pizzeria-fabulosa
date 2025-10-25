@@ -10,6 +10,9 @@ public record OrderSummaryDTO(
    String formattedCreatedOn,
 
    @NotNull
+   String state,
+
+   @NotNull
    String paymentMethod,
 
    @NotNull

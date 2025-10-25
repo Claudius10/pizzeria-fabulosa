@@ -251,7 +251,7 @@ public class OrderControllerTests {
    }
 
    @Test
-   void givenOrderDelete_whenWithinTimeLimit_thenReturnDeletedOrderId() throws Exception {
+   void givenOrderCancel_whenWithinTimeLimit_thenReturnCanceledOrderId() throws Exception {
 
 	  // Arrange
 
@@ -266,8 +266,8 @@ public class OrderControllerTests {
 
 	  // Act
 
-	  // delete api call to delete order
-	  MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, order.getId())
+	  // put api call to cancel order
+	  MockHttpServletResponse response = mockMvc.perform(put(path + Route.ORDER_ID, order.getId())
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn()
@@ -281,7 +281,7 @@ public class OrderControllerTests {
    }
 
    @Test
-   void givenOrderDelete_whenTimeLimitPassed_thenReturnBadRequestWithMessage() throws Exception {
+   void givenOrderCancel_whenTimeLimitPassed_thenReturnBadRequestWithMessage() throws Exception {
 
 	  // Arrange
 
@@ -296,8 +296,8 @@ public class OrderControllerTests {
 
 	  // Act
 
-	  // delete api call to delete order
-	  MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, order.getId())
+	  // put api call to cancel order
+	  MockHttpServletResponse response = mockMvc.perform(put(path + Route.ORDER_ID, order.getId())
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn()
@@ -308,13 +308,13 @@ public class OrderControllerTests {
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
+	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ValidationResponses.ORDER_CANCEL_TIME_ERROR);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ValidationResponses.ORDER_VALIDATION_FAILED);
 	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(MyApps.RESOURCE_SERVER_BUSINESS);
    }
 
    @Test
-   void givenOrderDelete_whenOrderNotFound_thenReturnNoContent() throws Exception {
+   void givenOrderCancel_whenOrderNotFound_thenReturnNoContent() throws Exception {
 
 	  // Arrange
 
@@ -325,8 +325,8 @@ public class OrderControllerTests {
 
 	  // Act
 
-	  // delete api call to delete order
-	  MockHttpServletResponse response = mockMvc.perform(delete(path + Route.ORDER_ID, orderId)
+	  // put api call to cancel order
+	  MockHttpServletResponse response = mockMvc.perform(put(path + Route.ORDER_ID, orderId)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn()
@@ -378,6 +378,7 @@ public class OrderControllerTests {
 
 	  assertThat(actualOrder.id()).isEqualTo(expectedOrder.getId());
 	  assertThat(actualOrder.formattedCreatedOn()).isEqualTo(expectedOrder.getFormattedCreatedOn());
+	  assertThat(actualOrder.state()).isEqualTo(expectedOrder.getState());
 	  assertThat(actualOrder.paymentMethod()).isEqualTo(expectedOrder.getOrderDetails().getPaymentMethod());
 	  assertThat(actualOrder.quantity()).isEqualTo(expectedOrder.getCart().getTotalQuantity());
 	  assertThat(actualOrder.cost()).isEqualTo(expectedOrder.getCart().getTotalCost());

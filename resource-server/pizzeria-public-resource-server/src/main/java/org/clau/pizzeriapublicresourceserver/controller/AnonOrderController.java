@@ -64,6 +64,7 @@ public class AnonOrderController implements AnonOrderControllerSwagger {
 	  CreatedOrderDTO createdOrderDTO = new CreatedOrderDTO(
 		 createdOrder.getId(),
 		 createdOrder.getFormattedCreatedOn(),
+		 createdOrder.getState(),
 		 new CustomerDTO(
 			createdOrder.getAnonCustomerName(),
 			createdOrder.getAnonCustomerContactNumber(),

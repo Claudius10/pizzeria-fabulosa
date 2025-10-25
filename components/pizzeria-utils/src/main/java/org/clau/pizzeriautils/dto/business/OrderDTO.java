@@ -13,6 +13,9 @@ public record OrderDTO(
    String formattedCreatedOn,
 
    @NotNull
+   String state,
+
+   @NotNull
    String address,
 
    @NotNull

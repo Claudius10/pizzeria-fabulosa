@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface AdminOrderService {
 
-   List<Integer> findCountForTimeline(String value);
+   List<Integer> findCountForTimelineAndState(String timeline, String state);
 }

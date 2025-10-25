@@ -4,6 +4,7 @@ import org.clau.pizzeriadata.model.business.Cart;
 import org.clau.pizzeriadata.model.business.CartItem;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriadata.model.business.OrderDetails;
+import org.clau.pizzeriautils.constant.business.OrderState;
 import org.clau.pizzeriautils.dto.business.*;
 
 import java.time.LocalDateTime;
@@ -67,7 +68,7 @@ public final class TestUtils {
 	  String formattedCreatedOn = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
 	  String address = "Baker Street 221b";
 
-	  return new CreatedOrderDTO(1L, formattedCreatedOn, customerDTO, address, orderDetailsDTO, cartDTO);
+	  return new CreatedOrderDTO(1L, formattedCreatedOn, OrderState.COMPLETED.toString(), customerDTO, address, orderDetailsDTO, cartDTO);
    }
 
    public static OrderDetailsDTO orderDetailsDTOStub() {

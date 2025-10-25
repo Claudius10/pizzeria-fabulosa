@@ -9,6 +9,7 @@ import org.clau.pizzeriadata.model.business.CartItem;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriadata.model.business.OrderDetails;
 import org.clau.pizzeriadata.model.common.APIError;
+import org.clau.pizzeriautils.constant.business.OrderState;
 import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
 import org.clau.pizzeriautils.util.business.OrderUtils;
 import org.clau.pizzeriautils.util.common.TimeUtils;
@@ -63,6 +64,7 @@ public class TestHelperService {
 	  Order order = Order.builder()
 		 .withCreatedOn(createdOn)
 		 .withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
+		 .withState(OrderState.COMPLETED.toString())
 		 .withUserId(userId)
 		 .withAddress(newUserOrder.address())
 		 .build();

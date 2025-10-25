@@ -78,10 +78,10 @@ public interface OrderControllerSwagger {
    ResponseEntity<OrderDTO> findById(@Parameter(required = true, description = "Id of the order to find") @PathVariable Long orderId);
 
 
-   @Operation(operationId = "deleteById", summary = "Delete user order by id")
+   @Operation(operationId = "cancelById", summary = "Cancel user order by id")
    @ApiResponse(
 	  responseCode = Response.OK,
-	  description = "Returns the deleted order's id",
+	  description = "Returns the canceled order's id",
 	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = Long.class))
    )
    @ApiResponse(
@@ -91,7 +91,7 @@ public interface OrderControllerSwagger {
    )
    @ApiResponse(
 	  responseCode = Response.BAD_REQUEST,
-	  description = "Validation failed or invalid request or order delete time-limit passed",
+	  description = "Validation failed or invalid request or order cancel time-limit passed",
 	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
    )
    @ApiResponse(
@@ -104,7 +104,7 @@ public interface OrderControllerSwagger {
 	  description = "Unexpected exception occurred",
 	  content = @Content(mediaType = Response.JSON, schema = @Schema(implementation = ResponseDTO.class))
    )
-   ResponseEntity<?> deleteById(@Parameter(required = true, description = "Id of the order to delete") @PathVariable Long orderId,
+   ResponseEntity<?> cancelById(@Parameter(required = true, description = "Id of the order to cancel") @PathVariable Long orderId,
 								HttpServletRequest request);
 
 

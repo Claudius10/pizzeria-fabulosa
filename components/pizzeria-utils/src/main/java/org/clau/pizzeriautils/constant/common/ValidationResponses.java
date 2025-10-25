@@ -26,7 +26,7 @@ public final class ValidationResponses {
 
    public static final String CART_IS_EMPTY = "InvalidCartIsEmpty";
 
-   public static final String ORDER_DELETE_TIME_ERROR = "InvalidOrderDeleteTime";
+   public static final String ORDER_CANCEL_TIME_ERROR = "InvalidOrderCancelTime";
 
    public static final String CART_MAX_PRODUCTS_QUANTITY_ERROR = "InvalidCartMaxProductsQuantity";
 
@@ -37,6 +37,8 @@ public final class ValidationResponses {
    public static final String CART_ITEM_MAX_QUANTITY_ERROR = "InvalidCartItemMaxQuantity";
 
    public static final String ORDER_VALIDATION_FAILED = "OrderValidationFailed";
+
+   public static final String ORDER_STATE_UNKNOWN = "UnsupportedOrderState";
 
    private ValidationResponses() {
    }

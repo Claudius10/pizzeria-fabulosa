@@ -22,19 +22,21 @@ public class AdminOrderServiceImpl implements AdminOrderService {
    private final AdminOrderRepository adminOrderRepository;
 
    @Override
-   public List<Integer> findCountForTimeline(String value) {
-	  if (value == null) return Collections.emptyList();
+   public List<Integer> findCountForTimelineAndState(String timeline, String state) {
+	  if (timeline == null) return Collections.emptyList();
 
 	  LocalDate today = LocalDate.now();
 
-	  switch (value) {
+	  // TODO - fix array indexes: some missing some misaligned
+
+	  switch (timeline) {
 		 case "hourly": {
 			List<Integer> result = new ArrayList<>(12);
 			LocalDateTime start = today.atTime(12, 0);
 			for (int i = 0; i < 12; i++) {
 			   LocalDateTime intervalStart = start.plusHours(i);
 			   LocalDateTime intervalEnd = intervalStart.plusHours(1).minusNanos(1);
-			   int count = adminOrderRepository.countAllByCreatedOnBetween(intervalStart, intervalEnd);
+			   int count = adminOrderRepository.countAllByCreatedOnBetweenAndState(intervalStart, intervalEnd, state);
 			   result.add(count);
 			}
 			return result;
@@ -45,7 +47,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 			   LocalDate day = today.minusDays(i);
 			   LocalDateTime dayStart = day.atStartOfDay();
 			   LocalDateTime dayEnd = day.atTime(23, 59, 59, 999_999_999);
-			   int count = adminOrderRepository.countAllByCreatedOnBetween(dayStart, dayEnd);
+			   int count = adminOrderRepository.countAllByCreatedOnBetweenAndState(dayStart, dayEnd, state);
 			   result.add(count);
 			}
 			return result;
@@ -57,7 +59,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 			   YearMonth ym = currentMonth.minusMonths(i);
 			   LocalDateTime monthStart = ym.atDay(1).atStartOfDay();
 			   LocalDateTime monthEnd = ym.atEndOfMonth().atTime(23, 59, 59, 999_999_999);
-			   int count = adminOrderRepository.countAllByCreatedOnBetween(monthStart, monthEnd);
+			   int count = adminOrderRepository.countAllByCreatedOnBetweenAndState(monthStart, monthEnd, state);
 			   result.add(count);
 			}
 			return result;
@@ -72,7 +74,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 			   Year year = Year.of(y);
 			   LocalDateTime yearStart = year.atDay(1).atStartOfDay();
 			   LocalDateTime yearEnd = year.atMonth(12).atEndOfMonth().atTime(23, 59, 59, 999_999_999);
-			   int count = adminOrderRepository.countAllByCreatedOnBetween(yearStart, yearEnd);
+			   int count = adminOrderRepository.countAllByCreatedOnBetweenAndState(yearStart, yearEnd, state);
 			   result.add(count);
 			}
 

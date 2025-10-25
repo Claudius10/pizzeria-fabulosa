@@ -1,7 +1,7 @@
 package org.clau.pizzeriautils.validation.business.order;
 
 import org.clau.pizzeriautils.constant.common.ValidationResponses;
-import org.clau.pizzeriautils.validation.business.order.impl.DeleteTimeLimitValidator;
+import org.clau.pizzeriautils.validation.business.order.impl.CancelTimeLimitValidator;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -14,31 +14,31 @@ class OrderDeleteValidationTest {
    void givenOrderDeleteRequest_whenDeleteWindowPassed_thenReturnInvalidResult() {
 	  // Arrange
 
-	  DeleteTimeLimitValidator deleteTimeLimitValidator = new DeleteTimeLimitValidator();
+	  CancelTimeLimitValidator cancelTimeLimitValidator = new CancelTimeLimitValidator();
 	  LocalDateTime now = LocalDateTime.now();
 	  LocalDateTime date = now.minusMinutes(15);
 
 	  // Act
 
-	  ValidationResult isDeleteRequestValid = deleteTimeLimitValidator.validate(date);
+	  ValidationResult isDeleteRequestValid = cancelTimeLimitValidator.validate(date);
 
 	  // Assert
 
 	  assertThat(isDeleteRequestValid.valid()).isFalse();
-	  assertThat(isDeleteRequestValid.message()).isEqualTo(ValidationResponses.ORDER_DELETE_TIME_ERROR);
+	  assertThat(isDeleteRequestValid.message()).isEqualTo(ValidationResponses.ORDER_CANCEL_TIME_ERROR);
    }
 
    @Test
    void givenOrderDeleteRequest_whenDeleteWindowDidNotPass_thenReturnValidResult() {
 	  // Arrange
 
-	  DeleteTimeLimitValidator deleteTimeLimitValidator = new DeleteTimeLimitValidator();
+	  CancelTimeLimitValidator cancelTimeLimitValidator = new CancelTimeLimitValidator();
 	  LocalDateTime now = LocalDateTime.now();
 	  LocalDateTime date = now.plusMinutes(15);
 
 	  // Act
 
-	  ValidationResult isDeleteRequestValid = deleteTimeLimitValidator.validate(date);
+	  ValidationResult isDeleteRequestValid = cancelTimeLimitValidator.validate(date);
 
 	  // Assert
 

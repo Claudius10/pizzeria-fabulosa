@@ -9,6 +9,7 @@ import org.clau.pizzeriadata.model.business.Cart;
 import org.clau.pizzeriadata.model.business.CartItem;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriadata.model.business.OrderDetails;
+import org.clau.pizzeriautils.constant.business.OrderState;
 import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
 import org.clau.pizzeriautils.util.business.OrderUtils;
 import org.clau.pizzeriautils.util.common.TimeUtils;
@@ -56,6 +57,7 @@ public class OrderServiceImpl implements OrderService {
 	  Order order = Order.builder()
 		 .withCreatedOn(LocalDateTime.now())
 		 .withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
+		 .withState(OrderState.COMPLETED.toString()) // todo - set to pending when created and figure out a way to pass them to completed
 		 .withUserId(userId)
 		 .withAddress(newUserOrder.address())
 		 .build();
@@ -84,8 +86,8 @@ public class OrderServiceImpl implements OrderService {
    }
 
    @Override
-   public void deleteById(Long orderId) {
-	  orderRepository.deleteById(orderId);
+   public void cancelById(Long orderId) {
+	  orderRepository.updateState(orderId, OrderState.CANCELLED.toString());
    }
 
    @Override

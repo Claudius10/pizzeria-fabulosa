@@ -13,7 +13,7 @@ public interface OrderService {
 
    Order create(Long userId, NewUserOrderDTO newUserOrder);
 
-   void deleteById(Long orderId);
+   void cancelById(Long orderId);
 
    Page<Order> findSummary(Long userId, int size, int page);
 

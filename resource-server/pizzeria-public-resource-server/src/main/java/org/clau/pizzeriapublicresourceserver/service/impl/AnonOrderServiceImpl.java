@@ -8,6 +8,7 @@ import org.clau.pizzeriadata.model.business.CartItem;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriadata.model.business.OrderDetails;
 import org.clau.pizzeriapublicresourceserver.service.AnonOrderService;
+import org.clau.pizzeriautils.constant.business.OrderState;
 import org.clau.pizzeriautils.dto.business.NewAnonOrderDTO;
 import org.clau.pizzeriautils.util.business.OrderUtils;
 import org.clau.pizzeriautils.util.common.TimeUtils;
@@ -46,6 +47,7 @@ public class AnonOrderServiceImpl implements AnonOrderService {
 	  Order anonOrder = Order.builder()
 		 .withCreatedOn(LocalDateTime.now())
 		 .withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
+		 .withState(OrderState.COMPLETED.toString()) // todo - set to pending when created and figure out a way to pass them to completed
 		 .withAnonCustomerName(newAnonOrder.customer().anonCustomerName())
 		 .withAnonCustomerContactNumber(newAnonOrder.customer().anonCustomerContactNumber())
 		 .withAnonCustomerEmail(newAnonOrder.customer().anonCustomerEmail())

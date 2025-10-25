@@ -61,10 +61,10 @@ spring:
                 - Path=/api/v1/order/**
               filters:
                 - TokenRelay=
-            - id: admin-incidents-api
+            - id: admin-api
               uri: http://localhost:8084
               predicates:
-                - Path=/api/v1/admin/incidents/**
+                - Path=/api/v1/admin/**
               filters:
                 - TokenRelay=
 

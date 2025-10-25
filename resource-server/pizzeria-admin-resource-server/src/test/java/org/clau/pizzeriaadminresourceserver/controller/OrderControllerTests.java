@@ -6,6 +6,7 @@ import org.clau.pizzeriaadminresourceserver.TestHelperService;
 import org.clau.pizzeriaadminresourceserver.TestJwtHelperService;
 import org.clau.pizzeriautils.constant.common.Route;
 import org.clau.pizzeriautils.constant.user.RoleEnum;
+import org.clau.pizzeriautils.dto.admin.OrderStatisticsByState;
 import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
 import org.clau.pizzeriautils.util.business.TestUtils;
 import org.junit.jupiter.api.Test;
@@ -67,13 +68,14 @@ public class OrderControllerTests {
 	  // Arrange
 	  createHourlyOrders(today, newUserOrderDTO);
 	  String timeline = "hourly";
+	  String state = "COMPLETED";
 
 	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act
 
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -82,21 +84,21 @@ public class OrderControllerTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  List<Integer> counts = objectMapper.readValue(response.getContentAsString(), List.class);
-	  assertThat(counts.size()).isEqualTo(12);
+	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
+	  assertThat(statisticsByState.countsByState().size()).isEqualTo(12);
 
-	  assertThat(counts.get(0)).isEqualTo(1); // 12:00
-	  assertThat(counts.get(1)).isEqualTo(2); // 13:00
-	  assertThat(counts.get(2)).isEqualTo(3); // 14:00
-	  assertThat(counts.get(3)).isEqualTo(4); // 15:00
-	  assertThat(counts.get(4)).isEqualTo(5); // 16:00
-	  assertThat(counts.get(5)).isEqualTo(6); // 17:00
-	  assertThat(counts.get(6)).isEqualTo(7); // 18:00
-	  assertThat(counts.get(7)).isEqualTo(8); // 19:00
-	  assertThat(counts.get(8)).isEqualTo(9); // 20:00
-	  assertThat(counts.get(9)).isEqualTo(10); // 21:00
-	  assertThat(counts.get(10)).isEqualTo(11); // 22:00
-	  assertThat(counts.get(11)).isEqualTo(12); // 23:00
+	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // 12:00
+	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // 13:00
+	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // 14:00
+	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(4); // 15:00
+	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(5); // 16:00
+	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(6); // 17:00
+	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(7); // 18:00
+	  assertThat(statisticsByState.countsByState().get(7)).isEqualTo(8); // 19:00
+	  assertThat(statisticsByState.countsByState().get(8)).isEqualTo(9); // 20:00
+	  assertThat(statisticsByState.countsByState().get(9)).isEqualTo(10); // 21:00
+	  assertThat(statisticsByState.countsByState().get(10)).isEqualTo(11); // 22:00
+	  assertThat(statisticsByState.countsByState().get(11)).isEqualTo(12); // 23:00
    }
 
    @Test
@@ -106,13 +108,14 @@ public class OrderControllerTests {
 
 	  createDailyOrders(today, newUserOrderDTO);
 	  String timeline = "daily";
+	  String state = "COMPLETED";
 
 	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act
 
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -121,16 +124,16 @@ public class OrderControllerTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  List<Integer> counts = objectMapper.readValue(response.getContentAsString(), List.class);
-	  assertThat(counts.size()).isEqualTo(7);
+	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
+	  assertThat(statisticsByState.countsByState().size()).isEqualTo(7);
 
-	  assertThat(counts.get(0)).isEqualTo(1); // monday
-	  assertThat(counts.get(1)).isEqualTo(2); // tuesday
-	  assertThat(counts.get(2)).isEqualTo(3); // wednesday
-	  assertThat(counts.get(3)).isEqualTo(4); // thursday
-	  assertThat(counts.get(4)).isEqualTo(5); // friday
-	  assertThat(counts.get(5)).isEqualTo(6); // saturday
-	  assertThat(counts.get(6)).isEqualTo(7); // sunday
+	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // monday
+	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // tuesday
+	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // wednesday
+	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(4); // thursday
+	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(5); // friday
+	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(6); // saturday
+	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(7); // sunday
    }
 
    @Test
@@ -140,13 +143,14 @@ public class OrderControllerTests {
 
 	  createMonthlyOrders(today, newUserOrderDTO);
 	  String timeline = "monthly";
+	  String state = "COMPLETED";
 
 	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act
 
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -155,21 +159,21 @@ public class OrderControllerTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  List<Integer> counts = objectMapper.readValue(response.getContentAsString(), List.class);
-	  assertThat(counts.size()).isEqualTo(12);
+	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
+	  assertThat(statisticsByState.countsByState().size()).isEqualTo(12);
 
-	  assertThat(counts.getFirst()).isEqualTo(1); // january
-	  assertThat(counts.get(1)).isEqualTo(2); // february
-	  assertThat(counts.get(2)).isEqualTo(3); // march
-	  assertThat(counts.get(3)).isEqualTo(4); // april
-	  assertThat(counts.get(4)).isEqualTo(5); // may
-	  assertThat(counts.get(5)).isEqualTo(6); // june
-	  assertThat(counts.get(6)).isEqualTo(7); // july
-	  assertThat(counts.get(7)).isEqualTo(8); // august
-	  assertThat(counts.get(8)).isEqualTo(9); // september
-	  assertThat(counts.get(9)).isEqualTo(10); // october
-	  assertThat(counts.get(10)).isEqualTo(11); // november
-	  assertThat(counts.get(11)).isEqualTo(12); // december
+	  assertThat(statisticsByState.countsByState().getFirst()).isEqualTo(1); // january
+	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // february
+	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // march
+	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(4); // april
+	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(5); // may
+	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(6); // june
+	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(7); // july
+	  assertThat(statisticsByState.countsByState().get(7)).isEqualTo(8); // august
+	  assertThat(statisticsByState.countsByState().get(8)).isEqualTo(9); // september
+	  assertThat(statisticsByState.countsByState().get(9)).isEqualTo(10); // october
+	  assertThat(statisticsByState.countsByState().get(10)).isEqualTo(11); // november
+	  assertThat(statisticsByState.countsByState().get(11)).isEqualTo(12); // december
    }
 
    @Test
@@ -179,13 +183,14 @@ public class OrderControllerTests {
 
 	  createYearlyOrders(newUserOrderDTO);
 	  String timeline = "yearly";
+	  String state = "COMPLETED";
 
 	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act
 
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -194,12 +199,11 @@ public class OrderControllerTests {
 	  // Assert
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  List<Integer> counts = objectMapper.readValue(response.getContentAsString(), List.class);
-	  assertThat(counts.size()).isEqualTo(3);
-
-	  assertThat(counts.get(0)).isEqualTo(1); // 2023
-	  assertThat(counts.get(1)).isEqualTo(2); // 2024
-	  assertThat(counts.get(2)).isEqualTo(3); // 2025
+	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
+	  assertThat(statisticsByState.countsByState().size()).isEqualTo(3);
+	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // 2023
+	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // 2024
+	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // 2025
    }
 
    private void createHourlyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {

@@ -10,6 +10,9 @@ public record CreatedOrderDTO(
    @NotNull
    String formattedCreatedOn,
 
+   @NotNull
+   String state,
+
    CustomerDTO customer,
 
    @NotNull

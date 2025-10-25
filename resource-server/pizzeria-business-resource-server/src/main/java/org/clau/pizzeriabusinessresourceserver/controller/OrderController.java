@@ -36,7 +36,7 @@ public class OrderController implements OrderControllerSwagger {
 
    private final CompositeValidator<NewOrder> newOrderValidator;
 
-   private final Validator<LocalDateTime> deleteOrderValidator;
+   private final Validator<LocalDateTime> cancelOrderValidator;
 
    @PostMapping
    public ResponseEntity<?> create(
@@ -67,6 +67,7 @@ public class OrderController implements OrderControllerSwagger {
 	  CreatedOrderDTO createdOrderDTO = new CreatedOrderDTO(
 		 createdOrder.getId(),
 		 createdOrder.getFormattedCreatedOn(),
+		 createdOrder.getState(),
 		 null,
 		 createdOrder.getAddress(),
 		 new OrderDetailsDTO(
@@ -105,6 +106,7 @@ public class OrderController implements OrderControllerSwagger {
 			new OrderDTO(
 			   theOrder.getId(),
 			   theOrder.getFormattedCreatedOn(),
+			   theOrder.getState(),
 			   theOrder.getAddress(),
 			   new OrderDetailsDTO(
 				  theOrder.getOrderDetails().getDeliveryTime(),
@@ -133,15 +135,15 @@ public class OrderController implements OrderControllerSwagger {
 		 .orElse(ResponseEntity.noContent().build());
    }
 
-   @DeleteMapping(Route.ORDER_ID)
-   public ResponseEntity<?> deleteById(@PathVariable Long orderId, HttpServletRequest request) {
+   @PutMapping(Route.ORDER_ID)
+   public ResponseEntity<?> cancelById(@PathVariable Long orderId, HttpServletRequest request) {
 
 	  Optional<CreatedOnProjection> createdOnDTOById = orderService.findCreatedOnById(orderId);
 
 	  if (createdOnDTOById.isEmpty()) {
 		 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	  } else {
-		 ValidationResult validate = deleteOrderValidator.validate(createdOnDTOById.get().getCreatedOn());
+		 ValidationResult validate = cancelOrderValidator.validate(createdOnDTOById.get().getCreatedOn());
 		 if (!validate.valid()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDTO.builder()
 			   .apiError(APIError.builder()
@@ -159,7 +161,7 @@ public class OrderController implements OrderControllerSwagger {
 		 }
 	  }
 
-	  orderService.deleteById(orderId);
+	  orderService.cancelById(orderId);
 	  return ResponseEntity.ok(orderId);
    }
 
@@ -176,6 +178,7 @@ public class OrderController implements OrderControllerSwagger {
 			new OrderSummaryDTO(
 			   order.getId(),
 			   order.getFormattedCreatedOn(),
+			   order.getState(),
 			   order.getOrderDetails().getPaymentMethod(),
 			   order.getCart().getTotalQuantity(),
 			   order.getCart().getTotalCost(),
