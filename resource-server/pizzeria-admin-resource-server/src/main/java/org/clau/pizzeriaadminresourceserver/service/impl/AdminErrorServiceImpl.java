@@ -8,7 +8,9 @@ import org.clau.pizzeriadata.dao.admin.AdminErrorRepository;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -37,30 +39,37 @@ public class AdminErrorServiceImpl implements AdminErrorService {
 
    @Override
    public List<APIError> findAllByOriginBetweenDates(String origin, String startDate, String endDate) {
-	  LocalDateTime startDateTime = parseDate(startDate);
-	  LocalDateTime endDateTime = parseDate(endDate);
+	  LocalDate start = parseToLocalDate(startDate);
+	  LocalDate end = parseToLocalDate(endDate);
 
-	  if (startDateTime == null && endDateTime == null) {
+	  if (start == null && end == null) {
 		 return List.of();
 	  }
 
-	  if (startDateTime == null) {
-		 return errorRepository.findAllByOriginAndCreatedOn(origin, endDateTime);
+	  if (start == null) {
+		 LocalDateTime dayStart = end.atStartOfDay();
+		 LocalDateTime dayEnd = LocalDateTime.of(end, LocalTime.MAX);
+		 return errorRepository.findAllByOriginAndCreatedOnBetweenOrderByIdDesc(origin, dayStart, dayEnd);
 	  }
 
-	  if (endDateTime == null) {
-		 return errorRepository.findAllByOriginAndCreatedOn(origin, startDateTime);
+	  if (end == null) {
+		 LocalDateTime dayStart = start.atStartOfDay();
+		 LocalDateTime dayEnd = LocalDateTime.of(start, LocalTime.MAX);
+		 return errorRepository.findAllByOriginAndCreatedOnBetweenOrderByIdDesc(origin, dayStart, dayEnd);
 	  }
 
+	  LocalDateTime startDateTime = start.atStartOfDay();
+	  LocalDateTime endDateTime = LocalDateTime.of(end, LocalTime.MAX);
 	  return errorRepository.findAllByOriginAndCreatedOnBetweenOrderByIdDesc(origin, startDateTime, endDateTime);
    }
 
-   private LocalDateTime parseDate(String date) {
+   private LocalDate parseToLocalDate(String date) {
 	  if (date == null || date.isBlank()) {
 		 return null;
 	  }
 
-	  String cleanDate = date.substring(0, date.indexOf('T')) + "T00:00:00";
-	  return LocalDateTime.parse(cleanDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	  int tIndex = date.indexOf('T');
+	  String onlyDate = (tIndex > 0) ? date.substring(0, tIndex) : date;
+	  return LocalDate.parse(onlyDate, DateTimeFormatter.ISO_LOCAL_DATE);
    }
 }

@@ -62,7 +62,7 @@ public class IncidentsControllerTests {
 	  // Arrange
 
 	  String startDate = "2025-08-02T09:37:01.924Z";
-	  String cleanDateTwo = startDate.substring(0, startDate.indexOf('T')) + "T00:00:00";
+	  String cleanDateTwo = startDate.substring(0, startDate.indexOf('T')) + "T11:00:00";
 	  LocalDateTime nowTwo = LocalDateTime.parse(cleanDateTwo, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 	  testHelperService.createApiError("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, nowTwo);
 
@@ -93,13 +93,13 @@ public class IncidentsControllerTests {
 
 	  // createApiError error 1
 	  String startDate = "2025-08-02T09:37:01.924Z";
-	  String cleanDateTwo = startDate.substring(0, startDate.indexOf('T')) + "T00:00:00";
+	  String cleanDateTwo = startDate.substring(0, startDate.indexOf('T')) + "T11:00:00";
 	  LocalDateTime nowTwo = LocalDateTime.parse(cleanDateTwo, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 	  testHelperService.createApiError("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, nowTwo);
 
 	  // createApiError error 2
 	  String endDate = "2025-08-03T09:37:01.924Z";
-	  String cleanDate = endDate.substring(0, endDate.indexOf('T')) + "T00:00:00";
+	  String cleanDate = endDate.substring(0, endDate.indexOf('T')) + "T11:00:00";
 	  LocalDateTime now = LocalDateTime.parse(cleanDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 	  testHelperService.createApiError("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, now);
 
@@ -130,7 +130,7 @@ public class IncidentsControllerTests {
 
 	  // createApiError error
 	  String endDate = "2025-08-03T09:37:01.924Z";
-	  String cleanDate = endDate.substring(0, endDate.indexOf('T')) + "T00:00:00";
+	  String cleanDate = endDate.substring(0, endDate.indexOf('T')) + "T11:00:00";
 	  LocalDateTime now = LocalDateTime.parse(cleanDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 	  testHelperService.createApiError("TEST", "TEST ERROR", MyApps.RESOURCE_SERVER_ADMIN, path, true, now);
 
