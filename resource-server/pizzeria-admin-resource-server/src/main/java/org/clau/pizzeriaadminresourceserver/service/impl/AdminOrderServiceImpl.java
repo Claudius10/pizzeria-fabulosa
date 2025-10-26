@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriaadminresourceserver.service.AdminOrderService;
 import org.clau.pizzeriadata.dao.admin.AdminOrderRepository;
+import org.clau.pizzeriautils.util.common.TimeUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,16 +26,15 @@ public class AdminOrderServiceImpl implements AdminOrderService {
    public List<Integer> findCountForTimelineAndState(String timeline, String state) {
 	  if (timeline == null) return Collections.emptyList();
 
-	  LocalDate today = LocalDate.now();
-
-	  // TODO - fix array indexes: some missing some misaligned
+	  LocalDate today = TimeUtils.getNowAccountingDST().toLocalDate();
 
 	  switch (timeline) {
 		 case "hourly": {
-			List<Integer> result = new ArrayList<>(12);
-			LocalDateTime start = today.atTime(12, 0);
-			for (int i = 0; i < 12; i++) {
-			   LocalDateTime intervalStart = start.plusHours(i);
+			List<Integer> result = new ArrayList<>(17);
+			LocalDateTime now = TimeUtils.getNowAccountingDST();
+			LocalDateTime startOfWindow = now.toLocalDate().atTime(8, 0);
+			for (int h = 0; h < 17; h++) {
+			   LocalDateTime intervalStart = startOfWindow.plusHours(h);
 			   LocalDateTime intervalEnd = intervalStart.plusHours(1).minusNanos(1);
 			   int count = adminOrderRepository.countAllByCreatedOnBetweenAndState(intervalStart, intervalEnd, state);
 			   result.add(count);
@@ -54,9 +54,9 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 		 }
 		 case "monthly": {
 			List<Integer> result = new ArrayList<>(12);
-			YearMonth currentMonth = YearMonth.from(today);
-			for (int i = 11; i >= 0; i--) {
-			   YearMonth ym = currentMonth.minusMonths(i);
+			int currentYear = today.getYear();
+			for (int m = 1; m <= 12; m++) {
+			   YearMonth ym = YearMonth.of(currentYear, m);
 			   LocalDateTime monthStart = ym.atDay(1).atStartOfDay();
 			   LocalDateTime monthEnd = ym.atEndOfMonth().atTime(23, 59, 59, 999_999_999);
 			   int count = adminOrderRepository.countAllByCreatedOnBetweenAndState(monthStart, monthEnd, state);

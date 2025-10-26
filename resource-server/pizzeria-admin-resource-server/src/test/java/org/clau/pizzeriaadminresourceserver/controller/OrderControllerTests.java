@@ -9,6 +9,7 @@ import org.clau.pizzeriautils.constant.user.RoleEnum;
 import org.clau.pizzeriautils.dto.admin.OrderStatisticsByState;
 import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
 import org.clau.pizzeriautils.util.business.TestUtils;
+import org.clau.pizzeriautils.util.common.TimeUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class OrderControllerTests {
 
    private final NewUserOrderDTO newUserOrderDTO = TestUtils.userOrderStub(false);
 
-   private final LocalDateTime today = LocalDateTime.now();
+   private final LocalDateTime today = TimeUtils.getNowAccountingDST();
 
    @Autowired
    private MockMvc mockMvc;
@@ -85,20 +86,25 @@ public class OrderControllerTests {
 
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  assertThat(statisticsByState.countsByState().size()).isEqualTo(12);
+	  assertThat(statisticsByState.countsByState().size()).isEqualTo(17);
 
-	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // 12:00
-	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // 13:00
-	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // 14:00
-	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(4); // 15:00
-	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(5); // 16:00
-	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(6); // 17:00
-	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(7); // 18:00
-	  assertThat(statisticsByState.countsByState().get(7)).isEqualTo(8); // 19:00
-	  assertThat(statisticsByState.countsByState().get(8)).isEqualTo(9); // 20:00
-	  assertThat(statisticsByState.countsByState().get(9)).isEqualTo(10); // 21:00
-	  assertThat(statisticsByState.countsByState().get(10)).isEqualTo(11); // 22:00
-	  assertThat(statisticsByState.countsByState().get(11)).isEqualTo(12); // 23:00
+	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // 08:00
+	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // 09:00
+	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // 10:00
+	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(4); // 11:00
+	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(5); // 12:00
+	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(6); // 13:00
+	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(7); // 14:00
+	  assertThat(statisticsByState.countsByState().get(7)).isEqualTo(8); // 15:00
+	  assertThat(statisticsByState.countsByState().get(8)).isEqualTo(9); // 16:00
+	  assertThat(statisticsByState.countsByState().get(9)).isEqualTo(10); // 17:00
+	  assertThat(statisticsByState.countsByState().get(10)).isEqualTo(11); // 18:00
+	  assertThat(statisticsByState.countsByState().get(11)).isEqualTo(12); // 19:00
+	  assertThat(statisticsByState.countsByState().get(12)).isEqualTo(13); // 20:00
+	  assertThat(statisticsByState.countsByState().get(13)).isEqualTo(14); // 21:00
+	  assertThat(statisticsByState.countsByState().get(14)).isEqualTo(15); // 22:00
+	  assertThat(statisticsByState.countsByState().get(15)).isEqualTo(16); // 23:00
+	  assertThat(statisticsByState.countsByState().get(16)).isEqualTo(17); // 00:00
    }
 
    @Test
@@ -207,14 +213,14 @@ public class OrderControllerTests {
    }
 
    private void createHourlyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {
-	  int[] counts = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+	  int[] counts = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+	  LocalDateTime startOfWindow = today.toLocalDate().atTime(8, 0);
 	  for (int i = 0; i < counts.length; i++) {
-		 int hour = 12 + i; // 12..23
 		 int count = counts[i];
-		 LocalDateTime base = today.withHour(hour).withMinute(0).withSecond(0).withNano(0);
+		 LocalDateTime intervalStart = startOfWindow.plusHours(i);
 		 for (int j = 0; j < count; j++) {
 			int minute = getRandomMinute();
-			LocalDateTime createdOn = base.withMinute(minute);
+			LocalDateTime createdOn = intervalStart.withMinute(minute);
 			this.testHelperService.createOrder(1L, newUserOrderDTO, createdOn);
 		 }
 	  }
@@ -237,10 +243,10 @@ public class OrderControllerTests {
 
    private void createMonthlyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {
 	  int[] counts = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-	  YearMonth current = YearMonth.of(today.getYear(), today.getMonth());
-	  for (int i = 0; i < counts.length; i++) {
-		 YearMonth ym = current.minusMonths(11 - i); // oldest first
-		 int count = counts[i];
+	  int currentYear = today.getYear();
+	  for (int m = 1; m <= 12; m++) {
+		 YearMonth ym = YearMonth.of(currentYear, m); // Jan..Dec of current year
+		 int count = counts[m - 1];
 		 for (int j = 0; j < count; j++) {
 			int day = Math.min(1 + (j % ym.lengthOfMonth()), ym.lengthOfMonth());
 			int hour = 10 + (j % 12); // spread during the day
@@ -265,6 +271,107 @@ public class OrderControllerTests {
 			LocalDateTime createdOn = LocalDateTime.of(year, month, day, hour, minute, 0);
 			this.testHelperService.createOrder(1L, newUserOrderDTO, createdOn);
 		 }
+	  }
+   }
+
+   @Test
+   void givenInvalidState_whenRequest_thenReturnBadRequestWithMessage() throws Exception {
+
+	  // Arrange
+	  String timeline = "daily";
+	  String state = "NOT_A_STATE";
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+	  String body = response.getContentAsString();
+	  assertThat(body).contains("Supported states");
+   }
+
+   @Test
+   void givenUnknownTimeline_whenRequest_thenReturnOkWithEmptyCounts() throws Exception {
+
+	  // Arrange
+	  String timeline = "foobar";
+	  String state = "COMPLETED";
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
+	  assertThat(statisticsByState.countsByState()).isEmpty();
+   }
+
+   @Test
+   void givenHourlyRequest_whenEventsOnBoundaries_thenBucketsAreInclusiveExclusiveCorrectly() throws Exception {
+
+	  // Arrange
+	  // Create 3 orders: 08:00:00 and 08:59:59.999999999 should fall into first bucket, 09:00:00 in the second
+	  LocalDateTime startOfWindow = today.toLocalDate().atTime(8, 0, 0, 0);
+	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow);
+	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow.withMinute(59).withSecond(59).withNano(999_999_999));
+	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow.plusHours(1)); // 09:00:00
+
+	  String timeline = "hourly";
+	  String state = "COMPLETED";
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
+	  assertThat(statisticsByState.countsByState().size()).isEqualTo(17);
+	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(2);
+	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(1);
+	  for (int i = 2; i < 17; i++) {
+		 assertThat(statisticsByState.countsByState().get(i)).isEqualTo(0);
+	  }
+   }
+
+   @Test
+   void givenYearlyRequest_whenNoData_thenReturnZeroCountsForAllYears() throws Exception {
+
+	  // Arrange: no orders created
+	  String timeline = "yearly";
+	  String state = "COMPLETED";
+	  int startYear = 2023;
+	  int currentYear = today.getYear();
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
+	  int expectedSize = currentYear - startYear + 1;
+	  assertThat(statisticsByState.countsByState().size()).isEqualTo(expectedSize);
+	  for (Integer count : statisticsByState.countsByState()) {
+		 assertThat(count).isEqualTo(0);
 	  }
    }
 

@@ -18,7 +18,7 @@ public final class TimeUtils {
    }
 
    public static LocalDateTime getNowAccountingDST() {
-	  int plusHours = isDst() ? 2 : 1;
+	  int plusHours = isDst() ? 1 : 0;
 	  return LocalDateTime.now().plusHours(plusHours);
    }
 
