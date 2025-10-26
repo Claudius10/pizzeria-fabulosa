@@ -14,8 +14,6 @@ import org.clau.pizzeriautils.util.business.OrderUtils;
 import org.clau.pizzeriautils.util.common.TimeUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -45,7 +43,7 @@ public class AnonOrderServiceImpl implements AnonOrderService {
 		 .forEach(cart::addItem);
 
 	  Order anonOrder = Order.builder()
-		 .withCreatedOn(LocalDateTime.now())
+		 .withCreatedOn(TimeUtils.getNowAccountingDST())
 		 .withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
 		 .withState(OrderState.COMPLETED.toString()) // todo - set to pending when created and figure out a way to pass them to completed
 		 .withAnonCustomerName(newAnonOrder.customer().anonCustomerName())

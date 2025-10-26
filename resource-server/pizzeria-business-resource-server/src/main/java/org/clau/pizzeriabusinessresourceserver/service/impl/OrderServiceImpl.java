@@ -18,7 +18,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -55,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
 		 .forEach(cart::addItem);
 
 	  Order order = Order.builder()
-		 .withCreatedOn(LocalDateTime.now())
+		 .withCreatedOn(TimeUtils.getNowAccountingDST())
 		 .withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
 		 .withState(OrderState.COMPLETED.toString()) // todo - set to pending when created and figure out a way to pass them to completed
 		 .withUserId(userId)
