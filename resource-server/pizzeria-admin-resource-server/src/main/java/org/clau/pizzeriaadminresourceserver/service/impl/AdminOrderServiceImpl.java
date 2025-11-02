@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,8 +44,9 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 		 }
 		 case "daily": {
 			List<Integer> result = new ArrayList<>(7);
-			for (int i = 6; i >= 0; i--) {
-			   LocalDate day = today.minusDays(i);
+			LocalDate mondayOfWeek = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+			for (int i = 0; i <= 6; i++) {
+			   LocalDate day = mondayOfWeek.plusDays(i);
 			   LocalDateTime dayStart = day.atStartOfDay();
 			   LocalDateTime dayEnd = day.atTime(23, 59, 59, 999_999_999);
 			   int count = adminOrderRepository.countAllByCreatedOnBetweenAndState(dayStart, dayEnd, state);
