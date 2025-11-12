@@ -17,7 +17,6 @@ public final class ApiResponseMessages {
    public static final String BAD_CREDENTIALS = "BadCredentialsException";
 
    public static final String JSON = "application/json";
-   public static final String TEXT = "text";
 
    public static final String OK = "200";
    public static final String CREATED = "201";

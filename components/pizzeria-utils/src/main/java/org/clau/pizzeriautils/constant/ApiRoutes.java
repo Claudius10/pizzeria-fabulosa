@@ -11,7 +11,6 @@ public final class ApiRoutes {
    public static final String V1 = "/v1";
    public static final String ALL = "/**";
    public static final String ANON_BASE = "/anon";
-   public static final String PUBLIC = "/public";
    public static final String REGISTER = "/register";
    public static final String RESOURCE = "/resource";
 

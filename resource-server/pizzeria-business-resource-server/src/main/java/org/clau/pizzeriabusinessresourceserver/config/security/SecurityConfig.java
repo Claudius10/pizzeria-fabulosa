@@ -22,9 +22,8 @@ public class SecurityConfig {
    ) throws Exception {
 
 	  http.securityMatcher(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ORDER_BASE + ApiRoutes.ALL)
-		 .authorizeHttpRequests(authorize -> {
-			   authorize.requestMatchers(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ORDER_BASE + ApiRoutes.ALL).hasAnyRole(RoleEnum.USER.value(), RoleEnum.ADMIN.value());
-			}
+		 .authorizeHttpRequests(authorize ->
+			authorize.requestMatchers(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ORDER_BASE + ApiRoutes.ALL).hasAnyRole(RoleEnum.USER.value(), RoleEnum.ADMIN.value())
 		 );
 
 	  http.oauth2ResourceServer(oauth2ResourceServer -> {
