@@ -2,8 +2,8 @@ package org.clau.pizzeriapublicresourceserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriadata.dao.assets.StoreRepository;
 import org.clau.pizzeriadata.model.assets.Store;
+import org.clau.pizzeriapublicresourceserver.dao.StoreRepository;
 import org.clau.pizzeriapublicresourceserver.service.StoreService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

@@ -31,38 +31,37 @@ spring:
       server:
         webmvc:
           routes:
-            - id: userinfo
+            - id: security-api
               uri: http://localhost:9000
               predicates:
-                - Path=/userinfo
+                - Path=/userinfo, /api/v1/user/**
               filters:
                 - TokenRelay=
-            - id: resource
+
+            - id: security-api-anonymous
+              uri: http://localhost:9000
+              predicates:
+                - Path=/api/v1/register/**
+
+            - id: public-api
               uri: http://localhost:8081
               predicates:
                 - Path=/api/v1/resource/**
-            - id: anon
-              uri: http://localhost:8081
-              predicates:
-                - Path=/api/v1/anon/**
-            - id: register
+
+            - id: business-api
               uri: http://localhost:8082
-              predicates:
-                - Path=/api/v1/register/**
-            - id: user-account-api
-              uri: http://localhost:8082
-              predicates:
-                - Path=/api/v1/user/**
-              filters:
-                - TokenRelay=
-            - id: user-order-api
-              uri: http://localhost:8083
               predicates:
                 - Path=/api/v1/order/**
               filters:
                 - TokenRelay=
+
+            - id: business-api-anonymous
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/v1/anon/**
+
             - id: admin-api
-              uri: http://localhost:8084
+              uri: http://localhost:8083
               predicates:
                 - Path=/api/v1/admin/**
               filters:

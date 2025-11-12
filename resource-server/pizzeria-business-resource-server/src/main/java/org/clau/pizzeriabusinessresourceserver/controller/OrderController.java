@@ -4,20 +4,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriabusinessresourceserver.controller.swagger.OrderControllerSwagger;
+import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
 import org.clau.pizzeriabusinessresourceserver.service.OrderService;
-import org.clau.pizzeriadata.dao.business.projection.CreatedOnProjection;
+import org.clau.pizzeriabusinessresourceserver.validator.CompositeValidator;
+import org.clau.pizzeriabusinessresourceserver.validator.OrderToValidate;
+import org.clau.pizzeriabusinessresourceserver.validator.ValidationResult;
+import org.clau.pizzeriabusinessresourceserver.validator.Validator;
+import org.clau.pizzeriadata.dto.business.*;
+import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriadata.model.common.APIError;
-import org.clau.pizzeriautils.constant.common.Route;
-import org.clau.pizzeriautils.constant.common.ValidationResponses;
-import org.clau.pizzeriautils.dto.business.*;
-import org.clau.pizzeriautils.dto.common.ResponseDTO;
-import org.clau.pizzeriautils.util.common.TimeUtils;
-import org.clau.pizzeriautils.util.common.constant.MyApps;
-import org.clau.pizzeriautils.validation.business.order.CompositeValidator;
-import org.clau.pizzeriautils.validation.business.order.NewOrder;
-import org.clau.pizzeriautils.validation.business.order.ValidationResult;
-import org.clau.pizzeriautils.validation.business.order.Validator;
+import org.clau.pizzeriautils.constant.ApiRoutes;
+import org.clau.pizzeriautils.constant.MyApps;
+import org.clau.pizzeriautils.constant.ValidationResponses;
+import org.clau.pizzeriautils.util.TimeUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,22 +29,22 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.API + Route.V1 + Route.ORDER_BASE)
+@RequestMapping(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ORDER_BASE)
 public class OrderController implements OrderControllerSwagger {
 
    private final OrderService orderService;
 
-   private final CompositeValidator<NewOrder> newOrderValidator;
+   private final CompositeValidator<OrderToValidate> newOrderValidator;
 
    private final Validator<LocalDateTime> cancelOrderValidator;
 
    @PostMapping
    public ResponseEntity<?> create(
 	  @RequestBody @Valid NewUserOrderDTO order,
-	  @RequestParam(name = Route.USER_ID_PARAM) Long userId,
+	  @RequestParam(name = ApiRoutes.PARAM_USER_ID) Long userId,
 	  HttpServletRequest request) {
 
-	  Optional<ValidationResult> validate = newOrderValidator.validate(new NewOrder(order.cart(), order.orderDetails()));
+	  Optional<ValidationResult> validate = newOrderValidator.validate(new OrderToValidate(order.cart(), order.orderDetails()));
 
 	  if (validate.isPresent()) {
 		 return ResponseEntity.badRequest().body(ResponseDTO.builder()
@@ -97,7 +97,7 @@ public class OrderController implements OrderControllerSwagger {
 	  return ResponseEntity.status(HttpStatus.CREATED).body(createdOrderDTO);
    }
 
-   @GetMapping(Route.ORDER_ID)
+   @GetMapping(ApiRoutes.ORDER_ID)
    public ResponseEntity<OrderDTO> findById(@PathVariable Long orderId) {
 
 	  Optional<Order> order = orderService.findById(orderId);
@@ -135,7 +135,7 @@ public class OrderController implements OrderControllerSwagger {
 		 .orElse(ResponseEntity.noContent().build());
    }
 
-   @PutMapping(Route.ORDER_ID)
+   @PutMapping(ApiRoutes.ORDER_ID)
    public ResponseEntity<?> cancelById(@PathVariable Long orderId, HttpServletRequest request) {
 
 	  Optional<CreatedOnProjection> createdOnDTOById = orderService.findCreatedOnById(orderId);
@@ -165,11 +165,11 @@ public class OrderController implements OrderControllerSwagger {
 	  return ResponseEntity.ok(orderId);
    }
 
-   @GetMapping(Route.ORDER_SUMMARY)
+   @GetMapping(ApiRoutes.ORDER_SUMMARY)
    public ResponseEntity<OrderSummaryListDTO> findSummary(
-	  @RequestParam(name = Route.PAGE_NUMBER) Integer pageNumber,
-	  @RequestParam(name = Route.PAGE_SIZE) Integer pageSize,
-	  @RequestParam(name = Route.USER_ID_PARAM) Long userId) {
+	  @RequestParam(name = ApiRoutes.PARAM_PAGE_NUMBER) Integer pageNumber,
+	  @RequestParam(name = ApiRoutes.PARAM_PAGE_SIZE) Integer pageSize,
+	  @RequestParam(name = ApiRoutes.PARAM_USER_ID) Long userId) {
 
 	  Page<Order> summary = orderService.findSummary(userId, pageSize, pageNumber);
 

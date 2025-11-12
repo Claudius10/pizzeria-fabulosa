@@ -1,8 +1,8 @@
 package org.clau.pizzeriabusinessresourceserver.service;
 
-import org.clau.pizzeriadata.dao.business.projection.CreatedOnProjection;
+import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
+import org.clau.pizzeriadata.dto.business.NewUserOrderDTO;
 import org.clau.pizzeriadata.model.business.Order;
-import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;

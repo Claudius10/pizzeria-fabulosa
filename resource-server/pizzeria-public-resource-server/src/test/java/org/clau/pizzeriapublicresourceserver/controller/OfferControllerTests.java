@@ -1,11 +1,11 @@
 package org.clau.pizzeriapublicresourceserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.clau.pizzeriadata.dao.assets.OfferRepository;
+import org.clau.pizzeriadata.dto.assets.OfferListDTO;
 import org.clau.pizzeriadata.model.assets.Offer;
 import org.clau.pizzeriapublicresourceserver.MyTestcontainersConfiguration;
-import org.clau.pizzeriautils.constant.common.Route;
-import org.clau.pizzeriautils.dto.assets.OfferListDTO;
+import org.clau.pizzeriapublicresourceserver.dao.OfferRepository;
+import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class OfferControllerTests {
 
-   private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.OFFER_BASE;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.RESOURCE + ApiRoutes.OFFER_BASE;
 
    @Autowired
    private MockMvc mockMvc;

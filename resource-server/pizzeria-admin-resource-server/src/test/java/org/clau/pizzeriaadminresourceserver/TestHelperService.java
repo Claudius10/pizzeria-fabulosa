@@ -2,17 +2,16 @@ package org.clau.pizzeriaadminresourceserver;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriadata.dao.admin.AdminErrorRepository;
-import org.clau.pizzeriadata.dao.admin.AdminOrderRepository;
+import org.clau.pizzeriaadminresourceserver.dao.AdminErrorRepository;
+import org.clau.pizzeriaadminresourceserver.dao.AdminOrderRepository;
+import org.clau.pizzeriadata.dto.business.NewUserOrderDTO;
 import org.clau.pizzeriadata.model.business.Cart;
 import org.clau.pizzeriadata.model.business.CartItem;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriadata.model.business.OrderDetails;
 import org.clau.pizzeriadata.model.common.APIError;
-import org.clau.pizzeriautils.constant.business.OrderState;
-import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
-import org.clau.pizzeriautils.util.business.OrderUtils;
-import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.enums.OrderState;
+import org.clau.pizzeriautils.util.TimeUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -80,14 +79,6 @@ public class TestHelperService {
 	  );
 
 	  order.setCart(cart);
-
-	  if (null != newUserOrder.orderDetails().billToChange()) {
-		 order.getOrderDetails().setChangeToGive(OrderUtils.calculatePaymentChange(
-			newUserOrder.orderDetails().billToChange(),
-			newUserOrder.cart().totalCost(),
-			newUserOrder.cart().totalCostOffers())
-		 );
-	  }
 
 	  orderRepository.save(order);
    }

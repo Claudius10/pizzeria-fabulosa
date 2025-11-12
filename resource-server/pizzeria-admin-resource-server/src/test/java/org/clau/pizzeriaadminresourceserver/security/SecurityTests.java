@@ -3,10 +3,10 @@ package org.clau.pizzeriaadminresourceserver.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.pizzeriaadminresourceserver.MyTestConfiguration;
 import org.clau.pizzeriaadminresourceserver.TestJwtHelperService;
-import org.clau.pizzeriautils.constant.common.Route;
-import org.clau.pizzeriautils.constant.common.SecurityResponse;
-import org.clau.pizzeriautils.dto.common.ResponseDTO;
-import org.clau.pizzeriautils.util.common.constant.MyApps;
+import org.clau.pizzeriadata.dto.common.ResponseDTO;
+import org.clau.pizzeriautils.constant.ApiRoutes;
+import org.clau.pizzeriautils.constant.ApiSecurityResponses;
+import org.clau.pizzeriautils.constant.MyApps;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.pizzeriautils.util.common.test.TestUtils.getResponse;
+import static org.clau.pizzeriaadminresourceserver.TestUtil.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestConfiguration.class)
 public class SecurityTests {
 
-   private final String path = Route.API + Route.V1 + Route.ADMIN_BASE;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE;
 
    @Autowired
    private MockMvc mockMvc;
@@ -92,7 +92,7 @@ public class SecurityTests {
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
 	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.MISSING_TOKEN);
+	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ApiSecurityResponses.MISSING_TOKEN);
 	  assertThat(responseObj.getApiError().getCause()).isEqualTo("InsufficientAuthenticationException");
 	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(MyApps.RESOURCE_SERVER_ADMIN);
    }
@@ -112,8 +112,8 @@ public class SecurityTests {
 
 	  ResponseDTO responseObj = getResponse(response.getContentAsString(StandardCharsets.UTF_8), objectMapper);
 	  assertThat(responseObj.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(SecurityResponse.INVALID_TOKEN);
-	  assertThat(responseObj.getApiError().getCause()).isEqualTo(SecurityResponse.INVALID_TOKEN);
+	  assertThat(responseObj.getApiError().getMessage()).isEqualTo(ApiSecurityResponses.INVALID_TOKEN);
+	  assertThat(responseObj.getApiError().getCause()).isEqualTo(ApiSecurityResponses.INVALID_TOKEN);
 	  assertThat(responseObj.getApiError().getOrigin()).isEqualTo(MyApps.RESOURCE_SERVER_ADMIN);
    }
 

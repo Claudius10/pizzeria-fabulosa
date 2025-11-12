@@ -4,13 +4,13 @@ import jakarta.persistence.PersistenceException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriadata.model.common.APIError;
-import org.clau.pizzeriadata.service.common.ErrorService;
-import org.clau.pizzeriautils.dto.common.ResponseDTO;
-import org.clau.pizzeriautils.util.common.ExceptionLogger;
-import org.clau.pizzeriautils.util.common.ServerUtils;
-import org.clau.pizzeriautils.util.common.TimeUtils;
-import org.clau.pizzeriautils.util.common.constant.MyApps;
+import org.clau.pizzeriapublicresourceserver.service.ErrorService;
+import org.clau.pizzeriautils.constant.MyApps;
+import org.clau.pizzeriautils.logger.ExceptionLogger;
+import org.clau.pizzeriautils.util.ServerUtils;
+import org.clau.pizzeriautils.util.TimeUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -87,7 +87,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .status(HttpStatus.BAD_REQUEST.value())
 		 .build();
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 	  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
    }
 
@@ -106,7 +106,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 HttpStatus.INTERNAL_SERVER_ERROR.value()
 	  );
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 
 	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
    }
@@ -126,7 +126,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 HttpStatus.INTERNAL_SERVER_ERROR.value()
 	  );
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 
 	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
    }

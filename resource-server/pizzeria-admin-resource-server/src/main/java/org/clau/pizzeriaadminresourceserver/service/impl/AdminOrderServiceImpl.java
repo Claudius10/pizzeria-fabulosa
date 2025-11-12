@@ -2,9 +2,9 @@ package org.clau.pizzeriaadminresourceserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.clau.pizzeriaadminresourceserver.dao.AdminOrderRepository;
 import org.clau.pizzeriaadminresourceserver.service.AdminOrderService;
-import org.clau.pizzeriadata.dao.admin.AdminOrderRepository;
-import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.util.TimeUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

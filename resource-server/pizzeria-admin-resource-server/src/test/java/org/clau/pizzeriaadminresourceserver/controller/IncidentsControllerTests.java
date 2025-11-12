@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.pizzeriaadminresourceserver.MyTestConfiguration;
 import org.clau.pizzeriaadminresourceserver.TestHelperService;
 import org.clau.pizzeriaadminresourceserver.TestJwtHelperService;
-import org.clau.pizzeriautils.constant.common.Route;
-import org.clau.pizzeriautils.constant.user.RoleEnum;
-import org.clau.pizzeriautils.dto.admin.IncidenceListDTO;
-import org.clau.pizzeriautils.util.common.constant.MyApps;
+import org.clau.pizzeriadata.dto.admin.IncidenceListDTO;
+import org.clau.pizzeriautils.constant.ApiRoutes;
+import org.clau.pizzeriautils.constant.MyApps;
+import org.clau.pizzeriautils.enums.RoleEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 public class IncidentsControllerTests {
 
-   private final String path = Route.API + Route.V1 + Route.ADMIN_BASE + Route.INCIDENTS_BASE;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.INCIDENTS_BASE;
 
    @Autowired
    private MockMvc mockMvc;

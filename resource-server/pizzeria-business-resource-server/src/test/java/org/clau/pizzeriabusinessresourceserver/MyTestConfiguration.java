@@ -1,6 +1,6 @@
 package org.clau.pizzeriabusinessresourceserver;
 
-import org.clau.pizzeriautils.util.common.test.JWTKeys;
+import org.clau.pizzeriautils.util.JWTKeys;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;

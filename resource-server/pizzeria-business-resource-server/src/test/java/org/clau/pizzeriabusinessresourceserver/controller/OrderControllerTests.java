@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.pizzeriabusinessresourceserver.MyTestConfiguration;
 import org.clau.pizzeriabusinessresourceserver.TestHelperService;
 import org.clau.pizzeriabusinessresourceserver.TestJwtHelperService;
+import org.clau.pizzeriadata.dto.business.*;
+import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriadata.model.business.Order;
-import org.clau.pizzeriautils.constant.common.Route;
-import org.clau.pizzeriautils.constant.common.ValidationResponses;
-import org.clau.pizzeriautils.constant.user.RoleEnum;
-import org.clau.pizzeriautils.dto.business.*;
-import org.clau.pizzeriautils.dto.common.ResponseDTO;
-import org.clau.pizzeriautils.util.common.constant.MyApps;
+import org.clau.pizzeriautils.constant.ApiRoutes;
+import org.clau.pizzeriautils.constant.MyApps;
+import org.clau.pizzeriautils.constant.ValidationResponses;
+import org.clau.pizzeriautils.enums.RoleEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +31,8 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.clau.pizzeriautils.util.business.TestUtils.userOrderStub;
-import static org.clau.pizzeriautils.util.common.test.TestUtils.getResponse;
+import static org.clau.pizzeriabusinessresourceserver.OrderTestUtils.userOrderStub;
+import static org.clau.pizzeriabusinessresourceserver.TestUtil.getResponse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 public class OrderControllerTests {
 
-   private final String path = Route.API + Route.V1 + Route.ORDER_BASE;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ORDER_BASE;
 
    @Autowired
    private MockMvc mockMvc;
@@ -186,7 +186,7 @@ public class OrderControllerTests {
 	  // Act
 
 	  // get api call to find user order
-	  MockHttpServletResponse getResponse = mockMvc.perform(get(path + Route.ORDER_ID, orderId)
+	  MockHttpServletResponse getResponse = mockMvc.perform(get(path + ApiRoutes.ORDER_ID, orderId)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn().getResponse();
@@ -240,7 +240,7 @@ public class OrderControllerTests {
 	  // Act
 
 	  // get api call to find user order
-	  MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_ID, orderId)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_ID, orderId)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn().getResponse();
@@ -267,7 +267,7 @@ public class OrderControllerTests {
 	  // Act
 
 	  // put api call to cancel order
-	  MockHttpServletResponse response = mockMvc.perform(put(path + Route.ORDER_ID, order.getId())
+	  MockHttpServletResponse response = mockMvc.perform(put(path + ApiRoutes.ORDER_ID, order.getId())
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn()
@@ -297,7 +297,7 @@ public class OrderControllerTests {
 	  // Act
 
 	  // put api call to cancel order
-	  MockHttpServletResponse response = mockMvc.perform(put(path + Route.ORDER_ID, order.getId())
+	  MockHttpServletResponse response = mockMvc.perform(put(path + ApiRoutes.ORDER_ID, order.getId())
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn()
@@ -326,7 +326,7 @@ public class OrderControllerTests {
 	  // Act
 
 	  // put api call to cancel order
-	  MockHttpServletResponse response = mockMvc.perform(put(path + Route.ORDER_ID, orderId)
+	  MockHttpServletResponse response = mockMvc.perform(put(path + ApiRoutes.ORDER_ID, orderId)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn()
@@ -357,7 +357,7 @@ public class OrderControllerTests {
 	  // Act
 
 	  // get api call to get OrderSummary
-	  MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn()
@@ -401,7 +401,7 @@ public class OrderControllerTests {
 	  // Act
 
 	  // get api call to get OrderSummary
-	  MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn()
@@ -435,7 +435,7 @@ public class OrderControllerTests {
 	  // Act
 
 	  // get api call to get OrderSummary
-	  MockHttpServletResponse response = mockMvc.perform(get(path + Route.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_SUMMARY + "?pageNumber={pN}&pageSize={pS}&userId={userId}", pageNumber, pageSize, userId)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
 		 .andReturn()

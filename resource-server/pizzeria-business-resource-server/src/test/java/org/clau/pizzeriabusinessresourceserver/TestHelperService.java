@@ -2,13 +2,16 @@ package org.clau.pizzeriabusinessresourceserver;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriadata.dao.business.OrderRepository;
+import org.clau.pizzeriabusinessresourceserver.dao.OrderRepository;
+import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriadata.model.business.Cart;
 import org.clau.pizzeriadata.model.business.CartItem;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriadata.model.business.OrderDetails;
 import org.springframework.stereotype.Service;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -68,5 +71,9 @@ public class TestHelperService {
 
    public Order findOrder(Long orderId) {
 	  return orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+   }
+
+   public ResponseDTO getResponse(String responseAsJson, ObjectMapper mapper) throws IOException {
+	  return mapper.readValue(responseAsJson, ResponseDTO.class);
    }
 }

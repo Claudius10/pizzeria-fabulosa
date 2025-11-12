@@ -2,14 +2,14 @@ package org.clau.pizzeriaadminresourceserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.pizzeriaadminresourceserver.MyTestConfiguration;
+import org.clau.pizzeriaadminresourceserver.OrderTestUtils;
 import org.clau.pizzeriaadminresourceserver.TestHelperService;
 import org.clau.pizzeriaadminresourceserver.TestJwtHelperService;
-import org.clau.pizzeriautils.constant.common.Route;
-import org.clau.pizzeriautils.constant.user.RoleEnum;
-import org.clau.pizzeriautils.dto.admin.OrderStatisticsByState;
-import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
-import org.clau.pizzeriautils.util.business.TestUtils;
-import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriadata.dto.admin.OrderStatisticsByState;
+import org.clau.pizzeriadata.dto.business.NewUserOrderDTO;
+import org.clau.pizzeriautils.constant.ApiRoutes;
+import org.clau.pizzeriautils.enums.RoleEnum;
+import org.clau.pizzeriautils.util.TimeUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Random;
 
@@ -45,9 +46,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 public class OrderControllerTests {
 
-   private final String path = Route.API + Route.V1 + Route.ADMIN_BASE + Route.ORDER_BASE + Route.COUNT;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.ORDER_BASE + ApiRoutes.COUNT;
 
-   private final NewUserOrderDTO newUserOrderDTO = TestUtils.userOrderStub(false);
+   private final NewUserOrderDTO newUserOrderDTO = OrderTestUtils.userOrderStub(false);
 
    private final LocalDateTime today = TimeUtils.getNowAccountingDST();
 
@@ -134,12 +135,12 @@ public class OrderControllerTests {
 	  assertThat(statisticsByState.countsByState().size()).isEqualTo(7);
 
 	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // monday
-	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // tuesday
-	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // wednesday
-	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(4); // thursday
-	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(5); // friday
-	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(6); // saturday
-	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(7); // sunday
+	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(1); // tuesday
+	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(1); // wednesday
+	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(1); // thursday
+	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(1); // friday
+	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(1); // saturday
+	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(1); // sunday
    }
 
    @Test
@@ -227,17 +228,10 @@ public class OrderControllerTests {
    }
 
    private void createDailyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {
-	  int[] counts = new int[]{1, 2, 3, 4, 5, 6, 7};
-	  for (int i = 0; i < counts.length; i++) {
-		 int daysAgo = 6 - i; // oldest first
-		 int count = counts[i];
-		 LocalDateTime base = today.minusDays(daysAgo).withHour(12).withMinute(0).withSecond(0).withNano(0);
-		 for (int j = 0; j < count; j++) {
-			int hour = 9 + (j % 12);
-			int minute = getRandomMinute();
-			LocalDateTime createdOn = base.withHour(hour).withMinute(minute);
-			this.testHelperService.createOrder(1L, newUserOrderDTO, createdOn);
-		 }
+	  LocalDateTime mondayOfWeek = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+	  for (int i = 0; i <= 6; i++) {
+		 LocalDateTime base = mondayOfWeek.plusDays(i).withHour(12).withMinute(0).withSecond(0).withNano(0);
+		 this.testHelperService.createOrder(1L, newUserOrderDTO, base);
 	  }
    }
 

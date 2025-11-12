@@ -43,6 +43,12 @@
             <version>0.0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.clau</groupId>
+            <artifactId>pizzeria-data</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
         <!-- Util -->
 
         <dependency>

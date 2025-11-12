@@ -8,20 +8,5 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(info = @Info(title = "Pizzeria Business API", version = "v1"), servers = {@Server(url = "http://127.0.0.1:8080")})
-//@SecurityScheme(
-//		name = "OAUTH2",
-//		type = SecuritySchemeType.OAUTH2,
-//		flows = @OAuthFlows(
-//				authorizationCode = @OAuthFlow(
-//						authorizationUrl = "/oauth2/authorization/business-client",
-//						tokenUrl = "http://127.0.0.1:8080/oauth2/token", // required for authorization code flow
-//						scopes = {
-//								@OAuthScope(
-//										name = "order"
-//								)
-//						}
-//				)
-//		)
-//)
 public class SpringDocsConfig {
 }

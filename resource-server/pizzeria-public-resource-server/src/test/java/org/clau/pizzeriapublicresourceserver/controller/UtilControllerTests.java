@@ -2,7 +2,7 @@ package org.clau.pizzeriapublicresourceserver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.clau.pizzeriapublicresourceserver.MyTestcontainersConfiguration;
-import org.clau.pizzeriautils.constant.common.Route;
+import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class UtilControllerTests {
 
-   private final String path = Route.API + Route.V1 + Route.RESOURCE + Route.UTIL_BASE + Route.LOCAL_DATE_TIME_NOW;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.RESOURCE + ApiRoutes.UTIL_BASE + ApiRoutes.LOCAL_DATE_TIME_NOW;
 
    @Autowired
    private MockMvc mockMvc;

@@ -1,7 +1,6 @@
 package org.clau.pizzeriaadminresourceserver.service;
 
 import org.clau.pizzeriadata.model.common.APIError;
-import org.clau.pizzeriadata.service.common.ErrorService;
 
 import java.util.List;
 

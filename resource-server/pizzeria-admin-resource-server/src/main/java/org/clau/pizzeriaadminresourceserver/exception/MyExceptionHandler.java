@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.clau.pizzeriaadminresourceserver.service.AdminErrorService;
 import org.clau.pizzeriadata.model.common.APIError;
-import org.clau.pizzeriautils.constant.common.SecurityResponse;
-import org.clau.pizzeriautils.dto.common.ResponseDTO;
-import org.clau.pizzeriautils.util.common.ExceptionLogger;
-import org.clau.pizzeriautils.util.common.ServerUtils;
-import org.clau.pizzeriautils.util.common.TimeUtils;
-import org.clau.pizzeriautils.util.common.constant.MyApps;
+import org.clau.pizzeriautils.constant.ApiSecurityResponses;
+import org.clau.pizzeriadata.dto.common.ResponseDTO;
+import org.clau.pizzeriautils.logger.ExceptionLogger;
+import org.clau.pizzeriautils.util.ServerUtils;
+import org.clau.pizzeriautils.util.TimeUtils;
+import org.clau.pizzeriautils.constant.MyApps;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -93,7 +93,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .status(HttpStatus.BAD_REQUEST.value())
 		 .build();
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 	  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
    }
 
@@ -112,7 +112,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 HttpStatus.INTERNAL_SERVER_ERROR.value()
 	  );
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 
 	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
    }
@@ -123,7 +123,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 	  ResponseDTO response = handleAuthenticationException(ex, request);
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 	  return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
    }
 
@@ -133,7 +133,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 	  ResponseDTO response = handleAccessDenied(ex, request);
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 	  return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
    }
 
@@ -152,7 +152,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 HttpStatus.INTERNAL_SERVER_ERROR.value()
 	  );
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 
 	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
    }
@@ -169,9 +169,9 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  boolean logged = false;
 
 	  switch (ex) {
-		 case InsufficientAuthenticationException ignored -> message = SecurityResponse.MISSING_TOKEN;
-		 case InvalidBearerTokenException ignored -> message = SecurityResponse.INVALID_TOKEN;
-		 case BadCredentialsException ignored -> message = SecurityResponse.BAD_CREDENTIALS;
+		 case InsufficientAuthenticationException ignored -> message = ApiSecurityResponses.MISSING_TOKEN;
+		 case InvalidBearerTokenException ignored -> message = ApiSecurityResponses.INVALID_TOKEN;
+		 case BadCredentialsException ignored -> message = ApiSecurityResponses.BAD_CREDENTIALS;
 		 default -> {
 			fatal = true;
 			logged = true;

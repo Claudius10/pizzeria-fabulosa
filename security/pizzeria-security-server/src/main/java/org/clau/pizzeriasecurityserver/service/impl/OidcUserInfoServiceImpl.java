@@ -2,9 +2,9 @@ package org.clau.pizzeriasecurityserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriadata.dao.user.UserRepository;
-import org.clau.pizzeriadata.model.user.Role;
-import org.clau.pizzeriadata.model.user.User;
+import org.clau.pizzeriasecurityserver.data.dao.UserRepository;
+import org.clau.pizzeriasecurityserver.data.model.Role;
+import org.clau.pizzeriasecurityserver.data.model.User;
 import org.clau.pizzeriasecurityserver.service.OidcUserService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

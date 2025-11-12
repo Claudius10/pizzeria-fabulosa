@@ -1,7 +1,7 @@
 package org.clau.pizzeriaadminresourceserver.config.security;
 
-import org.clau.pizzeriautils.constant.common.Route;
-import org.clau.pizzeriautils.constant.user.RoleEnum;
+import org.clau.pizzeriautils.constant.ApiRoutes;
+import org.clau.pizzeriautils.enums.RoleEnum;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,9 +21,9 @@ public class SecurityConfig {
 	  AccessDeniedHandler accessDeniedHandler
    ) throws Exception {
 
-	  http.securityMatcher(Route.API + Route.V1 + Route.ADMIN_BASE + Route.ALL)
+	  http.securityMatcher(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.ALL)
 		 .authorizeHttpRequests(authorize ->
-			authorize.requestMatchers(Route.API + Route.V1 + Route.ADMIN_BASE + Route.ALL).hasRole(RoleEnum.ADMIN.value())
+			authorize.requestMatchers(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.ALL).hasRole(RoleEnum.ADMIN.value())
 		 );
 
 	  http.oauth2ResourceServer(oauth2ResourceServer -> {
