@@ -1,11 +1,11 @@
 package org.clau.pizzeriapublicresourceserver.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.clau.pizzeriadata.dto.assets.ProductListDTO;
 import org.clau.pizzeriadata.model.assets.Product;
 import org.clau.pizzeriapublicresourceserver.controller.swagger.ProductControllerSwagger;
 import org.clau.pizzeriapublicresourceserver.service.ProductService;
 import org.clau.pizzeriautils.constant.ApiRoutes;
-import org.clau.pizzeriadata.dto.assets.ProductListDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

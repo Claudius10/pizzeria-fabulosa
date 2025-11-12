@@ -2,7 +2,6 @@ package org.clau.pizzeriasecurityserver.config;
 
 import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriasecurityserver.property.MyURI;
-import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
