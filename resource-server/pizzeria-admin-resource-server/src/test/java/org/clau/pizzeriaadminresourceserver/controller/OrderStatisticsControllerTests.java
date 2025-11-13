@@ -7,6 +7,7 @@ import org.clau.pizzeriaadminresourceserver.TestHelperService;
 import org.clau.pizzeriaadminresourceserver.TestJwtHelperService;
 import org.clau.pizzeriadata.dto.admin.OrderStatisticsByState;
 import org.clau.pizzeriadata.dto.business.NewUserOrderDTO;
+import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.clau.pizzeriautils.enums.RoleEnum;
 import org.clau.pizzeriautils.util.TimeUtils;
@@ -44,9 +45,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 @Import(MyTestConfiguration.class)
 @Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
-public class OrderControllerTests {
+public class OrderStatisticsControllerTests {
 
-   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.ORDER_BASE + ApiRoutes.COUNT;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN + ApiRoutes.ORDER_BASE + ApiRoutes.STATISTICS + ApiRoutes.STATE;
 
    private final NewUserOrderDTO newUserOrderDTO = OrderTestUtils.userOrderStub(false);
 
@@ -77,7 +78,7 @@ public class OrderControllerTests {
 
 	  // Act
 
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -122,7 +123,7 @@ public class OrderControllerTests {
 
 	  // Act
 
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -157,7 +158,7 @@ public class OrderControllerTests {
 
 	  // Act
 
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -197,7 +198,7 @@ public class OrderControllerTests {
 
 	  // Act
 
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -211,6 +212,109 @@ public class OrderControllerTests {
 	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // 2023
 	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // 2024
 	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // 2025
+   }
+
+   @Test
+   void givenInvalidState_whenRequest_thenReturnBadRequestWithMessage() throws Exception {
+
+	  // Arrange
+	  String timeline = "daily";
+	  String state = "NOT_A_STATE";
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+	  String body = response.getContentAsString();
+	  assertThat(body).contains("Supported states");
+   }
+
+   @Test
+   void givenUnknownTimeline_whenRequest_thenReturnBadRequest() throws Exception {
+
+	  // Arrange
+	  String timeline = "foobar";
+	  String state = "COMPLETED";
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+	  ResponseDTO responseDTO = objectMapper.readValue(response.getContentAsString(), ResponseDTO.class);
+	  assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+	  assertThat(responseDTO.getApiError().getCause()).isEqualTo("UnsupportedOrderState");
+	  assertThat(responseDTO.getApiError().getMessage()).isEqualTo("Supported states: [COMPLETED, CANCELLED, PENDING]");
+   }
+
+   @Test
+   void givenHourlyRequest_whenEventsOnBoundaries_thenBucketsAreInclusiveExclusiveCorrectly() throws Exception {
+
+	  // Arrange
+	  // Create 3 orders: 08:00:00 and 08:59:59.999999999 should fall into first bucket, 09:00:00 in the second
+	  LocalDateTime startOfWindow = today.toLocalDate().atTime(8, 0, 0, 0);
+	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow);
+	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow.withMinute(59).withSecond(59).withNano(999_999_999));
+	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow.plusHours(1)); // 09:00:00
+
+	  String timeline = "hourly";
+	  String state = "COMPLETED";
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
+	  assertThat(statisticsByState.countsByState().size()).isEqualTo(17);
+	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(2);
+	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(1);
+	  for (int i = 2; i < 17; i++) {
+		 assertThat(statisticsByState.countsByState().get(i)).isEqualTo(0);
+	  }
+   }
+
+   @Test
+   void givenYearlyRequest_whenNoData_thenReturnZeroCountsForAllYears() throws Exception {
+
+	  // Arrange: no orders created
+	  String timeline = "yearly";
+	  String state = "COMPLETED";
+	  int startYear = 2023;
+	  int currentYear = today.getYear();
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
+	  int expectedSize = currentYear - startYear + 1;
+	  assertThat(statisticsByState.countsByState().size()).isEqualTo(expectedSize);
+	  for (Integer count : statisticsByState.countsByState()) {
+		 assertThat(count).isEqualTo(0);
+	  }
    }
 
    private void createHourlyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {
@@ -265,107 +369,6 @@ public class OrderControllerTests {
 			LocalDateTime createdOn = LocalDateTime.of(year, month, day, hour, minute, 0);
 			this.testHelperService.createOrder(1L, newUserOrderDTO, createdOn);
 		 }
-	  }
-   }
-
-   @Test
-   void givenInvalidState_whenRequest_thenReturnBadRequestWithMessage() throws Exception {
-
-	  // Arrange
-	  String timeline = "daily";
-	  String state = "NOT_A_STATE";
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-	  String body = response.getContentAsString();
-	  assertThat(body).contains("Supported states");
-   }
-
-   @Test
-   void givenUnknownTimeline_whenRequest_thenReturnOkWithEmptyCounts() throws Exception {
-
-	  // Arrange
-	  String timeline = "foobar";
-	  String state = "COMPLETED";
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  assertThat(statisticsByState.countsByState()).isEmpty();
-   }
-
-   @Test
-   void givenHourlyRequest_whenEventsOnBoundaries_thenBucketsAreInclusiveExclusiveCorrectly() throws Exception {
-
-	  // Arrange
-	  // Create 3 orders: 08:00:00 and 08:59:59.999999999 should fall into first bucket, 09:00:00 in the second
-	  LocalDateTime startOfWindow = today.toLocalDate().atTime(8, 0, 0, 0);
-	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow);
-	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow.withMinute(59).withSecond(59).withNano(999_999_999));
-	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow.plusHours(1)); // 09:00:00
-
-	  String timeline = "hourly";
-	  String state = "COMPLETED";
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  assertThat(statisticsByState.countsByState().size()).isEqualTo(17);
-	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(2);
-	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(1);
-	  for (int i = 2; i < 17; i++) {
-		 assertThat(statisticsByState.countsByState().get(i)).isEqualTo(0);
-	  }
-   }
-
-   @Test
-   void givenYearlyRequest_whenNoData_thenReturnZeroCountsForAllYears() throws Exception {
-
-	  // Arrange: no orders created
-	  String timeline = "yearly";
-	  String state = "COMPLETED";
-	  int startYear = 2023;
-	  int currentYear = today.getYear();
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-	  MockHttpServletResponse response = mockMvc.perform(get(path + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  int expectedSize = currentYear - startYear + 1;
-	  assertThat(statisticsByState.countsByState().size()).isEqualTo(expectedSize);
-	  for (Integer count : statisticsByState.countsByState()) {
-		 assertThat(count).isEqualTo(0);
 	  }
    }
 

@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestConfiguration.class)
 public class SecurityTests {
 
-   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN;
 
    @Autowired
    private MockMvc mockMvc;

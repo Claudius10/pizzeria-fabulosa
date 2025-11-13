@@ -25,4 +25,6 @@ public final class ValidationResponses {
    public static final String ORDER_VALIDATION_FAILED = "OrderValidationFailed";
 
    public static final String ORDER_STATE_UNKNOWN = "UnsupportedOrderState";
+
+   public static final String USER_STATE_UNKNOWN = "UnsupportedUserState";
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.INCIDENTS_BASE)
+@RequestMapping(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN + ApiRoutes.INCIDENTS)
 public class IncidentsController implements IncidentsControllerSwagger {
 
    private final AdminErrorService errorService;

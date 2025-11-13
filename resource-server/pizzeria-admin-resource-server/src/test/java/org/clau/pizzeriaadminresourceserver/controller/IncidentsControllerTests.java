@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 public class IncidentsControllerTests {
 
-   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.INCIDENTS_BASE;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN + ApiRoutes.INCIDENTS;
 
    @Autowired
    private MockMvc mockMvc;

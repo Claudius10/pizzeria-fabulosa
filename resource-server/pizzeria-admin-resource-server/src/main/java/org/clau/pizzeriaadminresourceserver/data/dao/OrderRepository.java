@@ -1,4 +1,4 @@
-package org.clau.pizzeriaadminresourceserver.dao;
+package org.clau.pizzeriaadminresourceserver.data.dao;
 
 import org.clau.pizzeriadata.model.business.Order;
 import org.springframework.data.jpa.repository.JpaRepository;

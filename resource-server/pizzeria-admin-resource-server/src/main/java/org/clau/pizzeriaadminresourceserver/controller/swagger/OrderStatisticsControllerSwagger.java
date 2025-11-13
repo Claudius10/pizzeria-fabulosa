@@ -14,9 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "Order Statistics API")
-public interface OrderControllerSwagger {
+public interface OrderStatisticsControllerSwagger {
 
-   @Operation(operationId = "findCountForTimelineAndState", summary = "Returns order count for given timeline and state")
+   @Operation(operationId = "findCountByOrderState", summary = "Returns order count for given timeline and order state")
    @ApiResponse(
 	  responseCode = ApiResponseMessages.OK,
 	  description = "Returns DTO",
@@ -32,9 +32,31 @@ public interface OrderControllerSwagger {
 	  description = "Unexpected exception occurred",
 	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = ResponseDTO.class))
    )
-   ResponseEntity<?> findCountForTimelineAndState(
+   ResponseEntity<?> findCountByOrderState(
 	  HttpServletRequest request,
 	  @Parameter(required = true, description = "hourly, daily, monthly, yearly") @RequestParam String timeline,
 	  @Parameter(required = true, description = "COMPLETED, CANCELLED") @RequestParam String state
+   );
+
+   @Operation(operationId = "findCountByUserState", summary = "Returns order count for given timeline and user state")
+   @ApiResponse(
+	  responseCode = ApiResponseMessages.OK,
+	  description = "Returns DTO",
+	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = OrderStatisticsByState.class))
+   )
+   @ApiResponse(
+	  responseCode = ApiResponseMessages.BAD_REQUEST,
+	  description = "Unsupported order state",
+	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = ResponseDTO.class))
+   )
+   @ApiResponse(
+	  responseCode = ApiResponseMessages.INTERNAL_SERVER_ERROR,
+	  description = "Unexpected exception occurred",
+	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = ResponseDTO.class))
+   )
+   ResponseEntity<?> findCountByUserState(
+	  HttpServletRequest request,
+	  @Parameter(required = true, description = "hourly, daily, monthly, yearly") @RequestParam String timeline,
+	  @Parameter(required = true, description = "REGISTERED, ANONYMOUS") @RequestParam String state
    );
 }

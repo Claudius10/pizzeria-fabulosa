@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestConfiguration.class)
 public class AnonOrderControllerTests {
 
-   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ANON_BASE + ApiRoutes.ORDER_BASE;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ANON + ApiRoutes.ORDER_BASE;
 
    @Autowired
    private MockMvc mockMvc;

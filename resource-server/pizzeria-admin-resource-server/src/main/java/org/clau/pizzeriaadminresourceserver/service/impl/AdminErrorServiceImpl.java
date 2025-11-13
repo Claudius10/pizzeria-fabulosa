@@ -3,7 +3,7 @@ package org.clau.pizzeriaadminresourceserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriaadminresourceserver.dao.AdminErrorRepository;
+import org.clau.pizzeriaadminresourceserver.data.dao.AdminErrorRepository;
 import org.clau.pizzeriaadminresourceserver.service.AdminErrorService;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.springframework.stereotype.Service;

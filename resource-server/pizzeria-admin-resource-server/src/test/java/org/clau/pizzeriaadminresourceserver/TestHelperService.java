@@ -2,8 +2,8 @@ package org.clau.pizzeriaadminresourceserver;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.clau.pizzeriaadminresourceserver.dao.AdminErrorRepository;
-import org.clau.pizzeriaadminresourceserver.dao.AdminOrderRepository;
+import org.clau.pizzeriaadminresourceserver.data.dao.AdminErrorRepository;
+import org.clau.pizzeriaadminresourceserver.data.dao.OrderStatisticsRepository;
 import org.clau.pizzeriadata.dto.business.NewUserOrderDTO;
 import org.clau.pizzeriadata.model.business.Cart;
 import org.clau.pizzeriadata.model.business.CartItem;
@@ -23,7 +23,7 @@ public class TestHelperService {
 
    private final AdminErrorRepository errorRepository;
 
-   private final AdminOrderRepository orderRepository;
+   private final OrderStatisticsRepository orderRepository;
 
    public void createApiError(String cause, String message, String origin, String uriPath, boolean fatal, LocalDateTime createdOn) {
 

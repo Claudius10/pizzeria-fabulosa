@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(MyTestcontainersConfiguration.class)
 public class UtilControllerTests {
 
-   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.RESOURCE + ApiRoutes.UTIL_BASE + ApiRoutes.LOCAL_DATE_TIME_NOW;
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.RESOURCE + ApiRoutes.UTIL + ApiRoutes.LOCAL_DATE_TIME_NOW;
 
    @Autowired
    private MockMvc mockMvc;

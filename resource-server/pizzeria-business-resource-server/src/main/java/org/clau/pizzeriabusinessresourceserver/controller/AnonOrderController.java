@@ -28,7 +28,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ANON_BASE + ApiRoutes.ORDER_BASE)
+@RequestMapping(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ANON + ApiRoutes.ORDER_BASE)
 public class AnonOrderController implements AnonOrderControllerSwagger {
 
    private final AnonOrderService orderService;
