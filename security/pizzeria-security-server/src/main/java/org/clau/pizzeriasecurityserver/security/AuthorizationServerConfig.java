@@ -64,10 +64,7 @@ public class AuthorizationServerConfig {
 
    @Bean
    @Order(Ordered.HIGHEST_PRECEDENCE)
-   SecurityFilterChain authorizationServerSecurityFilterChain(
-	  HttpSecurity http,
-	  OidcUserInfoServiceImpl userInfoService,
-	  CorsConfigurationSource corsConfigurationSource) throws Exception {
+   SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http, OidcUserInfoServiceImpl userInfoService, CorsConfigurationSource corsConfigurationSource) throws Exception {
 
 	  Function<OidcUserInfoAuthenticationContext, OidcUserInfo> userInfoMapper = (context) -> {
 		 OidcUserInfoAuthenticationToken authentication = context.getAuthentication();

@@ -47,13 +47,8 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  String cause = body != null ? body.toString() : null;
 	  String message = "See cause";
 
-	  ResponseDTO response = buildResponse(
-		 cause,
-		 message,
-		 request,
-		 fatal,
-		 statusCode.value()
-	  );
+	  APIError apiError = saveError(cause, message, request, fatal);
+	  ResponseDTO response = buildResponse(apiError, statusCode.value());
 
 	  return new ResponseEntity<>(response, headers, statusCode);
    }
@@ -104,13 +99,8 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  String cause = ex.getClass().getSimpleName();
 	  String message = ex.getMessage();
 
-	  ResponseDTO response = buildResponse(
-		 cause,
-		 message,
-		 request,
-		 fatal,
-		 HttpStatus.INTERNAL_SERVER_ERROR.value()
-	  );
+	  APIError apiError = saveError(cause, message, request, fatal);
+	  ResponseDTO response = buildResponse(apiError, HttpStatus.INTERNAL_SERVER_ERROR.value());
 
 	  ExceptionLogger.log(ex, log);
 
@@ -144,13 +134,8 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  String cause = ex.getClass().getSimpleName();
 	  String message = ex.getMessage();
 
-	  ResponseDTO response = buildResponse(
-		 cause,
-		 message,
-		 request,
-		 fatal,
-		 HttpStatus.INTERNAL_SERVER_ERROR.value()
-	  );
+	  APIError apiError = saveError(cause, message, request, fatal);
+	  ResponseDTO response = buildResponse(apiError, HttpStatus.INTERNAL_SERVER_ERROR.value());
 
 	  ExceptionLogger.log(ex, log);
 
@@ -222,19 +207,19 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .build();
    }
 
-   private ResponseDTO buildResponse(String cause, String message, WebRequest request, boolean fatal, int status) {
-
+   private APIError saveError(String cause, String message, WebRequest request, boolean fatal) {
 	  HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
 	  String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
-
-	  APIError error = errorService.create(
+	  return errorService.create(
 		 cause,
 		 message,
-		 MyApps.RESOURCE_SERVER_ADMIN,
+		 MyApps.SECURITY_SERVER,
 		 path,
 		 fatal
 	  );
+   }
 
+   private ResponseDTO buildResponse(APIError error, int status) {
 	  return ResponseDTO.builder()
 		 .apiError(error)
 		 .status(status)
