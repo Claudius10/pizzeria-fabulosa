@@ -7,7 +7,7 @@ import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriasecurityserver.controller.swagger.RegisterControllerSwagger;
 import org.clau.pizzeriasecurityserver.data.dto.RegisterDTO;
-import org.clau.pizzeriasecurityserver.service.AnonUserService;
+import org.clau.pizzeriasecurityserver.service.RegisterService;
 import org.clau.pizzeriautils.constant.ApiResponseMessages;
 import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.clau.pizzeriautils.constant.MyApps;
@@ -27,12 +27,12 @@ import java.util.UUID;
 @RequestMapping(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.REGISTER)
 public class RegisterController implements RegisterControllerSwagger {
 
-   private final AnonUserService anonUserService;
+   private final RegisterService registerService;
 
    @PostMapping(ApiRoutes.USER_BASE)
    public ResponseEntity<?> registerAnonUser(@RequestBody @Valid RegisterDTO registerDTO, HttpServletRequest request) {
 	  try {
-		 anonUserService.create(registerDTO);
+		 registerService.create(registerDTO);
 	  } catch (DataIntegrityViolationException ex) {
 		 return ResponseEntity.badRequest().body(ResponseDTO.builder()
 			.apiError(APIError.builder()

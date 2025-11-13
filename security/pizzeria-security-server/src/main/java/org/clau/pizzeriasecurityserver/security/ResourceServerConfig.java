@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,17 +20,17 @@ public class ResourceServerConfig {
    @Bean
    SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http, AuthenticationHandler authenticationHandler, AccessDeniedHandler accessDeniedHandler) throws Exception {
 
-	  http.securityMatcher(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.ALL)
+	  http
+		 .securityMatcher(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.ALL)
 		 .authorizeHttpRequests(authorize ->
-			authorize.requestMatchers(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.ALL).hasAnyRole(RoleEnum.USER.value(), RoleEnum.ADMIN.value())
-		 );
-
-	  http.oauth2ResourceServer(oauth2ResourceServer -> {
-		 oauth2ResourceServer.jwt(jwtConfigurer ->
-			jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()));
-		 oauth2ResourceServer.accessDeniedHandler(accessDeniedHandler); // handle access denied
-		 oauth2ResourceServer.authenticationEntryPoint(authenticationHandler); // handle auth failure
-	  });
+			authorize.requestMatchers(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.USER_BASE + ApiRoutes.ALL).hasAnyRole(RoleEnum.USER.value(), RoleEnum.ADMIN.value()))
+		 .csrf(AbstractHttpConfigurer::disable) // bearer-token API; CSRF not needed
+		 .oauth2ResourceServer(oauth2ResourceServer -> {
+			oauth2ResourceServer.jwt(jwtConfigurer ->
+			   jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()));
+			oauth2ResourceServer.accessDeniedHandler(accessDeniedHandler); // handle access denied
+			oauth2ResourceServer.authenticationEntryPoint(authenticationHandler); // handle auth failure
+		 });
 
 	  return http.build();
    }

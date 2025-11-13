@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriasecurityserver.data.dao.UserRepository;
 import org.clau.pizzeriasecurityserver.data.model.Role;
 import org.clau.pizzeriasecurityserver.data.model.User;
-import org.clau.pizzeriasecurityserver.service.RoleService;
+import org.clau.pizzeriasecurityserver.service.user.RoleService;
 import org.clau.pizzeriautils.enums.RoleEnum;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

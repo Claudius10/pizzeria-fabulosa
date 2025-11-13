@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriadata.model.common.APIError;
 import org.clau.pizzeriasecurityserver.controller.swagger.UserControllerSwagger;
-import org.clau.pizzeriasecurityserver.service.UserService;
+import org.clau.pizzeriasecurityserver.service.user.UserService;
 import org.clau.pizzeriautils.constant.ApiResponseMessages;
 import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.clau.pizzeriautils.constant.MyApps;

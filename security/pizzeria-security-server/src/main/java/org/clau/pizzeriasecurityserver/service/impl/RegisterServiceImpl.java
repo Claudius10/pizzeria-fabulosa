@@ -7,8 +7,8 @@ import org.clau.pizzeriasecurityserver.data.dao.UserRepository;
 import org.clau.pizzeriasecurityserver.data.dto.RegisterDTO;
 import org.clau.pizzeriasecurityserver.data.model.Role;
 import org.clau.pizzeriasecurityserver.data.model.User;
-import org.clau.pizzeriasecurityserver.service.AnonUserService;
-import org.clau.pizzeriasecurityserver.service.RoleService;
+import org.clau.pizzeriasecurityserver.service.RegisterService;
+import org.clau.pizzeriasecurityserver.service.user.RoleService;
 import org.clau.pizzeriautils.constant.ApiResponseMessages;
 import org.clau.pizzeriautils.enums.RoleEnum;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +21,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AnonUserServiceImpl implements AnonUserService {
+public class RegisterServiceImpl implements RegisterService {
 
    private final UserRepository userRepository;
 

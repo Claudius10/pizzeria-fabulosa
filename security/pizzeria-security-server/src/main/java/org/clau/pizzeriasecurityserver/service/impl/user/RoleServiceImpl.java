@@ -1,10 +1,10 @@
-package org.clau.pizzeriasecurityserver.service.impl;
+package org.clau.pizzeriasecurityserver.service.impl.user;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriasecurityserver.data.dao.RoleRepository;
 import org.clau.pizzeriasecurityserver.data.model.Role;
-import org.clau.pizzeriasecurityserver.service.RoleService;
+import org.clau.pizzeriasecurityserver.service.user.RoleService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

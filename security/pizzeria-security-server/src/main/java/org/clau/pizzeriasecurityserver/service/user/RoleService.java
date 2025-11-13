@@ -1,4 +1,4 @@
-package org.clau.pizzeriasecurityserver.service;
+package org.clau.pizzeriasecurityserver.service.user;
 
 import org.clau.pizzeriasecurityserver.data.model.Role;
 

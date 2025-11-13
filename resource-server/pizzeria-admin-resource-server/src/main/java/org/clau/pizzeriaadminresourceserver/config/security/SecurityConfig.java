@@ -21,17 +21,15 @@ public class SecurityConfig {
 	  AccessDeniedHandler accessDeniedHandler
    ) throws Exception {
 
-	  http.securityMatcher(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.ALL)
+	  http
+		 .securityMatcher(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.ALL)
 		 .authorizeHttpRequests(authorize ->
-			authorize.requestMatchers(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.ALL).hasRole(RoleEnum.ADMIN.value())
-		 );
-
-	  http.oauth2ResourceServer(oauth2ResourceServer -> {
-		 oauth2ResourceServer.jwt(jwtConfigurer ->
-			jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()));
-		 oauth2ResourceServer.accessDeniedHandler(accessDeniedHandler); // handle access denied
-		 oauth2ResourceServer.authenticationEntryPoint(authenticationHandler); // handle auth failure
-	  });
+			authorize.requestMatchers(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN_BASE + ApiRoutes.ALL).hasRole(RoleEnum.ADMIN.value()))
+		 .oauth2ResourceServer(oauth2ResourceServer -> {
+			oauth2ResourceServer.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()));
+			oauth2ResourceServer.accessDeniedHandler(accessDeniedHandler); // handle access denied
+			oauth2ResourceServer.authenticationEntryPoint(authenticationHandler); // handle auth failure
+		 });
 
 	  return http.build();
    }
