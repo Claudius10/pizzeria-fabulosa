@@ -10,4 +10,6 @@ public interface OrderStatisticsService {
    List<Integer> findCountByOrderState(String timelineStr, OrderState state);
 
    List<Integer> findCountByUserState(String timelineStr, UserState state);
+
+   Integer findCountAllByUserState(UserState state);
 }

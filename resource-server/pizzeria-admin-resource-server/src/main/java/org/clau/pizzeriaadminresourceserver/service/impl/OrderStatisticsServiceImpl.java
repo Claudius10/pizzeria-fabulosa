@@ -49,4 +49,12 @@ public class OrderStatisticsServiceImpl implements OrderStatisticsService {
 		 );
 	  };
    }
+
+   @Override
+   public Integer findCountAllByUserState(UserState state) {
+	  return switch (state) {
+		 case REGISTERED -> orderStatisticsRepository.countAllByUserIdIsNotNull();
+		 case ANONYMOUS -> orderStatisticsRepository.countAllByUserIdIsNull();
+	  };
+   }
 }

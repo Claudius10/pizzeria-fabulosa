@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Tag(name = "Order Statistics API")
 public interface OrderStatisticsControllerSwagger {
 
-   @Operation(operationId = "findCountByOrderState", summary = "Returns order count for given timeline and all order states")
+   @Operation(operationId = "findCountByOrderState", summary = "Returns order count for the given timeline and all order states",
+	  description = "First index is for completed orders; second index is for cancelled orders")
    @ApiResponse(
 	  responseCode = ApiResponseMessages.OK,
 	  description = "Returns DTO",
@@ -34,7 +35,8 @@ public interface OrderStatisticsControllerSwagger {
    ResponseEntity<OrderStatistics> findCountByOrderState(@Parameter(required = true, description = "hourly, daily, monthly, yearly") @RequestParam String timeline
    );
 
-   @Operation(operationId = "findCountByUserState", summary = "Returns order count for given timeline and all user states")
+   @Operation(operationId = "findCountByUserState", summary = "Returns order count for the given timeline and all user states",
+	  description = "First index is for registered users; second index is for anonymous users")
    @ApiResponse(
 	  responseCode = ApiResponseMessages.OK,
 	  description = "Returns DTO",
@@ -50,6 +52,6 @@ public interface OrderStatisticsControllerSwagger {
 	  description = "Unexpected exception occurred",
 	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = ResponseDTO.class))
    )
-   ResponseEntity<OrderStatistics> findCountByUserState(@Parameter(required = true, description = "hourly, daily, monthly, yearly") @RequestParam String timeline
+   ResponseEntity<OrderStatistics> findCountByUserState(@Parameter(required = true, description = "hourly, daily, monthly, yearly, all") @RequestParam String timeline
    );
 }

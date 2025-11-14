@@ -9,4 +9,8 @@ public interface OrderStatisticsRepository extends OrderRepository {
    int countAllByCreatedOnBetweenAndUserIdIsNull(LocalDateTime createdOnStart, LocalDateTime createdOnEnd);
 
    int countAllByCreatedOnBetweenAndUserIdIsNotNull(LocalDateTime createdOnStart, LocalDateTime createdOnEnd);
+
+   int countAllByUserIdIsNull();
+
+   int countAllByUserIdIsNotNull();
 }

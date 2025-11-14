@@ -11,6 +11,7 @@ import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.clau.pizzeriautils.enums.RoleEnum;
 import org.clau.pizzeriautils.util.TimeUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -131,6 +132,33 @@ public class OrderStatisticsControllerTests {
 
 	  // Act
 	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.STATE + byClause + "?timeline=" + timeline)
+			.contentType(MediaType.APPLICATION_JSON)
+			.with(csrf())
+			.header("Authorization", format("Bearer %s", accessToken)))
+		 .andReturn().getResponse();
+
+	  // Assert
+	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	  OrderStatistics statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatistics.class);
+
+	  List<Integer> countRegisteredUsers = statisticsByState.statisticsByState().get(0).count();
+	  List<Integer> countAnonymousUsers = statisticsByState.statisticsByState().get(1).count();
+
+	  List<Integer> usersList = countRegisteredUsers.stream().filter(c -> c > 0).toList();
+	  assertThat(usersList).size().isPositive();
+
+	  List<Integer> anonymousList = countAnonymousUsers.stream().filter(c -> c > 0).toList();
+	  assertThat(anonymousList).size().isPositive();
+   }
+
+   @Test
+   void givenRequest_whenUserState_thenReturnAllOrderCount() throws Exception {
+
+	  // createApiError JWT token
+	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
+
+	  // Act
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.STATE + ApiRoutes.USER_BASE + "?timeline=all")
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))

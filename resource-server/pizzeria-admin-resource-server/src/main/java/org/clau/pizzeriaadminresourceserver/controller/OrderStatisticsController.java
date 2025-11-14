@@ -36,11 +36,21 @@ public class OrderStatisticsController implements OrderStatisticsControllerSwagg
 
    @GetMapping(ApiRoutes.STATE + ApiRoutes.USER_BASE)
    public ResponseEntity<OrderStatistics> findCountByUserState(@RequestParam String timeline) {
-	  OrderStatistics orderStatistics = new OrderStatistics(
-		 List.of(
-			new OrderStatisticsByState(orderService.findCountByUserState(timeline, UserState.REGISTERED)),
-			new OrderStatisticsByState(orderService.findCountByUserState(timeline, UserState.ANONYMOUS)))
-	  );
+	  OrderStatistics orderStatistics;
+
+	  if (timeline.equals("all")) {
+		 orderStatistics = new OrderStatistics(
+			List.of(
+			   new OrderStatisticsByState(List.of(orderService.findCountAllByUserState(UserState.REGISTERED))),
+			   new OrderStatisticsByState(List.of(orderService.findCountAllByUserState(UserState.ANONYMOUS)))
+			));
+	  } else {
+		 orderStatistics = new OrderStatistics(
+			List.of(
+			   new OrderStatisticsByState(orderService.findCountByUserState(timeline, UserState.REGISTERED)),
+			   new OrderStatisticsByState(orderService.findCountByUserState(timeline, UserState.ANONYMOUS))
+			));
+	  }
 
 	  return ResponseEntity.ok(orderStatistics);
    }
