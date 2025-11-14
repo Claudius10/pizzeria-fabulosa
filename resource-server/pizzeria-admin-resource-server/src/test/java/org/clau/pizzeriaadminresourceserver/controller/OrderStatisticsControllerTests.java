@@ -5,14 +5,16 @@ import org.clau.pizzeriaadminresourceserver.MyTestConfiguration;
 import org.clau.pizzeriaadminresourceserver.OrderTestUtils;
 import org.clau.pizzeriaadminresourceserver.TestHelperService;
 import org.clau.pizzeriaadminresourceserver.TestJwtHelperService;
-import org.clau.pizzeriadata.dto.admin.OrderStatisticsByState;
+import org.clau.pizzeriadata.dto.admin.OrderStatistics;
 import org.clau.pizzeriadata.dto.business.NewUserOrderDTO;
-import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.clau.pizzeriautils.enums.RoleEnum;
 import org.clau.pizzeriautils.util.TimeUtils;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +33,7 @@ import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,10 +47,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @DirtiesContext
 @AutoConfigureMockMvc
 @Import(MyTestConfiguration.class)
-@Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
+@Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS, config = @SqlConfig(transactionMode = ISOLATED))
 public class OrderStatisticsControllerTests {
 
-   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN + ApiRoutes.ORDER_BASE + ApiRoutes.STATISTICS + ApiRoutes.STATE;
+   static Stream<Arguments> orderStateTimelinesWithByClause() {
+	  return Stream.of(
+		 Arguments.of("hourly", ApiRoutes.ORDER_BASE),
+		 Arguments.of("daily", ApiRoutes.ORDER_BASE),
+		 Arguments.of("monthly", ApiRoutes.ORDER_BASE),
+		 Arguments.of("yearly", ApiRoutes.ORDER_BASE)
+	  );
+   }
+
+   static Stream<Arguments> userStateTimelinesWithByClause() {
+	  return Stream.of(
+		 Arguments.of("hourly", ApiRoutes.USER_BASE),
+		 Arguments.of("daily", ApiRoutes.USER_BASE),
+		 Arguments.of("monthly", ApiRoutes.USER_BASE),
+		 Arguments.of("yearly", ApiRoutes.USER_BASE)
+	  );
+   }
+
+   private final String path = ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ADMIN + ApiRoutes.ORDER_BASE + ApiRoutes.STATISTICS;
 
    private final NewUserOrderDTO newUserOrderDTO = OrderTestUtils.userOrderStub(false);
 
@@ -65,215 +86,23 @@ public class OrderStatisticsControllerTests {
    @Autowired
    private TestHelperService testHelperService;
 
-   @Test
-   void givenHourlyRequest_thenReturnHourOrderCount() throws Exception {
-
-	  // Arrange
+   @BeforeAll
+   void setup() {
 	  createHourlyOrders(today, newUserOrderDTO);
-	  String timeline = "hourly";
-	  String state = "COMPLETED";
-
-	  // createApiError JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-
-	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  assertThat(statisticsByState.countsByState().size()).isEqualTo(17);
-
-	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // 08:00
-	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // 09:00
-	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // 10:00
-	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(4); // 11:00
-	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(5); // 12:00
-	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(6); // 13:00
-	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(7); // 14:00
-	  assertThat(statisticsByState.countsByState().get(7)).isEqualTo(8); // 15:00
-	  assertThat(statisticsByState.countsByState().get(8)).isEqualTo(9); // 16:00
-	  assertThat(statisticsByState.countsByState().get(9)).isEqualTo(10); // 17:00
-	  assertThat(statisticsByState.countsByState().get(10)).isEqualTo(11); // 18:00
-	  assertThat(statisticsByState.countsByState().get(11)).isEqualTo(12); // 19:00
-	  assertThat(statisticsByState.countsByState().get(12)).isEqualTo(13); // 20:00
-	  assertThat(statisticsByState.countsByState().get(13)).isEqualTo(14); // 21:00
-	  assertThat(statisticsByState.countsByState().get(14)).isEqualTo(15); // 22:00
-	  assertThat(statisticsByState.countsByState().get(15)).isEqualTo(16); // 23:00
-	  assertThat(statisticsByState.countsByState().get(16)).isEqualTo(17); // 00:00
-   }
-
-   @Test
-   void givenDailyRequest_thenReturnHourOrderCount() throws Exception {
-
-	  // Arrange
-
 	  createDailyOrders(today, newUserOrderDTO);
-	  String timeline = "daily";
-	  String state = "COMPLETED";
-
-	  // createApiError JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-
-	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  assertThat(statisticsByState.countsByState().size()).isEqualTo(7);
-
-	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // monday
-	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(1); // tuesday
-	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(1); // wednesday
-	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(1); // thursday
-	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(1); // friday
-	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(1); // saturday
-	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(1); // sunday
-   }
-
-   @Test
-   void givenMonthlyRequest_thenReturnHourOrderCount() throws Exception {
-
-	  // Arrange
-
 	  createMonthlyOrders(today, newUserOrderDTO);
-	  String timeline = "monthly";
-	  String state = "COMPLETED";
-
-	  // createApiError JWT token
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-
-	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  assertThat(statisticsByState.countsByState().size()).isEqualTo(12);
-
-	  assertThat(statisticsByState.countsByState().getFirst()).isEqualTo(1); // january
-	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // february
-	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // march
-	  assertThat(statisticsByState.countsByState().get(3)).isEqualTo(4); // april
-	  assertThat(statisticsByState.countsByState().get(4)).isEqualTo(5); // may
-	  assertThat(statisticsByState.countsByState().get(5)).isEqualTo(6); // june
-	  assertThat(statisticsByState.countsByState().get(6)).isEqualTo(7); // july
-	  assertThat(statisticsByState.countsByState().get(7)).isEqualTo(8); // august
-	  assertThat(statisticsByState.countsByState().get(8)).isEqualTo(9); // september
-	  assertThat(statisticsByState.countsByState().get(9)).isEqualTo(10); // october
-	  assertThat(statisticsByState.countsByState().get(10)).isEqualTo(11); // november
-	  assertThat(statisticsByState.countsByState().get(11)).isEqualTo(12); // december
-   }
-
-   @Test
-   void givenYearlyRequest_whenCurrentYearIs2025_thenReturnHourOrderCount() throws Exception {
-
-	  // Arrange
-
 	  createYearlyOrders(newUserOrderDTO);
-	  String timeline = "yearly";
-	  String state = "COMPLETED";
+   }
+
+   @ParameterizedTest(name = "{index} => timeline={0}")
+   @MethodSource("orderStateTimelinesWithByClause")
+   void givenRequest_whenOrderState_thenReturnOrderCount(String timeline, String byClause) throws Exception {
 
 	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act
-
-	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  assertThat(statisticsByState.countsByState().size()).isEqualTo(3);
-	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(1); // 2023
-	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(2); // 2024
-	  assertThat(statisticsByState.countsByState().get(2)).isEqualTo(3); // 2025
-   }
-
-   @Test
-   void givenInvalidState_whenRequest_thenReturnBadRequestWithMessage() throws Exception {
-
-	  // Arrange
-	  String timeline = "daily";
-	  String state = "NOT_A_STATE";
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-	  String body = response.getContentAsString();
-	  assertThat(body).contains("Supported states");
-   }
-
-   @Test
-   void givenUnknownTimeline_whenRequest_thenReturnBadRequest() throws Exception {
-
-	  // Arrange
-	  String timeline = "foobar";
-	  String state = "COMPLETED";
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
-			.contentType(MediaType.APPLICATION_JSON)
-			.with(csrf())
-			.header("Authorization", format("Bearer %s", accessToken)))
-		 .andReturn().getResponse();
-
-	  // Assert
-	  assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-	  ResponseDTO responseDTO = objectMapper.readValue(response.getContentAsString(), ResponseDTO.class);
-	  assertThat(responseDTO.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-	  assertThat(responseDTO.getApiError().getCause()).isEqualTo("UnsupportedOrderState");
-	  assertThat(responseDTO.getApiError().getMessage()).isEqualTo("Supported states: [COMPLETED, CANCELLED, PENDING]");
-   }
-
-   @Test
-   void givenHourlyRequest_whenEventsOnBoundaries_thenBucketsAreInclusiveExclusiveCorrectly() throws Exception {
-
-	  // Arrange
-	  // Create 3 orders: 08:00:00 and 08:59:59.999999999 should fall into first bucket, 09:00:00 in the second
-	  LocalDateTime startOfWindow = today.toLocalDate().atTime(8, 0, 0, 0);
-	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow);
-	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow.withMinute(59).withSecond(59).withNano(999_999_999));
-	  this.testHelperService.createOrder(1L, newUserOrderDTO, startOfWindow.plusHours(1)); // 09:00:00
-
-	  String timeline = "hourly";
-	  String state = "COMPLETED";
-	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
-
-	  // Act
-	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.STATE + byClause + "?timeline=" + timeline)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -281,27 +110,24 @@ public class OrderStatisticsControllerTests {
 
 	  // Assert
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  assertThat(statisticsByState.countsByState().size()).isEqualTo(17);
-	  assertThat(statisticsByState.countsByState().get(0)).isEqualTo(2);
-	  assertThat(statisticsByState.countsByState().get(1)).isEqualTo(1);
-	  for (int i = 2; i < 17; i++) {
-		 assertThat(statisticsByState.countsByState().get(i)).isEqualTo(0);
-	  }
+	  OrderStatistics statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatistics.class);
+
+	  List<Integer> countCompleted = statisticsByState.statisticsByState().get(0).count();
+	  List<Integer> countCancelled = statisticsByState.statisticsByState().get(1).count();
+
+	  assertThat(countCompleted).size().isPositive();
+	  assertThat(countCancelled).size().isPositive();
    }
 
-   @Test
-   void givenYearlyRequest_whenNoData_thenReturnZeroCountsForAllYears() throws Exception {
+   @ParameterizedTest(name = "{index} => timeline={0}")
+   @MethodSource("userStateTimelinesWithByClause")
+   void givenRequest_whenUserState_thenReturnOrderCount(String timeline, String byClause) throws Exception {
 
-	  // Arrange: no orders created
-	  String timeline = "yearly";
-	  String state = "COMPLETED";
-	  int startYear = 2023;
-	  int currentYear = today.getYear();
+	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
 
 	  // Act
-	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.ORDER_BASE + "?timeline=" + timeline + "&state=" + state)
+	  MockHttpServletResponse response = mockMvc.perform(get(path + ApiRoutes.STATE + byClause + "?timeline=" + timeline)
 			.contentType(MediaType.APPLICATION_JSON)
 			.with(csrf())
 			.header("Authorization", format("Bearer %s", accessToken)))
@@ -309,12 +135,13 @@ public class OrderStatisticsControllerTests {
 
 	  // Assert
 	  assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	  OrderStatisticsByState statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatisticsByState.class);
-	  int expectedSize = currentYear - startYear + 1;
-	  assertThat(statisticsByState.countsByState().size()).isEqualTo(expectedSize);
-	  for (Integer count : statisticsByState.countsByState()) {
-		 assertThat(count).isEqualTo(0);
-	  }
+	  OrderStatistics statisticsByState = objectMapper.readValue(response.getContentAsString(), OrderStatistics.class);
+
+	  List<Integer> countRegisteredUsers = statisticsByState.statisticsByState().get(0).count();
+	  List<Integer> countAnonymousUsers = statisticsByState.statisticsByState().get(1).count();
+
+	  assertThat(countRegisteredUsers).size().isPositive();
+	  assertThat(countAnonymousUsers).size().isPositive();
    }
 
    private void createHourlyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {

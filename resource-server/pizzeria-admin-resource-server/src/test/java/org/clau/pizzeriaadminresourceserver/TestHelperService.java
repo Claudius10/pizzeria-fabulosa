@@ -15,6 +15,7 @@ import org.clau.pizzeriautils.util.TimeUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Service
 @Transactional
@@ -41,6 +42,7 @@ public class TestHelperService {
    }
 
    public void createOrder(Long userId, NewUserOrderDTO newUserOrder, LocalDateTime createdOn) {
+	  boolean randomBool = new Random().nextBoolean();
 
 	  Cart cart = Cart.builder()
 		 .withTotalQuantity(newUserOrder.cart().totalQuantity())
@@ -63,8 +65,8 @@ public class TestHelperService {
 	  Order order = Order.builder()
 		 .withCreatedOn(createdOn)
 		 .withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
-		 .withState(OrderState.COMPLETED.toString())
-		 .withUserId(userId)
+		 .withState(randomBool ? OrderState.COMPLETED.toString() : OrderState.CANCELLED.toString())
+		 .withUserId(randomBool ? userId : null)
 		 .withAddress(newUserOrder.address())
 		 .build();
 

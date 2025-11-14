@@ -4,10 +4,10 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record OrderStatisticsByState(
+public record OrderStatistics(
 
    @NotNull
-   List<Integer> count
+   List<OrderStatisticsByState> statisticsByState
 
 ) {
 }

@@ -6,8 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import org.clau.pizzeriadata.dto.admin.OrderStatisticsByState;
+import org.clau.pizzeriadata.dto.admin.OrderStatistics;
 import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriautils.constant.ApiResponseMessages;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Tag(name = "Order Statistics API")
 public interface OrderStatisticsControllerSwagger {
 
-   @Operation(operationId = "findCountByOrderState", summary = "Returns order count for given timeline and order state")
+   @Operation(operationId = "findCountByOrderState", summary = "Returns order count for given timeline and all order states")
    @ApiResponse(
 	  responseCode = ApiResponseMessages.OK,
 	  description = "Returns DTO",
-	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = OrderStatisticsByState.class))
+	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = OrderStatistics.class))
    )
    @ApiResponse(
 	  responseCode = ApiResponseMessages.BAD_REQUEST,
@@ -32,17 +31,14 @@ public interface OrderStatisticsControllerSwagger {
 	  description = "Unexpected exception occurred",
 	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = ResponseDTO.class))
    )
-   ResponseEntity<?> findCountByOrderState(
-	  HttpServletRequest request,
-	  @Parameter(required = true, description = "hourly, daily, monthly, yearly") @RequestParam String timeline,
-	  @Parameter(required = true, description = "COMPLETED, CANCELLED") @RequestParam String state
+   ResponseEntity<OrderStatistics> findCountByOrderState(@Parameter(required = true, description = "hourly, daily, monthly, yearly") @RequestParam String timeline
    );
 
-   @Operation(operationId = "findCountByUserState", summary = "Returns order count for given timeline and user state")
+   @Operation(operationId = "findCountByUserState", summary = "Returns order count for given timeline and all user states")
    @ApiResponse(
 	  responseCode = ApiResponseMessages.OK,
 	  description = "Returns DTO",
-	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = OrderStatisticsByState.class))
+	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = OrderStatistics.class))
    )
    @ApiResponse(
 	  responseCode = ApiResponseMessages.BAD_REQUEST,
@@ -54,9 +50,6 @@ public interface OrderStatisticsControllerSwagger {
 	  description = "Unexpected exception occurred",
 	  content = @Content(mediaType = ApiResponseMessages.JSON, schema = @Schema(implementation = ResponseDTO.class))
    )
-   ResponseEntity<?> findCountByUserState(
-	  HttpServletRequest request,
-	  @Parameter(required = true, description = "hourly, daily, monthly, yearly") @RequestParam String timeline,
-	  @Parameter(required = true, description = "REGISTERED, ANONYMOUS") @RequestParam String state
+   ResponseEntity<OrderStatistics> findCountByUserState(@Parameter(required = true, description = "hourly, daily, monthly, yearly") @RequestParam String timeline
    );
 }

@@ -23,11 +23,12 @@ public class OrderStatisticsServiceImpl implements OrderStatisticsService {
    @Override
    public List<Integer> findCountByOrderState(String timelineStr, OrderState state) {
 	  Timeline timeline = Timeline.fromString(timelineStr);
+	  String orderState = state.toString();
 
 	  return TimelineExecutor.execute(
 		 timeline,
 		 TimeUtils::getNowAccountingDST,
-		 interval -> orderStatisticsRepository.countAllByCreatedOnBetweenAndState(interval.start(), interval.end(), state.toString())
+		 interval -> orderStatisticsRepository.countAllByCreatedOnBetweenAndState(interval.start(), interval.end(), orderState)
 	  );
    }
 
