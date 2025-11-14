@@ -10,7 +10,6 @@ import org.clau.pizzeriadata.dto.business.NewUserOrderDTO;
 import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.clau.pizzeriautils.enums.RoleEnum;
 import org.clau.pizzeriautils.util.TimeUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -47,7 +46,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @DirtiesContext
 @AutoConfigureMockMvc
 @Import(MyTestConfiguration.class)
-@Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS, config = @SqlConfig(transactionMode = ISOLATED))
+@Sql(scripts = "file:src/test/resources/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
 public class OrderStatisticsControllerTests {
 
    static Stream<Arguments> orderStateTimelinesWithByClause() {
@@ -86,17 +85,16 @@ public class OrderStatisticsControllerTests {
    @Autowired
    private TestHelperService testHelperService;
 
-   @BeforeAll
-   void setup() {
-	  createHourlyOrders(today, newUserOrderDTO);
-	  createDailyOrders(today, newUserOrderDTO);
-	  createMonthlyOrders(today, newUserOrderDTO);
-	  createYearlyOrders(newUserOrderDTO);
-   }
-
    @ParameterizedTest(name = "{index} => timeline={0}")
    @MethodSource("orderStateTimelinesWithByClause")
    void givenRequest_whenOrderState_thenReturnOrderCount(String timeline, String byClause) throws Exception {
+
+	  switch (timeline) {
+		 case "hourly" -> createHourlyOrders(today, newUserOrderDTO);
+		 case "daily" -> createDailyOrders(today, newUserOrderDTO);
+		 case "monthly" -> createMonthlyOrders(today, newUserOrderDTO);
+		 case "yearly" -> createYearlyOrders(newUserOrderDTO);
+	  }
 
 	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
@@ -115,13 +113,23 @@ public class OrderStatisticsControllerTests {
 	  List<Integer> countCompleted = statisticsByState.statisticsByState().get(0).count();
 	  List<Integer> countCancelled = statisticsByState.statisticsByState().get(1).count();
 
-	  assertThat(countCompleted).size().isPositive();
-	  assertThat(countCancelled).size().isPositive();
+	  List<Integer> completedList = countCompleted.stream().filter(c -> c > 0).toList();
+	  assertThat(completedList).size().isPositive();
+
+	  List<Integer> cancelledList = countCancelled.stream().filter(c -> c > 0).toList();
+	  assertThat(cancelledList).size().isPositive();
    }
 
    @ParameterizedTest(name = "{index} => timeline={0}")
    @MethodSource("userStateTimelinesWithByClause")
    void givenRequest_whenUserState_thenReturnOrderCount(String timeline, String byClause) throws Exception {
+
+	  switch (timeline) {
+		 case "hourly" -> createHourlyOrders(today, newUserOrderDTO);
+		 case "daily" -> createDailyOrders(today, newUserOrderDTO);
+		 case "monthly" -> createMonthlyOrders(today, newUserOrderDTO);
+		 case "yearly" -> createYearlyOrders(newUserOrderDTO);
+	  }
 
 	  // createApiError JWT token
 	  String accessToken = testJwtHelperService.generateAccessToken(List.of(RoleEnum.ADMIN.value()));
@@ -140,8 +148,11 @@ public class OrderStatisticsControllerTests {
 	  List<Integer> countRegisteredUsers = statisticsByState.statisticsByState().get(0).count();
 	  List<Integer> countAnonymousUsers = statisticsByState.statisticsByState().get(1).count();
 
-	  assertThat(countRegisteredUsers).size().isPositive();
-	  assertThat(countAnonymousUsers).size().isPositive();
+	  List<Integer> usersList = countRegisteredUsers.stream().filter(c -> c > 0).toList();
+	  assertThat(usersList).size().isPositive();
+
+	  List<Integer> anonymousList = countAnonymousUsers.stream().filter(c -> c > 0).toList();
+	  assertThat(anonymousList).size().isPositive();
    }
 
    private void createHourlyOrders(LocalDateTime today, NewUserOrderDTO newUserOrderDTO) {
