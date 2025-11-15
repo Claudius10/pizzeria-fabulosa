@@ -35,7 +35,6 @@ public class CorsConfiguration {
 	  source.registerCorsConfiguration("/.well-known/**", config);
 	  source.registerCorsConfiguration("/authorize/**", config);
 	  source.registerCorsConfiguration("/error/**", config);
-	  source.registerCorsConfiguration("/api/v1/register/**", config);
 
 	  return source;
    }
