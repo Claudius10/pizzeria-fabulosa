@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/components/pizzeria-data/pom.xml" />
         <option value="$PROJECT_DIR$/components/pizzeria-utils/pom.xml" />
         <option value="$PROJECT_DIR$/security/pizzeria-security-server/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
