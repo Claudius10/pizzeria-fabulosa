@@ -10,7 +10,7 @@ logging:
 
 spring:
   application:
-    name: "pizzeria-backend-client"
+    name: "fabulosa-backend-client"
   security:
     oauth2:
       client:
