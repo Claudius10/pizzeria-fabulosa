@@ -10,10 +10,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>org.clau</groupId>
-    <artifactId>fabulosa-security-server</artifactId>
+    <groupId>org.clau.fabulosa</groupId>
+    <artifactId>security-server</artifactId>
     <version>0.0.1</version>
-    <name>fabulosa-security-server</name>
 
     <properties>
         <java.version>21</java.version>
@@ -42,14 +41,14 @@
         <!-- Fabulosa -->
 
         <dependency>
-            <groupId>org.clau</groupId>
-            <artifactId>fabulosa-utils</artifactId>
+            <groupId>org.clau.fabulosa</groupId>
+            <artifactId>utils</artifactId>
             <version>0.0.1</version>
         </dependency>
 
         <dependency>
-            <groupId>org.clau</groupId>
-            <artifactId>fabulosa-data</artifactId>
+            <groupId>org.clau.fabulosa</groupId>
+            <artifactId>data</artifactId>
             <version>0.0.1</version>
         </dependency>
 

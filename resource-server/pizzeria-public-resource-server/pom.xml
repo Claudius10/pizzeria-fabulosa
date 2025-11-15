@@ -10,11 +10,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>org.clau</groupId>
-    <artifactId>pizzeria-public-resource-server</artifactId>
+    <groupId>org.clau.fabulosa.pizzeria</groupId>
+    <artifactId>public-resource-server</artifactId>
     <version>0.0.1</version>
-    <name>pizzeria-public-resource-server</name>
-    <description>pizzeria-public-resource-server</description>
 
     <properties>
         <java.version>21</java.version>
@@ -38,14 +36,14 @@
         <!-- Fabulosa -->
 
         <dependency>
-            <groupId>org.clau</groupId>
-            <artifactId>fabulosa-utils</artifactId>
+            <groupId>org.clau.fabulosa</groupId>
+            <artifactId>utils</artifactId>
             <version>0.0.1</version>
         </dependency>
 
         <dependency>
-            <groupId>org.clau</groupId>
-            <artifactId>fabulosa-data</artifactId>
+            <groupId>org.clau.fabulosa</groupId>
+            <artifactId>data</artifactId>
             <version>0.0.1</version>
         </dependency>
 

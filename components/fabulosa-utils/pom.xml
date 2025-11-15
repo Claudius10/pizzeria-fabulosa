@@ -10,11 +10,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>org.clau</groupId>
-    <artifactId>fabulosa-utils</artifactId>
+    <groupId>org.clau.fabulosa</groupId>
+    <artifactId>utils</artifactId>
     <version>0.0.1</version>
-    <name>fabulosa-utils</name>
-    <description>fabulosa-utils</description>
 
     <properties>
         <java.version>21</java.version>
