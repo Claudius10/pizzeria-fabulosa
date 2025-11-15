@@ -1,12 +1,12 @@
 package org.clau.pizzeriabusinessresourceserver.config;
 
-import org.clau.pizzeriautils.validation.business.order.CompositeValidator;
-import org.clau.pizzeriautils.validation.business.order.NewOrder;
-import org.clau.pizzeriautils.validation.business.order.Validator;
-import org.clau.pizzeriautils.validation.business.order.impl.CartValidator;
-import org.clau.pizzeriautils.validation.business.order.impl.DeleteTimeLimitValidator;
-import org.clau.pizzeriautils.validation.business.order.impl.NewOrderValidator;
-import org.clau.pizzeriautils.validation.business.order.impl.OrderDetailsValidator;
+import org.clau.pizzeriabusinessresourceserver.validator.CompositeValidator;
+import org.clau.pizzeriabusinessresourceserver.validator.OrderToValidate;
+import org.clau.pizzeriabusinessresourceserver.validator.Validator;
+import org.clau.pizzeriabusinessresourceserver.validator.impl.CartValidator;
+import org.clau.pizzeriabusinessresourceserver.validator.impl.OrderCancelTimeLimitValidator;
+import org.clau.pizzeriabusinessresourceserver.validator.impl.OrderDetailsValidator;
+import org.clau.pizzeriabusinessresourceserver.validator.impl.OrderValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,14 +17,14 @@ import java.util.List;
 public class ValidatorConfig {
 
    @Bean
-   CompositeValidator<NewOrder> newOrderValidator() {
-	  NewOrderValidator newOrderValidator = new NewOrderValidator();
-	  newOrderValidator.setValidators(List.of(new CartValidator(), new OrderDetailsValidator()));
-	  return newOrderValidator;
+   CompositeValidator<OrderToValidate> newOrderValidator() {
+	  OrderValidator orderValidator = new OrderValidator();
+	  orderValidator.setValidators(List.of(new CartValidator(), new OrderDetailsValidator()));
+	  return orderValidator;
    }
 
    @Bean
-   Validator<LocalDateTime> deleteOrderValidator() {
-	  return new DeleteTimeLimitValidator();
+   Validator<LocalDateTime> cancelOrderValidator() {
+	  return new OrderCancelTimeLimitValidator();
    }
 }

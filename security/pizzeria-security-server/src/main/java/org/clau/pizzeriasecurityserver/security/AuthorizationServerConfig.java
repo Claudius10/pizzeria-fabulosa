@@ -7,7 +7,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.clau.pizzeriasecurityserver.property.MyURI;
 import org.clau.pizzeriasecurityserver.security.jose.Jwks;
-import org.clau.pizzeriasecurityserver.service.impl.OidcUserInfoServiceImpl;
+import org.clau.pizzeriasecurityserver.service.impl.user.OidcUserInfoServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -64,10 +64,7 @@ public class AuthorizationServerConfig {
 
    @Bean
    @Order(Ordered.HIGHEST_PRECEDENCE)
-   SecurityFilterChain authorizationServerSecurityFilterChain(
-	  HttpSecurity http,
-	  OidcUserInfoServiceImpl userInfoService,
-	  CorsConfigurationSource corsConfigurationSource) throws Exception {
+   SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http, OidcUserInfoServiceImpl userInfoService, CorsConfigurationSource corsConfigurationSource) throws Exception {
 
 	  Function<OidcUserInfoAuthenticationContext, OidcUserInfo> userInfoMapper = (context) -> {
 		 OidcUserInfoAuthenticationToken authentication = context.getAuthentication();

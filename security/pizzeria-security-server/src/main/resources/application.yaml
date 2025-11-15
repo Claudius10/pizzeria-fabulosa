@@ -14,7 +14,7 @@ spring:
     name: "pizzeria-security-server"
 
   datasource:
-    url: jdbc:mariadb://localhost:3306/security
+    url: jdbc:mariadb://localhost:3306/pizzeria
     username: root
     password: root
     #    url: jdbc:mariadb://db:3306/pizzeria
@@ -35,6 +35,13 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
+
+springdoc:
+  api-docs:
+    path: /api/v1/docs
+  swagger-ui:
+    path: /api/v1/docs/swagger
+    operations-sorter: method
 
 uri:
   angular-base: http://127.0.0.1:4200

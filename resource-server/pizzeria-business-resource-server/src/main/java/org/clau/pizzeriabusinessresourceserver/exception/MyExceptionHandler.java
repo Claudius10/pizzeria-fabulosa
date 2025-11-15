@@ -4,14 +4,14 @@ import jakarta.persistence.PersistenceException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.clau.pizzeriabusinessresourceserver.util.Constant;
+import org.clau.pizzeriabusinessresourceserver.service.ErrorService;
+import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriadata.model.common.APIError;
-import org.clau.pizzeriadata.service.common.ErrorService;
-import org.clau.pizzeriautils.constant.common.SecurityResponse;
-import org.clau.pizzeriautils.dto.common.ResponseDTO;
-import org.clau.pizzeriautils.util.common.ExceptionLogger;
-import org.clau.pizzeriautils.util.common.ServerUtils;
-import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.constant.ApiSecurityResponses;
+import org.clau.pizzeriautils.constant.MyApps;
+import org.clau.pizzeriautils.logger.ExceptionLogger;
+import org.clau.pizzeriautils.util.ServerUtils;
+import org.clau.pizzeriautils.util.TimeUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -47,13 +47,8 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  String cause = body != null ? body.toString() : null;
 	  String message = "See cause";
 
-	  ResponseDTO response = buildResponse(
-		 cause,
-		 message,
-		 request,
-		 fatal,
-		 statusCode.value()
-	  );
+	  APIError apiError = saveError(cause, message, request, fatal);
+	  ResponseDTO response = buildResponse(apiError, statusCode.value());
 
 	  return new ResponseEntity<>(response, headers, statusCode);
    }
@@ -85,7 +80,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 			.withCreatedOn(TimeUtils.getNowAccountingDST())
 			.withCause(cause)
 			.withMessage(String.valueOf(errorMessages))
-			.withOrigin(Constant.APP_NAME)
+			.withOrigin(MyApps.RESOURCE_SERVER_BUSINESS)
 			.withPath(path)
 			.withLogged(false)
 			.withFatal(false)
@@ -93,7 +88,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .status(HttpStatus.BAD_REQUEST.value())
 		 .build();
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 	  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
    }
 
@@ -104,15 +99,10 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  String cause = ex.getClass().getSimpleName();
 	  String message = ex.getMessage();
 
-	  ResponseDTO response = buildResponse(
-		 cause,
-		 message,
-		 request,
-		 fatal,
-		 HttpStatus.INTERNAL_SERVER_ERROR.value()
-	  );
+	  APIError apiError = saveError(cause, message, request, fatal);
+	  ResponseDTO response = buildResponse(apiError, HttpStatus.INTERNAL_SERVER_ERROR.value());
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 
 	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
    }
@@ -123,7 +113,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 	  ResponseDTO response = handleAuthenticationException(ex, request);
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 	  return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
    }
 
@@ -133,7 +123,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 
 	  ResponseDTO response = handleAccessDenied(ex, request);
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 	  return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
    }
 
@@ -144,15 +134,10 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  String cause = ex.getClass().getSimpleName();
 	  String message = ex.getMessage();
 
-	  ResponseDTO response = buildResponse(
-		 cause,
-		 message,
-		 request,
-		 fatal,
-		 HttpStatus.INTERNAL_SERVER_ERROR.value()
-	  );
+	  APIError apiError = saveError(cause, message, request, fatal);
+	  ResponseDTO response = buildResponse(apiError, HttpStatus.INTERNAL_SERVER_ERROR.value());
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 
 	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
    }
@@ -169,9 +154,9 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  boolean logged = false;
 
 	  switch (ex) {
-		 case InsufficientAuthenticationException ignored -> message = SecurityResponse.MISSING_TOKEN;
-		 case InvalidBearerTokenException ignored -> message = SecurityResponse.INVALID_TOKEN;
-		 case BadCredentialsException ignored -> message = SecurityResponse.BAD_CREDENTIALS;
+		 case InsufficientAuthenticationException ignored -> message = ApiSecurityResponses.MISSING_TOKEN;
+		 case InvalidBearerTokenException ignored -> message = ApiSecurityResponses.INVALID_TOKEN;
+		 case BadCredentialsException ignored -> message = ApiSecurityResponses.BAD_CREDENTIALS;
 		 default -> {
 			fatal = true;
 			logged = true;
@@ -180,14 +165,14 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	  }
 
 	  if (logged) {
-		 error = errorService.create(cause, message, Constant.APP_NAME, path, fatal);
+		 error = errorService.create(cause, message, MyApps.RESOURCE_SERVER_BUSINESS, path, fatal);
 	  } else {
 		 error = APIError.builder()
 			.withId(UUID.randomUUID().getMostSignificantBits())
 			.withCreatedOn(TimeUtils.getNowAccountingDST())
 			.withCause(cause)
 			.withMessage(message)
-			.withOrigin(Constant.APP_NAME)
+			.withOrigin(MyApps.RESOURCE_SERVER_BUSINESS)
 			.withPath(path)
 			.withLogged(logged)
 			.withFatal(fatal)
@@ -210,7 +195,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .withCreatedOn(TimeUtils.getNowAccountingDST())
 		 .withCause(ex.getClass().getSimpleName())
 		 .withMessage(ex.getMessage())
-		 .withOrigin(Constant.APP_NAME)
+		 .withOrigin(MyApps.RESOURCE_SERVER_BUSINESS)
 		 .withPath(path)
 		 .withLogged(false)
 		 .withFatal(false)
@@ -222,19 +207,19 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .build();
    }
 
-   private ResponseDTO buildResponse(String cause, String message, WebRequest request, boolean fatal, int status) {
-
+   private APIError saveError(String cause, String message, WebRequest request, boolean fatal) {
 	  HttpServletRequest httpRequest = ((ServletWebRequest) request).getRequest();
 	  String path = ServerUtils.resolvePath(httpRequest.getServletPath(), httpRequest.getRequestURI());
-
-	  APIError error = errorService.create(
+	  return errorService.create(
 		 cause,
 		 message,
-		 Constant.APP_NAME,
+		 MyApps.SECURITY_SERVER,
 		 path,
 		 fatal
 	  );
+   }
 
+   private ResponseDTO buildResponse(APIError error, int status) {
 	  return ResponseDTO.builder()
 		 .apiError(error)
 		 .status(status)

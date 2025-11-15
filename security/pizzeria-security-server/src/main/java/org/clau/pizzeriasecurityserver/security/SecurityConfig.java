@@ -26,11 +26,11 @@ public class SecurityConfig {
    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
 
 	  http
-		 .cors(cors ->
-			cors.configurationSource(corsConfigurationSource))
+		 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+		 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/v1/register/**"))
 		 .authorizeHttpRequests(authorize ->
 			authorize
-			   .requestMatchers("/assets/**", "/login").permitAll()
+			   .requestMatchers("/assets/**", "/login", "/api/v1/register/**").permitAll()
 			   .anyRequest().authenticated())
 		 .formLogin(login ->
 			login.loginPage("/login"));

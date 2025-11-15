@@ -3,11 +3,11 @@ package org.clau.pizzeriabackendclient.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.clau.pizzeriabackendclient.util.Constant;
+import org.clau.pizzeriadata.dto.common.ResponseDTO;
 import org.clau.pizzeriadata.model.common.APIError;
-import org.clau.pizzeriautils.dto.common.ResponseDTO;
-import org.clau.pizzeriautils.util.common.ExceptionLogger;
-import org.clau.pizzeriautils.util.common.ServerUtils;
+import org.clau.pizzeriautils.constant.MyApps;
+import org.clau.pizzeriautils.logger.ExceptionLogger;
+import org.clau.pizzeriautils.util.ServerUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -16,6 +16,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -62,8 +63,26 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 status
 	  );
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 	  return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+   }
+
+   @ExceptionHandler(ResourceAccessException.class)
+   protected ResponseEntity<ResponseDTO> handleUnavailableResource(ResourceAccessException ex, WebRequest request) {
+
+	  boolean fatal = false;
+	  String cause = ex.getClass().getSimpleName();
+	  String message = ex.getMessage();
+
+	  ResponseDTO response = buildResponse(
+		 cause,
+		 message,
+		 request,
+		 fatal,
+		 HttpStatus.INTERNAL_SERVER_ERROR.value()
+	  );
+
+	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
    }
 
    @ExceptionHandler(Exception.class)
@@ -81,7 +100,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 HttpStatus.INTERNAL_SERVER_ERROR.value()
 	  );
 
-	  ExceptionLogger.log(ex, log, response);
+	  ExceptionLogger.log(ex, log);
 	  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
    }
 
@@ -98,7 +117,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 		 .withCause(cause)
 		 .withFatal(fatal)
 		 .withLogged(false)
-		 .withOrigin(Constant.APP_NAME)
+		 .withOrigin(MyApps.CLIENT_BACKEND)
 		 .build();
 
 	  return ResponseDTO.builder()

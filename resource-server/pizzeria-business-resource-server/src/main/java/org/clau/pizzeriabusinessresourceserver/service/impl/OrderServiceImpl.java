@@ -2,22 +2,22 @@ package org.clau.pizzeriabusinessresourceserver.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.clau.pizzeriabusinessresourceserver.dao.OrderRepository;
+import org.clau.pizzeriabusinessresourceserver.dao.projection.CreatedOnProjection;
 import org.clau.pizzeriabusinessresourceserver.service.OrderService;
-import org.clau.pizzeriadata.dao.business.OrderRepository;
-import org.clau.pizzeriadata.dao.business.projection.CreatedOnProjection;
+import org.clau.pizzeriabusinessresourceserver.util.OrderUtils;
+import org.clau.pizzeriadata.dto.business.NewUserOrderDTO;
 import org.clau.pizzeriadata.model.business.Cart;
 import org.clau.pizzeriadata.model.business.CartItem;
 import org.clau.pizzeriadata.model.business.Order;
 import org.clau.pizzeriadata.model.business.OrderDetails;
-import org.clau.pizzeriautils.dto.business.NewUserOrderDTO;
-import org.clau.pizzeriautils.util.business.OrderUtils;
-import org.clau.pizzeriautils.util.common.TimeUtils;
+import org.clau.pizzeriautils.enums.OrderState;
+import org.clau.pizzeriautils.util.TimeUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -54,8 +54,9 @@ public class OrderServiceImpl implements OrderService {
 		 .forEach(cart::addItem);
 
 	  Order order = Order.builder()
-		 .withCreatedOn(LocalDateTime.now())
+		 .withCreatedOn(TimeUtils.getNowAccountingDST())
 		 .withFormattedCreatedOn(TimeUtils.formatDateAsString(TimeUtils.getNowAccountingDST()))
+		 .withState(OrderState.COMPLETED.toString()) // todo - set to pending when created and figure out a way to pass them to completed
 		 .withUserId(userId)
 		 .withAddress(newUserOrder.address())
 		 .build();
@@ -84,8 +85,8 @@ public class OrderServiceImpl implements OrderService {
    }
 
    @Override
-   public void deleteById(Long orderId) {
-	  orderRepository.deleteById(orderId);
+   public void cancelById(Long orderId) {
+	  orderRepository.updateState(orderId, OrderState.CANCELLED.toString());
    }
 
    @Override

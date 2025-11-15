@@ -26,6 +26,8 @@ public class Order {
 
    private String formattedCreatedOn;
 
+   private String state;
+
    private String anonCustomerName;
 
    private Integer anonCustomerContactNumber;

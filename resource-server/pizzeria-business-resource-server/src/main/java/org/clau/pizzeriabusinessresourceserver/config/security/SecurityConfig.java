@@ -1,7 +1,7 @@
 package org.clau.pizzeriabusinessresourceserver.config.security;
 
-import org.clau.pizzeriautils.constant.common.Route;
-import org.clau.pizzeriautils.constant.user.RoleEnum;
+import org.clau.pizzeriautils.constant.ApiRoutes;
+import org.clau.pizzeriautils.enums.RoleEnum;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,17 +21,15 @@ public class SecurityConfig {
 	  AccessDeniedHandler accessDeniedHandler
    ) throws Exception {
 
-	  http.securityMatcher(Route.API + Route.V1 + Route.ORDER_BASE + Route.ALL)
+	  http
+		 .securityMatcher(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ORDER_BASE + ApiRoutes.ALL)
 		 .authorizeHttpRequests(authorize ->
-			authorize.requestMatchers(Route.API + Route.V1 + Route.ORDER_BASE + Route.ALL).hasAnyRole(RoleEnum.USER.value(), RoleEnum.ADMIN.value())
-		 );
-
-	  http.oauth2ResourceServer(oauth2ResourceServer -> {
-		 oauth2ResourceServer.jwt(jwtConfigurer ->
-			jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()));
-		 oauth2ResourceServer.accessDeniedHandler(accessDeniedHandler); // handle access denied
-		 oauth2ResourceServer.authenticationEntryPoint(authenticationHandler); // handle auth failure
-	  });
+			authorize.requestMatchers(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.ORDER_BASE + ApiRoutes.ALL).hasAnyRole(RoleEnum.USER.value(), RoleEnum.ADMIN.value()))
+		 .oauth2ResourceServer(oauth2ResourceServer -> {
+			oauth2ResourceServer.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()));
+			oauth2ResourceServer.accessDeniedHandler(accessDeniedHandler); // handle access denied
+			oauth2ResourceServer.authenticationEntryPoint(authenticationHandler); // handle auth failure
+		 });
 
 	  return http.build();
    }

@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="pizzeria-utils" />
+        <module name="pizzeria-data" />
       </profile>
       <profile name="Annotation profile for pizzeria-security-server" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -17,20 +18,25 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="pizzeria-security-server" />
-        <module name="pizzeria-data" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="pizzeria-admin-resource-server" target="21" />
+      <module name="pizzeria-backend-client" target="21" />
       <module name="pizzeria-business-resource-server" target="21" />
       <module name="pizzeria-public-resource-server" target="21" />
+      <module name="pizzeria-user-resource-server" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="pizzeria-admin-resource-server" options="-parameters" />
+      <module name="pizzeria-backend-client" options="-parameters" />
       <module name="pizzeria-business-resource-server" options="-parameters" />
       <module name="pizzeria-data" options="-parameters" />
       <module name="pizzeria-public-resource-server" options="-parameters" />
       <module name="pizzeria-security-server" options="-parameters" />
+      <module name="pizzeria-user-resource-server" options="-parameters" />
       <module name="pizzeria-utils" options="-parameters" />
     </option>
   </component>

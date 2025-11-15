@@ -1,10 +1,10 @@
 package org.clau.pizzeriapublicresourceserver.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.clau.pizzeriadata.dto.assets.OfferListDTO;
 import org.clau.pizzeriapublicresourceserver.controller.swagger.OfferControllerSwagger;
 import org.clau.pizzeriapublicresourceserver.service.OfferService;
-import org.clau.pizzeriautils.constant.common.Route;
-import org.clau.pizzeriautils.dto.assets.OfferListDTO;
+import org.clau.pizzeriautils.constant.ApiRoutes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Route.API + Route.V1 + Route.RESOURCE + Route.OFFER_BASE)
+@RequestMapping(ApiRoutes.API + ApiRoutes.V1 + ApiRoutes.RESOURCE + ApiRoutes.OFFER)
 public class OfferController implements OfferControllerSwagger {
 
    private final OfferService offerService;
