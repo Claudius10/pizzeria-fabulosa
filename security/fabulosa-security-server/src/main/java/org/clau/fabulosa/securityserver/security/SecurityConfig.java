@@ -30,7 +30,11 @@ public class SecurityConfig {
 		 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/v1/register/**"))
 		 .authorizeHttpRequests(authorize ->
 			authorize
-			   .requestMatchers("/assets/**", "/login", "/api/v1/register/**").permitAll()
+			   .requestMatchers("/assets/**").permitAll()
+			   .requestMatchers("/login").permitAll()
+			   .requestMatchers("/api/v1/register/**").permitAll()
+			   .requestMatchers("/api/v1/docs.yaml").permitAll()
+			   .requestMatchers("/api/v1/docs/**").permitAll()
 			   .anyRequest().authenticated())
 		 .formLogin(login ->
 			login.loginPage("/login"));
