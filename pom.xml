@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.clau</groupId>
+    <artifactId>fabulosa-corporation</artifactId>
+    <version>0.0.1</version>
+    <packaging>pom</packaging>
+    <name>fabulosa-corporation</name>
+
+    <modules>
+        <!-- Components -->
+        <module>components/fabulosa-utils</module>
+        <module>components/fabulosa-data</module>
+        <!-- Security server -->
+        <module>security/fabulosa-security-server</module>
+        <!-- API Client -->
+        <module>api-client/fabulosa-backend-client</module>
+
+        <!-- Pizzeria Resource servers -->
+        <module>resource-server/pizzeria-admin-resource-server</module>
+        <module>resource-server/pizzeria-business-resource-server</module>
+        <module>resource-server/pizzeria-public-resource-server</module>
+    </modules>
+
+</project>
+
+        <!-- mvn -U clean install -DskipTests  -->
